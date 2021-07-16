@@ -1,3 +1,9 @@
+// TODO: For all screens. When loading images and vidoes.
+// TODO: First, have them save to firebase storage.
+// TODO: Second, have them load from firebase storage.
+// TODO: Third, prefetch using the string that represents their location.
+// TODO: Fourth, have their prop set to force cache so that they load with the rest of the screen.
+
 import React from "react";
 import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
@@ -97,6 +103,11 @@ function BrowseStackScreen() {
 }
 const Tab = createBottomTabNavigator();
 
+export const GlobalContext = React.createContext({
+  myUserId: null,
+  myFriends: [],
+});
+
 function App() {
   var [loading, setLoading] = React.useState(true);
   var [user, setUser] = React.useState(null);
@@ -136,31 +147,44 @@ function App() {
     return <Login />;
   } else {
     return (
-      <NavigationContainer>
-        <Tab.Navigator
-          screenOptions={({ route }) => ({
-            tabBarIcon: ({ focused, color, size }) => {
-              let iconName;
-              if (route.name === "Home") {
-                iconName = "home";
-              } else if (route.name === "My Workouts") {
-                iconName = "activity";
-              } else if (route.name === "Browse") {
-                iconName = "search";
-              }
-              return <Feather name={iconName} color={color} size={size} />;
+      <GlobalContext.Provider
+        value={{
+          myUserId: firebase.auth().currentUser.uid,
+          myFriends: [
+            {
+              id: 123,
+              displayName: "Robert G",
+              profilePicture: "https://google.com",
             },
-          })}
-          tabBarOptions={{
-            activeTintColor: "orange",
-            inactiveTintColor: "#708090",
-          }}
-        >
-          <Tab.Screen name="Home" component={HomeStackScreen} />
-          <Tab.Screen name="My Workouts" component={MyWorkoutsStackScreen} />
-          <Tab.Screen name="Browse" component={BrowseStackScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
+          ],
+        }}
+      >
+        <NavigationContainer>
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+                if (route.name === "Home") {
+                  iconName = "home";
+                } else if (route.name === "My Workouts") {
+                  iconName = "activity";
+                } else if (route.name === "Browse") {
+                  iconName = "search";
+                }
+                return <Feather name={iconName} color={color} size={size} />;
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: "orange",
+              inactiveTintColor: "#708090",
+            }}
+          >
+            <Tab.Screen name="Home" component={HomeStackScreen} />
+            <Tab.Screen name="My Workouts" component={MyWorkoutsStackScreen} />
+            <Tab.Screen name="Browse" component={BrowseStackScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </GlobalContext.Provider>
     );
   }
 }

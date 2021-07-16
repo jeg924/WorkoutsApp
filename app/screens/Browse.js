@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import firebase from "firebase";
 import {
   Configure,
@@ -62,7 +62,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                 }}
               >
                 <Image
-                  source={{ uri: item.photoURL }}
+                  source={{ uri: item.photoURL, cache: "force-cache" }}
                   style={{ width: 40, height: 40 }}
                 />
                 <View style={{ marginLeft: 10, width: 250 }}>
@@ -75,23 +75,13 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
               </View>
             </TouchableHighlight>
           ) : (
-            // Assuming this is a workout for now
+            // this is a workout
             <TouchableHighlight
-              onPress={async () => {
-                const workoutRef = firebase
-                  .firestore()
-                  .collection("workouts")
-                  .doc(item.workoutID);
-                const workout = await workoutRef.get();
-                let workoutData = {};
-                if (workout.exists) {
-                  workoutData = workout.data();
-                }
-                // note: maybe we shouldn't be navigating back to that stack screen.
+              onPress={() =>
                 navigation.navigate("Start Workout", {
                   workoutID: item.workoutID,
-                });
-              }}
+                })
+              }
             >
               <View
                 style={{
@@ -102,7 +92,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                 }}
               >
                 <Image
-                  source={{ uri: item.workoutImage }}
+                  source={{ uri: item.workoutImage, cache: "force-cache" }}
                   style={{ width: 40, height: 40 }}
                 />
                 <View style={{ marginLeft: 10, width: 250 }}>
@@ -122,16 +112,29 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
 
 export default function Browse({ navigation, route }) {
   const filters = route.params;
-  if (filters) {
-    console.log(filters);
-    console.log("facetFilters: " + filters.facetFilters);
+
+  const [facetFilters, setFacetFilters] = React.useState(null);
+  const [numericFilters, setNumericFilters] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(filterResults, [filters]);
+
+  function filterResults() {
+    setLoading(true);
+    if (filters) {
+      setFacetFilters(filters.facetFilters);
+      setNumericFilters(filters.numericFilters);
+    }
+    setLoading(false);
   }
 
-  // const [
-  //   authorData,
-  //   loadingAuthorData,
-  //   errorLoadingAuthorData,
-  // ] = useDocumentDataOnce(firebase.firestore().collection.doc())
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -166,10 +169,10 @@ export default function Browse({ navigation, route }) {
       >
         <SearchBox />
         <InfiniteHits navigation={navigation} />
-        {filters ? (
+        {facetFilters || numericFilters ? (
           <Configure
-            facetFilters={filters.facetFilters}
-            numericFilters={filters.numericFilters}
+            facetFilters={facetFilters}
+            numericFilters={numericFilters}
           />
         ) : null}
       </InstantSearch>

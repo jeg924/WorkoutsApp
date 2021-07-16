@@ -9,11 +9,12 @@ import {
   TouchableHighlight,
   FlatList,
   SafeAreaView,
-  ImageBackground,
+  ActionSheetIOS,
 } from "react-native";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 export default function MyWorkouts({ navigation, route }) {
+  const [deletingUpload, setDeletingUpload] = React.useState(false);
   const [myHistoryCategory, setMyHistoryCategory] = React.useState(false);
   const [myLibraryCategory, setMyLibraryCategory] = React.useState(false);
   const [myUploadsCategory, setMyUploadsCategory] = React.useState(true);
@@ -23,9 +24,28 @@ export default function MyWorkouts({ navigation, route }) {
       .firestore()
       .collection("workouts")
       .where("authorID", "==", firebase.auth().currentUser.uid)
+      .where("published", "==", true)
+      .where("deleted", "==", false)
   );
   const history = [];
   const library = [];
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Error</Text>
+      </View>
+    );
+  }
+
   return (
     <View
       style={{
@@ -115,29 +135,76 @@ export default function MyWorkouts({ navigation, route }) {
           data={
             myUploadsCategory ? uploads : myHistoryCategory ? history : library
           }
-          renderItem={({ item }) => (
-            <TouchableHighlight
-              onPress={() => {
-                navigation.navigate("Start Workout", {
-                  workoutID: item.workoutID,
-                });
-              }}
-            >
-              <ImageBackground
-                style={{ width: 100, height: 100 }}
-                source={item.workoutImage ? { uri: item.workoutImage } : null}
+          renderItem={({ item }) => {
+            return (
+              <TouchableHighlight
+                onPress={() => {
+                  navigation.navigate("Start Workout", {
+                    workoutID: item.workoutID,
+                  });
+                }}
+                onLongPress={() => {
+                  const options = ["start", "edit", "delete", "cancel"];
+                  const destructiveButtonIndex = 2;
+                  const cancelButtonIndex = 3;
+
+                  ActionSheetIOS.showActionSheetWithOptions(
+                    {
+                      options,
+                      cancelButtonIndex,
+                      destructiveButtonIndex,
+                    },
+                    async (buttenIndex) => {
+                      if (buttenIndex == 0) {
+                        navigation.navigate("Start Workout", {
+                          workoutID: item.workoutID,
+                        });
+                      } else if (buttenIndex == 1) {
+                        navigation.navigate("Workout Info Form", {
+                          workoutID: item.workoutID,
+                        });
+                      } else if (buttenIndex == 2) {
+                        setDeletingUpload(true);
+                        const workoutRef = firebase
+                          .firestore()
+                          .collection("workouts")
+                          .doc(item.workoutID);
+                        workoutRef.update({
+                          deleted: true,
+                        });
+                        const workoutExercisesRef = firebase
+                          .firestore()
+                          .collection("exercises")
+                          .where("workoutID", "==", item.workoutID);
+                        const batch = firebase.firestore().batch();
+                        batch.update(workoutExercisesRef, { deleted: true });
+                        await batch.commit();
+
+                        setDeletingUpload(false);
+                      }
+                    }
+                  );
+                }}
               >
-                <Text>{item.workoutName}</Text>
-              </ImageBackground>
-            </TouchableHighlight>
-          )}
+                <View>
+                  <Image
+                    style={{ width: 100, height: 100 }}
+                    source={{ uri: item.workoutImage, cache: "force-cache" }}
+                  />
+                  <Text>{item.workoutName}</Text>
+                </View>
+              </TouchableHighlight>
+            );
+          }}
           numColumns={2}
           style={{ padding: 10 }}
         />
       </View>
 
       <TouchableHighlight
-        onPress={() => navigation.navigate("Workout Info Form", {})}
+        onPress={() =>
+          navigation.navigate("Workout Info Form", { workoutID: null })
+        }
         style={{
           backgroundColor: "orange",
           borderRadius: "100%",

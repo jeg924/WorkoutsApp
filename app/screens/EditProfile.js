@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from "firebase";
+import firebase, { firestore } from "firebase";
 import {
   View,
   Text,
@@ -11,29 +11,53 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
+const uuidv4 = require("uuid/v4");
 
 export default function EditProfile({ navigation, route }) {
+  const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
-  const [ProfilePicture, setProfilePicture] = React.useState("");
+  const [profilePicture, setProfilePicture] = React.useState("");
+  const [displayNameChanged, setDisplayNameChanged] = React.useState(false);
+  const [profilePictureChanged, setProfilePictureChanged] =
+    React.useState(false);
+  const [saving, setSaving] = React.useState(false);
 
   React.useEffect(() => {
-    var userInfo = {};
-    const usersRef = firebase
+    loadMyData();
+  }, []);
+
+  async function loadMyData() {
+    setLoading(true);
+    const myRef = firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid);
+    const myDoc = await myRef.get();
+    const my = myDoc.data();
+    setDisplayName(my.displayName);
+    if (my?.photoURL) {
+      setProfilePicture(my.photoURL);
+      await Image.prefetch(my.photoURL);
+    }
+    setLoading(false);
+  }
 
-    usersRef.get().then((doc) => {
-      if (!doc.exists) {
-        console.log("No such document exists.");
-      } else {
-        userInfo = doc.data();
-      }
-      setDisplayName(userInfo.displayName);
-      setProfilePicture(userInfo.photoURL);
-      console.log(ProfilePicture);
-    });
-  }, []);
+  if (loading) {
+    // all users will have a display name from when they sign up.
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (saving) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Saving</Text>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -43,10 +67,11 @@ export default function EditProfile({ navigation, route }) {
         alignItems: "center",
       }}
     >
-      {ProfilePicture ? (
+      {profilePicture ? (
         <Image
           source={{
-            uri: ProfilePicture,
+            uri: profilePicture,
+            cache: "force-cache",
           }}
           loadingStyle={{ width: 20, height: 10 }}
           style={{
@@ -67,7 +92,7 @@ export default function EditProfile({ navigation, route }) {
               status = await ImagePicker.requestCameraPermissionsAsync();
             }
             if (status !== "granted") {
-              alert("GIVE US ACCESS TO THE CAMERA OR ELSE!");
+              alert("we need camera permissions for this to work.");
             }
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -78,6 +103,7 @@ export default function EditProfile({ navigation, route }) {
 
             if (!result.cancelled) {
               setProfilePicture(result.uri);
+              setProfilePictureChanged(true);
             }
           }
         }}
@@ -92,6 +118,7 @@ export default function EditProfile({ navigation, route }) {
           }}
           onChangeText={(x) => {
             setDisplayName(x);
+            setDisplayNameChanged(true);
           }}
         >
           {displayName}
@@ -99,47 +126,109 @@ export default function EditProfile({ navigation, route }) {
 
         <Text>This is the name you'll be seen as in this app.</Text>
       </View>
-      <TouchableHighlight
-        style={{
-          marginTop: 50,
-          backgroundColor: "orange",
-          width: "80%",
-          height: 40,
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 30,
-        }}
-        onPress={async () => {
-          firebase.auth().currentUser.updateProfile({
-            displayName: displayName,
-            photoURL: ProfilePicture,
-          });
 
-          const response = await fetch(ProfilePicture);
-          const blob = await response.blob();
-          const imageSnapshot = await firebase
-            .storage()
-            .ref()
-            .child("profilePictures")
-            .child("toast.png")
-            .put(blob);
-          const photoURL = await imageSnapshot.ref.getDownloadURL();
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(firebase.auth().currentUser.uid)
-            .set(
-              {
-                displayName: displayName,
-                photoURL: photoURL,
-              },
-              { merge: true }
-            );
-          navigation.navigate("Home");
-        }}
-      >
-        <Text>Save</Text>
-      </TouchableHighlight>
+      {profilePictureChanged || displayNameChanged ? (
+        <TouchableHighlight
+          style={{
+            marginTop: 50,
+            backgroundColor: "orange",
+            width: "80%",
+            height: 40,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 30,
+          }}
+          onPress={async () => {
+            setSaving(true);
+            try {
+              if (profilePictureChanged && displayNameChanged) {
+                // update storage
+                const response = await fetch(profilePicture);
+                const blob = await response.blob();
+                const imageSnapshot = await firebase
+                  .storage()
+                  .ref()
+                  .child("profile pictures")
+                  .child(uuidv4() + ".png")
+                  .put(blob);
+                // update firestore
+                const photoURL = await imageSnapshot.ref.getDownloadURL();
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .set(
+                    {
+                      displayName: displayName,
+                      photoURL: photoURL,
+                    },
+                    { merge: true }
+                  );
+                setDisplayNameChanged(false);
+                setProfilePictureChanged(false);
+                setSaving(false);
+                navigation.navigate("Profile", {
+                  edited: true,
+                });
+              }
+              if (profilePictureChanged) {
+                // update storage
+                const response = await fetch(profilePicture);
+                const blob = await response.blob();
+                const imageSnapshot = await firebase
+                  .storage()
+                  .ref()
+                  .child("profile pictures")
+                  .child(uuidv4() + ".png")
+                  .put(blob);
+                // update firestore
+                const photoURL = await imageSnapshot.ref.getDownloadURL();
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .set(
+                    {
+                      photoURL: photoURL,
+                    },
+                    { merge: true }
+                  );
+                setDisplayNameChanged(false);
+                setProfilePictureChanged(false);
+                setSaving(false);
+                navigation.navigate("Profile", {
+                  edited: true,
+                });
+              }
+              if (displayNameChanged) {
+                // update firestore
+                firebase
+                  .firestore()
+                  .collection("users")
+                  .doc(firebase.auth().currentUser.uid)
+                  .set(
+                    {
+                      displayName: displayName,
+                    },
+                    { merge: true }
+                  );
+                setDisplayNameChanged(false);
+                setProfilePictureChanged(false);
+                setSaving(false);
+                navigation.navigate("Profile", {
+                  edited: true,
+                });
+              }
+            } catch (error) {
+              console.log("Error is " + error);
+            }
+          }}
+        >
+          <Text>Save</Text>
+        </TouchableHighlight>
+      ) : (
+        <View></View>
+      )}
     </View>
   );
 }

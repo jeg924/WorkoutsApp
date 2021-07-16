@@ -2,7 +2,7 @@ import { TextInput as RNTextInput } from "react-native";
 
 // import as
 // rename mine (TextField)
-export default function TextInput({ style, ...rest }) {
+export default function MyTextInput({ style, ...rest }) {
   return (
     <RNTextInput
       {...rest}

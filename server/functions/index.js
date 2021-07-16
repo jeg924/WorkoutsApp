@@ -20,6 +20,10 @@ exports.syncWorkoutsToAlgolia = functions.firestore
           type: "workout",
           objectID: context.params.id,
         };
+        if (object.deleted) {
+          console.log("deleting...");
+          await searchIndex.deleteObject(context.params.id);
+        }
         console.log("saving...");
         await searchIndex.saveObject(object);
       } else {
@@ -41,6 +45,10 @@ exports.syncUsersToAlgolia = functions.firestore
           type: "user",
           objectID: context.params.id,
         };
+        if (object.deleted) {
+          console.log("deleting...");
+          await searchIndex.deleteObject(context.params.id);
+        }
         console.log("saving...");
         await searchIndex.saveObject(object);
       } else {

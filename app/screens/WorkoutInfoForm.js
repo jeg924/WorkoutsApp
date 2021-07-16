@@ -5,24 +5,56 @@ import "firebase/auth";
 import {
   View,
   Text,
-  Button,
   Switch,
-  FlatList,
   SafeAreaView,
   TouchableHighlight,
-  ImageBackground,
+  Image,
 } from "react-native";
-import ImageLoad from "react-native-image-placeholder";
 import { TextInput, ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
+
 import Constants from "expo-constants";
-import { set } from "react-native-reanimated";
 
 export default function WorkoutInfoForm({ navigation, route }) {
   const { workoutID } = route.params;
+  var published = false;
+  async function loadWorkoutData() {
+    setLoading(true);
+    if (workoutID) {
+      const workoutRef = firebase
+        .firestore()
+        .collection("workouts")
+        .doc(workoutID);
+      const workoutDoc = await workoutRef.get();
+      const workout = workoutDoc.data();
+      if (workout) {
+        setWorkoutName(workout.workoutName);
+        setWorkoutImage(workout.workoutImage);
+        setWeightNeeded(workout.isWeightNeeded);
+        setBarNeeded(workout.isBarNeeded);
+        setChairNeeded(workout.isChairNeeded);
+        setMatNeeded(workout.isMatNeeded);
+        setTowelNeeded(workout.isTowelNeeded);
 
+        setStrength(workout.isStrength);
+        setCardio(workout.isCardio);
+        setYoga(workout.isYoga);
+        setSpeed(workout.isSpeed);
+        setBalance(workout.isBalance);
+
+        published = workout.published;
+        Image.prefetch(workoutImage);
+      }
+    }
+    setLoading(false);
+  }
+
+  React.useEffect(() => {
+    loadWorkoutData();
+  }, []);
+
+  const [loading, setLoading] = React.useState(true);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [error, setError] = React.useState(null);
 
   const [workoutName, setWorkoutName] = React.useState("");
   const [workoutImage, setWorkoutImage] = React.useState(null);
@@ -94,79 +126,96 @@ export default function WorkoutInfoForm({ navigation, route }) {
     },
   ];
 
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (isSubmitting) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Submitting</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
-      <ImageBackground
-        source={{ uri: workoutImage ? workoutImage : "" }}
-        loadingStyle={{ width: 20, height: 10 }}
-        style={{ width: "100%", height: 200 }}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: 100,
+        }}
       >
-        <View
+        <Text style={{ fontSize: 20, fontWeight: "bold", margin: 10 }}>
+          Create a workout
+        </Text>
+        <TouchableHighlight
+          onPress={() => {
+            console.log("getting here but no further");
+            navigation.navigate("My Workouts");
+          }}
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            marginBottom: 100,
+            margin: 10,
+            backgroundColor: "orange",
+            borderRadius: "100%",
+            padding: 5,
           }}
         >
-          <Text style={{ fontSize: 20, fontWeight: "bold", margin: 10 }}>
-            Create a workout
-          </Text>
-          <TouchableHighlight
-            onPress={() => {
-              navigation.goBack();
-            }}
-            style={{
-              margin: 10,
-              backgroundColor: "orange",
-              borderRadius: "100%",
-              padding: 5,
-            }}
-          >
-            <Text>cancel</Text>
-          </TouchableHighlight>
-        </View>
-        <View
-          style={{
-            padding: 10,
-            width: 165,
-          }}
-        >
-          <TouchableHighlight
-            onPress={async () => {
-              if (Constants.platform.ios) {
-                let { status } = await ImagePicker.getCameraPermissionsAsync();
-                if (status !== "granted") {
-                  status = await ImagePicker.requestCameraPermissionsAsync();
-                }
-                if (status !== "granted") {
-                  alert(
-                    "Sorry, we need camera roll permissions to make this work!"
-                  );
-                }
-                let result = await ImagePicker.launchImageLibraryAsync({
-                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                  allowsEditing: true,
-                  aspect: [4, 3],
-                  quality: 1,
-                });
-
-                console.log(result.uri);
-
-                if (!result.cancelled) {
-                  setWorkoutImage(result.uri);
-                }
+          <Text>cancel</Text>
+        </TouchableHighlight>
+      </View>
+      {workoutImage ? (
+        <Image
+          source={{ uri: workoutImage, cache: "force-cache" }}
+          style={{ width: "100%", height: 200 }}
+        />
+      ) : null}
+      <View
+        style={{
+          padding: 10,
+          width: 165,
+        }}
+      >
+        <TouchableHighlight
+          onPress={async () => {
+            if (Constants.platform.ios) {
+              let { status } = await ImagePicker.getCameraPermissionsAsync();
+              if (status !== "granted") {
+                status = await ImagePicker.requestCameraPermissionsAsync();
               }
-            }}
-            style={{
-              backgroundColor: "orange",
-              borderRadius: "100%",
-              padding: 5,
-            }}
-          >
-            <Text>Upload Cover Image</Text>
-          </TouchableHighlight>
-        </View>
-      </ImageBackground>
+              if (status !== "granted") {
+                alert(
+                  "Sorry, we need camera roll permissions to make this work!"
+                );
+              }
+              let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+              });
+
+              console.log(result.uri);
+
+              if (!result.cancelled) {
+                setWorkoutImage(result.uri);
+              }
+            }
+          }}
+          style={{
+            backgroundColor: "orange",
+            borderRadius: "100%",
+            padding: 5,
+          }}
+        >
+          <Text>Upload Cover Image</Text>
+        </TouchableHighlight>
+      </View>
 
       <Text style={{ marginLeft: 10 }}>Workout Name</Text>
       <TextInput
@@ -176,7 +225,10 @@ export default function WorkoutInfoForm({ navigation, route }) {
           padding: 10,
           margin: 10,
         }}
-        onChangeText={(x) => setWorkoutName(x)}
+        onChangeText={(x) => {
+          setWorkoutName(x);
+        }}
+        defaultValue={workoutName}
       ></TextInput>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView bounces style={{ flex: 1 }}>
@@ -226,12 +278,10 @@ export default function WorkoutInfoForm({ navigation, route }) {
             margin: 10,
           }}
           onPress={async () => {
-            // firebase stuff. Need to store info. Create a unique ID.
-            // in order to do this I need to have a submitting case. and a try catch
             try {
               setIsSubmitting(true);
               let workoutRef = null;
-
+              let published = false;
               if (workoutID) {
                 workoutRef = firebase
                   .firestore()
@@ -240,13 +290,24 @@ export default function WorkoutInfoForm({ navigation, route }) {
               } else {
                 workoutRef = firebase.firestore().collection("workouts").doc();
               }
+              // update firebase storage
+              const response = await fetch(workoutImage);
+              const blob = await response.blob();
+              const imageSnapshot = await firebase
+                .storage()
+                .ref()
+                .child("workoutImages")
+                .child(workoutRef.id + ".png")
+                .put(blob);
+
+              const photoURL = await imageSnapshot.ref.getDownloadURL();
 
               const workoutData = {
                 workoutID: workoutRef.id,
                 authorID: firebase.auth().currentUser.uid,
-                published: false,
+                published: published,
                 workoutName: workoutName,
-                workoutImage: workoutImage,
+                workoutImage: photoURL,
                 isWeightNeeded: isWeightNeeded,
                 isBarNeeded: isBarNeeded,
                 isChairNeeded: isChairNeeded,
@@ -258,22 +319,21 @@ export default function WorkoutInfoForm({ navigation, route }) {
                 isBalance: isBalance,
                 isSpeed: isSpeed,
                 lengthInMinutes: 0,
+                deleted: false,
               };
-
-              workoutRef.set(workoutData);
+              workoutRef.set(workoutData, { merge: true });
 
               navigation.navigate("Workout Editor", {
                 workoutID: workoutData.workoutID,
               });
             } catch (error) {
-              setError(error);
               console.log("Error is", error);
             } finally {
               setIsSubmitting(false);
             }
           }}
         >
-          <Text>Save Workout</Text>
+          <Text>Edit Exercises</Text>
         </TouchableHighlight>
       )}
     </View>

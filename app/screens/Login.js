@@ -26,6 +26,7 @@ export default function Login() {
       .then((result) => {
         firebase.firestore().collection("users").doc(result.user.uid).set({
           displayName: name,
+          deleted: false,
         });
       })
       .catch((error) => setError(error.message));

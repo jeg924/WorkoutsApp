@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   ImageBackground,
-  Video,
+  Image,
   FlatList,
   SafeAreaView,
 } from "react-native";
@@ -24,6 +24,7 @@ export default function WorkoutEditor({ navigation, route }) {
       .firestore()
       .collection("exercises")
       .where("workoutID", "==", workoutID)
+      .where("deleted", "==", false)
   );
 
   var orderedExercises = [];
@@ -33,28 +34,24 @@ export default function WorkoutEditor({ navigation, route }) {
       return a.order > b.order ? 1 : -1;
     });
   }
-
   // load last saved state of workout & exercises
   React.useEffect(() => {
+    loadWorkoutData();
+  }, []);
+
+  async function loadWorkoutData() {
+    setLoading(true);
     const workoutRef = firebase
       .firestore()
       .collection("workouts")
       .doc(workoutID);
 
-    workoutRef
-      .get()
-      .then((doc) => {
-        if (!doc.exists) {
-          console.log("No such document!");
-        } else {
-          setWorkout(doc.data());
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.log("Error getting document", err);
-      });
-  }, []);
+    const workoutDoc = await workoutRef.get();
+    const workoutData = workoutDoc.data();
+    await Image.prefetch(workoutData.workoutImage);
+    setWorkout(workoutData);
+    setLoading(false);
+  }
 
   // gotta get the info from firebase instead of route params.
   if (loading) {
@@ -69,7 +66,7 @@ export default function WorkoutEditor({ navigation, route }) {
     <View style={{ flex: 1 }}>
       <ImageBackground
         style={{ width: "100%", height: 200, backgroundColor: "red" }}
-        source={workout.workoutImage ? { uri: workout.workoutImage } : {}}
+        source={{ uri: workout.workoutImage, cache: "force-cache" }}
       >
         <View
           style={{
@@ -81,16 +78,21 @@ export default function WorkoutEditor({ navigation, route }) {
           <Button
             title="Edit Workout Details"
             onPress={() =>
-              navigation.navigate("Workout Info Form", { workoutID: workoutID })
+              navigation.navigate("Workout Info Form", {
+                workoutID: workoutID,
+              })
             }
           />
           <Button
             title="Publish"
-            onPress={() => {
+            onPress={async () => {
               // need to change the minute counting to be a listener
               // that listens to changes in firebase when a new exercise with
               // this workout ID is added.
-              // that way publish will only publish.
+              // that way the publish button will only publish.
+
+              console.log(orderedExercises.length);
+
               let lengthInMinutes = 0;
               for (let i = 0; i < orderedExercises.length; ++i) {
                 lengthInMinutes += Math.floor(
@@ -103,10 +105,14 @@ export default function WorkoutEditor({ navigation, route }) {
                 .collection("workouts")
                 .doc(workoutID);
 
-              workoutRef.update({
-                published: true,
-                lengthInMinutes: lengthInMinutes,
-              });
+              await workoutRef.set(
+                {
+                  published: true,
+                  lengthInMinutes: lengthInMinutes,
+                },
+                { merge: true }
+              );
+              console.log("got here with no problem");
               navigation.navigate("My Workouts");
             }}
           />

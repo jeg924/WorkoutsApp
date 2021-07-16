@@ -12,30 +12,63 @@ import { TextInput } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-
-// TODO: look into saving profile pics in Firebase storage
-// TODO: create a view that says saving friend. And then show them as a friend.
+import { set } from "react-native-reanimated";
+import { GlobalContext } from "../App";
 
 export default function Profile({ navigation, route }) {
-  const { userID } = route.params;
+  // const { myUserId, myFriends } = React.useContext(GlobalContext);
+
+  const { userID, edited } = route.params;
+  const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
   const [profilePicture, setProfilePicture] = React.useState("");
+  const [addingFriend, setAddingFriend] = React.useState(false);
+  const [isFriend, setIsFriend] = React.useState(false);
+
+  async function loadUserData() {
+    setLoading(true);
+    // set displayName and profile picture
+    const userRef = firebase.firestore().collection("users").doc(userID);
+    const userDoc = await userRef.get();
+    const user = userDoc.data();
+    if (user) {
+      setDisplayName(user.displayName);
+      if (user.photoURL) {
+        await Image.prefetch(user.photoURL);
+        setProfilePicture(user.photoURL);
+      }
+    }
+    if (userID != firebase.auth().currentUser.uid) {
+      // set is friend to true if this user in my friends list
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+
+      if (my?.friends?.includes(userID)) {
+        setIsFriend(true);
+      }
+    }
+    setLoading(false);
+  }
 
   React.useEffect(() => {
-    var userInfo = {};
-    const usersRef = firebase.firestore().collection("users").doc(userID);
+    loadUserData();
+  }, [userID]);
 
-    usersRef.get().then((doc) => {
-      if (!doc.exists) {
-        console.log("No such document exists.");
-      } else {
-        userInfo = doc.data();
-      }
-      setDisplayName(userInfo.displayName);
-      setProfilePicture(userInfo.photoURL);
-      console.log(profilePicture);
-    });
-  }, []);
+  React.useEffect(() => {
+    loadUserData();
+  }, [edited]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   return (
     <View
@@ -50,8 +83,8 @@ export default function Profile({ navigation, route }) {
         <Image
           source={{
             uri: profilePicture,
+            cache: "force-cache",
           }}
-          loadingStyle={{ width: 20, height: 10 }}
           style={{
             width: 200,
             height: 200,
@@ -62,7 +95,7 @@ export default function Profile({ navigation, route }) {
         <Text>No picture yet.</Text>
       )}
       <View>
-        {userID === firebase.auth().currentUser.uid ? (
+        {userID === firebase.auth().currentUser.uid ? ( // is this my own profile?
           <View style={{}}>
             <TouchableHighlight
               onPress={() => {
@@ -72,48 +105,62 @@ export default function Profile({ navigation, route }) {
               <Text style={{ fontWeight: "bold" }}>Edit Profile</Text>
             </TouchableHighlight>
           </View>
-        ) : (
-          <View style={{}}>
-            <TouchableHighlight
-              onPress={async () => {
-                var userInfo = {};
-                const userRef = firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(firebase.auth().currentUser.uid);
+        ) : !isFriend ? ( // is this my Friend?
+          addingFriend ? ( // am I currently adding this person to my friends list?
+            <Text>Adding Friend...</Text>
+          ) : (
+            <View style={{}}>
+              <TouchableHighlight
+                onPress={async () => {
+                  setAddingFriend(true);
+                  const myRef = firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(firebase.auth().currentUser.uid);
 
-                await userRef.get().then((doc) => {
-                  if (!doc.exists) {
-                    console.log("No such document exists.");
-                  } else {
-                    userInfo = doc.data();
-                    if (userInfo.friends) {
-                      let friends = [...userInfo.friends];
-                      if (!friends.includes(userID)) {
-                        friends = friends.concat(userID);
-                        userRef.update({
-                          friends: friends,
-                        });
-                      }
-                    } else {
-                      userRef.update({
-                        friends: [{ userID, displayName, profilePicture }],
+                  const myDoc = await myRef.get();
+                  const my = myDoc.data();
+
+                  if (my) {
+                    let friends = [];
+                    if (my.friends) {
+                      friends = [...my.friends];
+                      friends.concat({
+                        userID: userID,
+                        displayName: displayName,
+                        profilePicture: profilePicture,
                       });
+                    } else {
+                      friends = [
+                        {
+                          userID: userID,
+                          displayName: displayName,
+                          profilePicture: profilePicture,
+                        },
+                      ];
                     }
+
+                    myRef.set({ friends: friends }, { merge: true });
                   }
-                });
-              }}
-            >
-              <View style={{ flexDirection: "row" }}>
-                <Feather name="heart" color="orange" size={30} />
-                <Text
-                  style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
-                >
-                  Add Friend
-                </Text>
-              </View>
-            </TouchableHighlight>
-          </View>
+
+                  setIsFriend(true);
+                  setAddingFriend(false);
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <Feather name="heart" color="orange" size={30} />
+                  <Text
+                    style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
+                  >
+                    Add Friend
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          )
+        ) : (
+          // already my friend
+          <Text>Friend</Text>
         )}
       </View>
     </View>

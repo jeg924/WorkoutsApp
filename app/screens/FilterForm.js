@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Switch } from "react-native";
 import { CheckBox } from "native-base";
 import Slider from "react-native-slider";
-import Button from "../components/Button";
+import MyButton from "../components/Button";
 import { DisplayMaxTime } from "../UtilityFunctions";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { set } from "react-native-reanimated";
@@ -199,10 +199,9 @@ export default function FilterForm({ navigation, route }) {
               }
 
               if (timeLimit) {
-                let timeFilter = "lengthInMinutes<=" + Math.floor(maxTime * 90);
+                let timeFilter = "lengthInMinutes" + Math.floor(maxTime * 90);
                 numericFilters = numericFilters.concat(timeFilter);
               }
-              console.log("Should be something here" + facetFilters[0]);
 
               navigation.navigate("Browse", {
                 facetFilters: facetFilters,
