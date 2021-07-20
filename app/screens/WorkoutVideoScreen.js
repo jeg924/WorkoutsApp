@@ -198,7 +198,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
             } else {
               // update current exercise
               navigation.navigate("Start Workout", {
-                current: currentExercise,
+                current: currentExercise + 1,
               });
             }
           }}

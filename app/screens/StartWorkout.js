@@ -27,11 +27,10 @@ export default function StartWorkout({ navigation, route }) {
   }, [workoutID]);
 
   React.useEffect(() => {
+    setLoading(true);
     loadStatData();
-  }, [recordID]);
-
-  React.useEffect(() => {
     setCurrentExercise(current);
+    setLoading(false);
   }, [current]);
 
   async function loadData() {
@@ -81,6 +80,7 @@ export default function StartWorkout({ navigation, route }) {
 
   async function loadStatData() {
     try {
+      setLoading(true);
       const statsRef = firebase
         .firestore()
         .collection("users")
@@ -92,6 +92,8 @@ export default function StartWorkout({ navigation, route }) {
       setStats(stats);
     } catch (error) {
       console.log("error is " + error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -170,6 +172,7 @@ export default function StartWorkout({ navigation, route }) {
   }
 
   console.log(currentExercise);
+  console.log(stats);
 
   if (loading)
     return (
@@ -204,7 +207,7 @@ export default function StartWorkout({ navigation, route }) {
       />
       <View style={{ margin: 10 }}>
         <Text style={{ fontWeight: "bold", fontSize: 30 }}>
-          {workout.workoutName}
+          {workout?.workoutName}
         </Text>
         <Text>By {author?.displayName}</Text>
       </View>
@@ -220,7 +223,7 @@ export default function StartWorkout({ navigation, route }) {
         <View style={{ flexDirection: "row", marginLeft: 40 }}>
           <Feather name="clock" color="orange" size={30} />
           <Text style={{ fontWeight: "bold", marginLeft: 10, marginTop: 5 }}>
-            Time: {workout.lengthInMinutes} minutes
+            Time: {workout?.lengthInMinutes} minutes
           </Text>
         </View>
         <View style={{ flexDirection: "row", marginLeft: 40 }}>
@@ -258,37 +261,31 @@ export default function StartWorkout({ navigation, route }) {
                     {stats && currentExercise ? (
                       item.reps && item.weight && item.time ? (
                         <Text>
-                          R {recordedStats.exerciseInputData[index].reps} & W{" "}
-                          {recordedStats.exerciseInputData[index].weight} & T{" "}
-                          {recordedStats.exerciseInputData[index].time}
+                          R {stats.exerciseInputData[index]?.reps} & W{" "}
+                          {stats.exerciseInputData[index]?.weight} & T{" "}
+                          {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.reps && item.weight && !item.time ? (
                         <Text>
-                          R {recordedStats.exerciseInputData[index].reps} & W{" "}
-                          {recordedStats.exerciseInputData[index].weight}
+                          R {stats.exerciseInputData[index]?.reps} & W{" "}
+                          {stats.exerciseInputData[index]?.weight}
                         </Text>
                       ) : item.reps && item.time && !item.weight ? (
                         <Text>
-                          Reps {recordedStats.exerciseInputData[index].reps} & T{" "}
-                          {recordedStats.exerciseInputData[index].time}
+                          Reps {stats.exerciseInputData[index]?.reps} & T{" "}
+                          {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.weight && item.time && !item.reps ? (
                         <Text>
-                          Weight {recordedStats.exerciseInputData[index].weight}{" "}
-                          & T {recordedStats.exerciseInputData[index].time}
+                          Weight {stats.exerciseInputData[index]?.weight} & T{" "}
+                          {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.reps && !item.weight && !item.time ? (
-                        <Text>
-                          R {recordedStats.exerciseInputData[index].reps}
-                        </Text>
+                        <Text>R {stats.exerciseInputData[index]?.reps}</Text>
                       ) : item.weight && !item.reps && !item.time ? (
-                        <Text>
-                          W {recordedStats.exerciseInputData[index].weight}
-                        </Text>
+                        <Text>W {stats.exerciseInputData[index]?.weight}</Text>
                       ) : item.time && !item.weight && !item.reps ? (
-                        <Text>
-                          T {recordedStats.exerciseInputData[index].time}
-                        </Text>
+                        <Text>T {stats.exerciseInputData[index]?.time}</Text>
                       ) : (
                         ""
                       )

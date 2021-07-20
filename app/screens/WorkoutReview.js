@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 export default function WorkoutReview({ navigation, route }) {
-  const { workoutData, exercises } = route.params;
+  const { workout, exercises } = route.params;
   const authID = firebase.auth().currentUser.uid;
-  const workoutID = workoutData.workoutID;
+  const workoutID = workout.workoutID;
 
   const [latestStats, setLatestStats] = React.useState(null);
   const [averageStats, setAverageStats] = React.useState(null);
@@ -199,7 +199,7 @@ export default function WorkoutReview({ navigation, route }) {
     <View style={{ justifyContent: "center" }}>
       <View style={{ margin: 20, marginTop: 30 }}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-          Review {workoutData.workoutName}
+          Review {workout.workoutName}
         </Text>
       </View>
       <View style={{ justifyContent: "center", flexDirection: "column" }}>
