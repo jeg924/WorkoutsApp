@@ -80,6 +80,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
               onPress={() =>
                 navigation.navigate("Start Workout", {
                   workoutID: item.workoutID,
+                  current: 0,
                 })
               }
             >

@@ -24,7 +24,6 @@ export default function MyWorkouts({ navigation, route }) {
       .firestore()
       .collection("workouts")
       .where("authorID", "==", firebase.auth().currentUser.uid)
-      .where("published", "==", true)
       .where("deleted", "==", false)
   );
   const history = [];
@@ -141,6 +140,7 @@ export default function MyWorkouts({ navigation, route }) {
                 onPress={() => {
                   navigation.navigate("Start Workout", {
                     workoutID: item.workoutID,
+                    current: 0,
                   });
                 }}
                 onLongPress={() => {
@@ -158,6 +158,7 @@ export default function MyWorkouts({ navigation, route }) {
                       if (buttenIndex == 0) {
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
+                          current: 0,
                         });
                       } else if (buttenIndex == 1) {
                         navigation.navigate("Workout Info Form", {

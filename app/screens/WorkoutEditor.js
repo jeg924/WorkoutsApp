@@ -64,65 +64,64 @@ export default function WorkoutEditor({ navigation, route }) {
 
   return (
     <View style={{ flex: 1 }}>
-      <ImageBackground
-        style={{ width: "100%", height: 200, backgroundColor: "red" }}
-        source={{ uri: workout.workoutImage, cache: "force-cache" }}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          padding: 10,
+        }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 10,
-          }}
-        >
-          <Button
-            title="Edit Workout Details"
-            onPress={() =>
-              navigation.navigate("Workout Info Form", {
-                workoutID: workoutID,
-              })
-            }
-          />
-          <Button
-            title="Publish"
-            onPress={async () => {
-              // need to change the minute counting to be a listener
-              // that listens to changes in firebase when a new exercise with
-              // this workout ID is added.
-              // that way the publish button will only publish.
+        <Button
+          title="Edit Workout Details"
+          onPress={() =>
+            navigation.navigate("Workout Info Form", {
+              workoutID: workoutID,
+            })
+          }
+        />
+        <Button
+          title="Publish"
+          onPress={async () => {
+            // need to change the minute counting to be a listener
+            // that listens to changes in firebase when a new exercise with
+            // this workout ID is added.
+            // that way the publish button will only publish.
 
-              console.log(orderedExercises.length);
+            console.log(orderedExercises.length);
 
-              let lengthInMinutes = 0;
-              for (let i = 0; i < orderedExercises.length; ++i) {
-                lengthInMinutes += Math.floor(
-                  (orderedExercises[i].duration / (1000 * 60)) % 60
-                );
-              }
-
-              const workoutRef = firebase
-                .firestore()
-                .collection("workouts")
-                .doc(workoutID);
-
-              await workoutRef.set(
-                {
-                  published: true,
-                  lengthInMinutes: lengthInMinutes,
-                },
-                { merge: true }
+            let lengthInMinutes = 0;
+            for (let i = 0; i < orderedExercises.length; ++i) {
+              lengthInMinutes += Math.floor(
+                (orderedExercises[i].duration / (1000 * 60)) % 60
               );
-              console.log("got here with no problem");
-              navigation.navigate("My Workouts");
-            }}
-          />
-        </View>
-        <View style={{ marginTop: 50, marginLeft: 10 }}>
-          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            {workout.workoutName}
-          </Text>
-        </View>
-      </ImageBackground>
+            }
+
+            const workoutRef = firebase
+              .firestore()
+              .collection("workouts")
+              .doc(workoutID);
+
+            await workoutRef.set(
+              {
+                published: true,
+                lengthInMinutes: lengthInMinutes,
+              },
+              { merge: true }
+            );
+            console.log("got here with no problem");
+            navigation.navigate("My Workouts");
+          }}
+        />
+      </View>
+      <Image
+        style={{ width: "100%", height: "30%", backgroundColor: "red" }}
+        source={{ uri: workout.workoutImage, cache: "force-cache" }}
+      ></Image>
+      <View style={{ marginTop: 50, marginLeft: 10 }}>
+        <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+          {workout.workoutName}
+        </Text>
+      </View>
       <SafeAreaView style={{ flex: 1 }}>
         {eloading ? (
           console.log(eloading)

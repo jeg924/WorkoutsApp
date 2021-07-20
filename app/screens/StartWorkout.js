@@ -2,11 +2,6 @@ import React from "react";
 import firebase from "firebase";
 import { View, TextInput, Text, Image } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
-import {
-  useCollectionData,
-  useDocumentData,
-  useDocumentDataOnce,
-} from "react-firebase-hooks/firestore";
 import { FlatList, TouchableHighlight } from "react-native-gesture-handler";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "react-native-elements";
@@ -16,76 +11,88 @@ import { concat, set } from "react-native-reanimated";
 // todo: I need to change previous best, to just show the results from last inputs
 
 export default function StartWorkout({ navigation, route }) {
-  const { workoutID } = route.params;
+  const { workoutID, current } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [addingToLibrary, setAddingToLibary] = React.useState(false);
   const [starting, setStarting] = React.useState(false);
   const [workout, setWorkout] = React.useState(null);
   const [author, setAuthor] = React.useState(null);
   const [exercises, setExercises] = React.useState(null);
-  const [currentExercise, setCurrentExercise] = React.useState(0);
+  const [currentExercise, setCurrentExercise] = React.useState(null);
   const [stats, setStats] = React.useState(null);
   const [recordID, setRecordID] = React.useState(null);
 
   React.useEffect(() => {
-    setLoading(true);
-    loadWorkoutData();
-    loadExerciseData();
-    loadAuthorData();
+    loadData();
+  }, [workoutID]);
+
+  React.useEffect(() => {
     loadStatData();
-    setLoading(false);
-  }, []);
+  }, [recordID]);
 
-  async function loadExerciseData() {
-    let exercises = [];
-    let orderedExercises = [];
-    const exerciseRefs = firebase
-      .firestore()
-      .collection("exercises")
-      .where("workoutID", "==", workoutID);
-    const exerciseDocs = await exerciseRefs.get();
-    exerciseDocs.forEach((doc) => {
-      exercises.push(doc.data());
-    });
-    orderedExercises = exercises.sort((a, b) => {
-      return a.order - b.order;
-    });
-    setExercises(orderedExercises);
-  }
+  React.useEffect(() => {
+    setCurrentExercise(current);
+  }, [current]);
 
-  async function loadWorkoutData() {
-    const workoutRef = firebase
-      .firestore()
-      .collection("workouts")
-      .doc(workoutID);
-    const workoutDoc = await workoutRef.get();
-    const workout = workoutDoc.data();
-    if (workout) {
-      Image.prefetch(workout.workoutImage);
+  async function loadData() {
+    try {
+      setLoading(true);
+      // load workout data
+      const workoutRef = firebase
+        .firestore()
+        .collection("workouts")
+        .doc(workoutID);
+      const workoutDoc = await workoutRef.get();
+      const workout = workoutDoc.data();
+      if (workout) {
+        Image.prefetch(workout.workoutImage);
+        console.log("got here");
+      }
+      setWorkout(workout);
+      // load exercise data
+      let exercises = [];
+      let orderedExercises = [];
+      const exerciseRefs = firebase
+        .firestore()
+        .collection("exercises")
+        .where("workoutID", "==", workoutID);
+      const exerciseDocs = await exerciseRefs.get();
+      exerciseDocs.forEach((doc) => {
+        exercises.push(doc.data());
+      });
+      orderedExercises = exercises.sort((a, b) => {
+        return a.order - b.order;
+      });
+      setExercises(orderedExercises);
+      // load author datqa
+      const authorRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(workout.authorID);
+      const authorDoc = await authorRef.get();
+      const author = authorDoc.data();
+      setAuthor(author);
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setLoading(false);
     }
-    setWorkout(workout);
-  }
-
-  async function loadAuthorData() {
-    const authorRef = firebase
-      .firestore()
-      .collection("users")
-      .doc(workout.authorID);
-    const authorDoc = await authorRef.get();
-    const author = authorDoc.data();
-    setAuthor(author);
   }
 
   async function loadStatData() {
-    const statsRef = firebase
-      .firestore()
-      .collection("users")
-      .doc(firebase.auth().currentUser.uid)
-      .collection("recorded workouts")
-      .doc(recordID);
-    const statsDoc = await statsRef.get();
-    const stats = statsDoc.data();
-    setStats(stats);
+    try {
+      const statsRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("recorded workouts")
+        .doc(recordID);
+      const statsDoc = await statsRef.get();
+      const stats = statsDoc.data();
+      setStats(stats);
+    } catch (error) {
+      console.log("error is " + error);
+    }
   }
 
   async function addToLibrary() {
@@ -147,19 +154,22 @@ export default function StartWorkout({ navigation, route }) {
         timeStarted: Date(),
       });
 
+      console.log("current exercise is " + currentExercise);
+
       navigation.navigate("Workout Video Screen", {
         recordID: recordRef.id,
         workout: workout,
         currentExercise: currentExercise,
-        exercises: orderedExercises,
+        exercises: exercises,
       });
-      setCurrentExercise(currentExercise + 1);
     } catch (error) {
       console.log("Error is", error);
     } finally {
       setStarting(false);
     }
   }
+
+  console.log(currentExercise);
 
   if (loading)
     return (
@@ -187,7 +197,7 @@ export default function StartWorkout({ navigation, route }) {
       <Image
         style={{ width: "100%", height: "30%" }}
         source={
-          workout.workoutImage
+          workout?.workoutImage
             ? { uri: workout.workoutImage, cache: "force-cache" }
             : null
         }

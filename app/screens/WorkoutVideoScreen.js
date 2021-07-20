@@ -8,12 +8,11 @@ import {
 } from "react-native";
 import firebase from "firebase";
 import { Video } from "expo-av";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 // todo: allow minimizing the screen while watching in order to edit data.
 
 export default function WorkoutVideoScreen({ navigation, route }) {
-  const { recordID, workoutData, currentExercise, exercises } = route.params;
+  const { recordID, workout, currentExercise, exercises } = route.params;
   const user = firebase.auth().currentUser.uid;
   const [amountOfWeight, setAmountOfWeight] = React.useState(0);
   const [numberOfReps, setNumberOfReps] = React.useState(0);
@@ -31,18 +30,22 @@ export default function WorkoutVideoScreen({ navigation, route }) {
         }}
       >
         <Text>
-          No exercises. Whoever created this workout was dumb as a rock.
+          There shouldn't be workouts without exercises but here we are.
         </Text>
       </View>
     );
   }
-
+  console.log("recordID: " + recordID);
+  console.log("workout: " + workout);
+  console.log("exercises: " + exercises);
+  console.log("current exercise: " + currentExercise);
+  console.log("video url: " + exercises[currentExercise].video);
   return (
     <View style={{ flex: 1 }}>
       <View>
         <View>
           <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            {workoutData.workoutName}
+            {workout.workoutName}
           </Text>
         </View>
         {exercises[currentExercise].video ? (
@@ -51,7 +54,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
             initialStatus={{ resizeMode: "stretch" }}
             style={{
               width: "100%",
-              height: "50%",
+              height: "40%",
             }}
             useNativeControls
             resizeMode="contain"
@@ -189,11 +192,14 @@ export default function WorkoutVideoScreen({ navigation, route }) {
 
             if (currentExercise == exercises.length - 1) {
               navigation.navigate("Workout Review", {
-                workoutData: workoutData,
+                workout: workout,
                 exercises: exercises,
               });
             } else {
-              navigation.goBack();
+              // update current exercise
+              navigation.navigate("Start Workout", {
+                current: currentExercise,
+              });
             }
           }}
         >
