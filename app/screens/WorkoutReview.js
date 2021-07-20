@@ -37,6 +37,7 @@ export default function WorkoutReview({ navigation, route }) {
       recordedWorkoutDocs.forEach((doc) => {
         allMyStats.push(doc.data());
       });
+      allMyStats.filter((x) => x.exerciseInputData);
 
       const latestDoc = await recordedWorkoutRef
         .orderBy("timeStarted", "desc")
@@ -50,9 +51,10 @@ export default function WorkoutReview({ navigation, route }) {
       var average = allMyStats[0];
 
       var best = allMyStats[0];
-      console.log(
-        "all my stats[0].exerciseinputdata: " + allMyStats[0].exerciseInputData
-      );
+      console.log("latest: " + latest.exerciseInputData[0].reps);
+      console.log("average: " + average.exerciseInputData[0].reps);
+      console.log("best: " + best.exerciseInputData[0].reps);
+
       for (var i = 1; i < allMyStats.length; ++i) {
         for (var j = 0; j < allMyStats[i].exerciseInputData.length; ++j) {
           // reps
@@ -104,44 +106,43 @@ export default function WorkoutReview({ navigation, route }) {
           average.exerciseInputData[j].time / allMyStats.length
         );
       }
-      // console.log(latest);
-      // console.log(average);
-      // console.log(best);
+      console.log(latest);
+      console.log(average);
+      console.log(best);
       setLatestStats(latest);
       setAverageStats(average);
       setBestStats(best);
 
       var listOfComparisons = [];
-      for (let i = 0; i < latestStats.exerciseInputData.length; ++i) {
+      for (let i = 0; i < latest.exerciseInputData.length; ++i) {
         var comparisonObject = {};
         comparisonObject.name = exercises[i].name;
-        comparisonObject.latestReps = latestStats.exerciseInputData[i].reps
-          ? latestStats.exerciseInputData[i].reps
+        comparisonObject.latestReps = latest.exerciseInputData[i].reps
+          ? latest.exerciseInputData[i].reps
           : "";
-        comparisonObject.latestWeight = latestStats.exerciseInputData[i].weight
-          ? latestStats.exerciseInputData[i].weight
+        comparisonObject.latestWeight = latest.exerciseInputData[i].weight
+          ? latest.exerciseInputData[i].weight
           : "";
-        comparisonObject.latestTime = latestStats.exerciseInputData[i].time
-          ? latestStats.exerciseInputData[i].time
+        comparisonObject.latestTime = latest.exerciseInputData[i].time
+          ? latest.exerciseInputData[i].time
           : "";
-        comparisonObject.averageReps = averageStats.exerciseInputData[i].reps
-          ? averageStats.exerciseInputData[i].reps
+        comparisonObject.averageReps = average.exerciseInputData[i].reps
+          ? average.exerciseInputData[i].reps
           : "";
-        comparisonObject.averageWeight = averageStats.exerciseInputData[i]
-          .weight
-          ? averageStats.exerciseInputData[i].weight
+        comparisonObject.averageWeight = average.exerciseInputData[i].weight
+          ? average.exerciseInputData[i].weight
           : "";
-        comparisonObject.averageTime = averageStats.exerciseInputData[i].time
-          ? averageStats.exerciseInputData[i].time
+        comparisonObject.averageTime = average.exerciseInputData[i].time
+          ? average.exerciseInputData[i].time
           : "";
-        comparisonObject.bestReps = bestStats.exerciseInputData[i].reps
-          ? bestStats.exerciseInputData[i].reps
+        comparisonObject.bestReps = best.exerciseInputData[i].reps
+          ? best.exerciseInputData[i].reps
           : "";
-        comparisonObject.bestWeight = bestStats.exerciseInputData[i].weight
-          ? bestStats.exerciseInputData[i].weight
+        comparisonObject.bestWeight = best.exerciseInputData[i].weight
+          ? best.exerciseInputData[i].weight
           : "";
-        comparisonObject.bestTime = bestStats.exerciseInputData[i].time
-          ? bestStats.exerciseInputData[i].time
+        comparisonObject.bestTime = best.exerciseInputData[i].time
+          ? best.exerciseInputData[i].time
           : "";
         listOfComparisons.push(comparisonObject);
       }
@@ -189,12 +190,6 @@ export default function WorkoutReview({ navigation, route }) {
       setLoading(false);
     }
   }
-
-  console.log("latest stats: " + latestStats);
-  console.log("average stats: " + averageStats);
-  console.log("best stats: " + bestStats);
-  console.log("friends stats: " + friendsStats);
-  console.log("comparison list: " + comparisonsList);
 
   if (loading) {
     return (

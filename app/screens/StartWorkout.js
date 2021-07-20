@@ -239,7 +239,10 @@ export default function StartWorkout({ navigation, route }) {
         </View>
       </View>
       <View style={{ width: "90%", marginLeft: 15 }}>
-        <MyButton title="Start Exercise" onPress={startExercise} />
+        <MyButton
+          title={currentExercise ? "Next Exercise" : "Start Workout"}
+          onPress={startExercise}
+        />
       </View>
       <View style={{ flex: 1 }}>
         <FlatList
@@ -258,34 +261,36 @@ export default function StartWorkout({ navigation, route }) {
                 >
                   <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
                   <View style={{ flexDirection: "row" }}>
-                    {stats && currentExercise ? (
+                    {stats?.exerciseInputData && currentExercise ? (
                       item.reps && item.weight && item.time ? (
                         <Text>
-                          R {stats.exerciseInputData[index]?.reps} & W{" "}
-                          {stats.exerciseInputData[index]?.weight} & T{" "}
+                          Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
+                          {stats.exerciseInputData[index]?.weight} & Time{" "}
                           {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.reps && item.weight && !item.time ? (
                         <Text>
-                          R {stats.exerciseInputData[index]?.reps} & W{" "}
+                          Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
                           {stats.exerciseInputData[index]?.weight}
                         </Text>
                       ) : item.reps && item.time && !item.weight ? (
                         <Text>
-                          Reps {stats.exerciseInputData[index]?.reps} & T{" "}
+                          Reps {stats.exerciseInputData[index]?.reps} & Time{" "}
                           {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.weight && item.time && !item.reps ? (
                         <Text>
-                          Weight {stats.exerciseInputData[index]?.weight} & T{" "}
+                          Weight {stats.exerciseInputData[index]?.weight} & Time{" "}
                           {stats.exerciseInputData[index]?.time}
                         </Text>
                       ) : item.reps && !item.weight && !item.time ? (
-                        <Text>R {stats.exerciseInputData[index]?.reps}</Text>
+                        <Text>Reps {stats.exerciseInputData[index]?.reps}</Text>
                       ) : item.weight && !item.reps && !item.time ? (
-                        <Text>W {stats.exerciseInputData[index]?.weight}</Text>
+                        <Text>
+                          Weight {stats.exerciseInputData[index]?.weight}
+                        </Text>
                       ) : item.time && !item.weight && !item.reps ? (
-                        <Text>T {stats.exerciseInputData[index]?.time}</Text>
+                        <Text>Time {stats.exerciseInputData[index]?.time}</Text>
                       ) : (
                         ""
                       )
