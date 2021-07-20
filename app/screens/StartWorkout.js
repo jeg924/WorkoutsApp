@@ -55,6 +55,7 @@ export default function StartWorkout({ navigation, route }) {
         .firestore()
         .collection("exercises")
         .where("workoutID", "==", workoutID);
+      console.log("got here 2");
       const exerciseDocs = await exerciseRefs.get();
       exerciseDocs.forEach((doc) => {
         exercises.push(doc.data());
@@ -68,8 +69,10 @@ export default function StartWorkout({ navigation, route }) {
         .firestore()
         .collection("users")
         .doc(workout.authorID);
+      console.log("got here 3");
       const authorDoc = await authorRef.get();
       const author = authorDoc.data();
+      console.log("got here 4");
       setAuthor(author);
     } catch (error) {
       console.log("error is " + error);
@@ -170,9 +173,6 @@ export default function StartWorkout({ navigation, route }) {
       setStarting(false);
     }
   }
-
-  console.log(currentExercise);
-  console.log(stats);
 
   if (loading)
     return (
