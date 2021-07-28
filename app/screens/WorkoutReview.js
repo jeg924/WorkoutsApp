@@ -13,7 +13,6 @@ export default function WorkoutReview({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
   const [myFriendsIDs, setMyFriendsIDs] = React.useState(null);
   const [friendsStats, setFriendsStats] = React.useState(null); // [{ workoutId, recordId, timeStarted, exerciseInputData }, { ... }
-  const [comparisonsList, setComparisonList] = React.useState(null);
 
   useEffect(() => {
     loadData();
@@ -113,41 +112,6 @@ export default function WorkoutReview({ navigation, route }) {
       setAverageStats(average);
       setBestStats(best);
 
-      var listOfComparisons = [];
-      for (let i = 0; i < latest.exerciseInputData.length; ++i) {
-        var comparisonObject = {};
-        comparisonObject.name = exercises[i].name;
-        comparisonObject.latestReps = latest.exerciseInputData[i].reps
-          ? latest.exerciseInputData[i].reps
-          : "";
-        comparisonObject.latestWeight = latest.exerciseInputData[i].weight
-          ? latest.exerciseInputData[i].weight
-          : "";
-        comparisonObject.latestTime = latest.exerciseInputData[i].time
-          ? latest.exerciseInputData[i].time
-          : "";
-        comparisonObject.averageReps = average.exerciseInputData[i].reps
-          ? average.exerciseInputData[i].reps
-          : "";
-        comparisonObject.averageWeight = average.exerciseInputData[i].weight
-          ? average.exerciseInputData[i].weight
-          : "";
-        comparisonObject.averageTime = average.exerciseInputData[i].time
-          ? average.exerciseInputData[i].time
-          : "";
-        comparisonObject.bestReps = best.exerciseInputData[i].reps
-          ? best.exerciseInputData[i].reps
-          : "";
-        comparisonObject.bestWeight = best.exerciseInputData[i].weight
-          ? best.exerciseInputData[i].weight
-          : "";
-        comparisonObject.bestTime = best.exerciseInputData[i].time
-          ? best.exerciseInputData[i].time
-          : "";
-        listOfComparisons.push(comparisonObject);
-      }
-      setComparisonList(listOfComparisons);
-
       const userRef = firebase.firestore().collection("users").doc(authID);
       const userDoc = await userRef.get();
       const user = userDoc.data();
@@ -202,43 +166,32 @@ export default function WorkoutReview({ navigation, route }) {
     <View style={{ justifyContent: "center" }}>
       <View style={{ margin: 20, marginTop: 30 }}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-          Review {workout.workoutName}
+          {workout.workoutName}
         </Text>
       </View>
       <View style={{ justifyContent: "center", flexDirection: "column" }}>
         <View
           style={{
-            marginLeft: 60,
             flexDirection: "row",
-            justifyContent: "space-around",
+            justifyContent: "center",
           }}
         >
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Latest</Text>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Average</Text>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Best</Text>
         </View>
         <View style={{ flexDirection: "row" }}>
           <FlatList
-            data={comparisonsList}
+            data={latestStats}
             renderItem={({ item }) => (
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginLeft: 10,
+                  justifyContent: "center",
                 }}
               >
-                <Text style={{ paddingRight: 10 }}>{item.name}</Text>
+                <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
                 <Text>
-                  R: {item.latestReps} W: {item.latestWeight} T:{" "}
+                  R: {item.latestReps} W: {item.latestWeight} T:
                   {item.latestTime}
-                </Text>
-                <Text>
-                  R: {item.averageReps} W: {item.averageWeight} T:{" "}
-                  {item.averageTime}
-                </Text>
-                <Text>
-                  R: {item.bestReps} W: {item.bestWeight} T: {item.bestTime}
                 </Text>
               </View>
             )}

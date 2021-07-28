@@ -28,7 +28,9 @@ export default function StartWorkout({ navigation, route }) {
 
   React.useEffect(() => {
     setLoading(true);
-    loadStatData();
+    if (current > 0) {
+      loadStatData();
+    }
     setCurrentExercise(current);
     setLoading(false);
   }, [current]);
@@ -82,22 +84,16 @@ export default function StartWorkout({ navigation, route }) {
   }
 
   async function loadStatData() {
-    try {
-      setLoading(true);
-      const statsRef = firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("recorded workouts")
-        .doc(recordID);
-      const statsDoc = await statsRef.get();
-      const stats = statsDoc.data();
-      setStats(stats);
-    } catch (error) {
-      console.log("error is " + error);
-    } finally {
-      setLoading(false);
-    }
+    console.log("######################");
+    const statsRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("recorded workouts")
+      .doc(recordID);
+    const statsDoc = await statsRef.get();
+    const stats = statsDoc.data();
+    setStats(stats);
   }
 
   async function addToLibrary() {
@@ -139,14 +135,23 @@ export default function StartWorkout({ navigation, route }) {
       const myDoc = await myRef.get();
       const my = myDoc.data();
       if (my) {
-        let history = [...my.history];
-        history.concat({ id: workoutID, timeStamp: Date() });
-        myRef.set(
-          {
-            history: history,
-          },
-          { merge: true }
-        );
+        if (my.history) {
+          let history = [...my.history];
+          history.concat({ id: workoutID, timeStamp: Date() });
+          myRef.set(
+            {
+              history: history,
+            },
+            { merge: true }
+          );
+        } else {
+          myRef.set(
+            {
+              history: [{ id: workoutID, timeStamp: Date() }],
+            },
+            { merge: true }
+          );
+        }
       }
 
       // create a document to collect stats

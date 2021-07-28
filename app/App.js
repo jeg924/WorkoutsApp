@@ -31,14 +31,13 @@ import WorkoutVideoScreen from "./screens/WorkoutVideoScreen";
 import WorkoutReview from "./screens/WorkoutReview";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBxPo4CtHiwwYEPE-_72Vux_ltE1Emx_tM",
-  authDomain: "workouts-app-3ac2b.firebaseapp.com",
-  databaseURL: "https://workouts-app-3ac2b.firebaseio.com",
-  projectId: "workouts-app-3ac2b",
-  storageBucket: "workouts-app-3ac2b.appspot.com",
-  messagingSenderId: "896355632662",
-  appId: "1:896355632662:web:7125dc68c7ae07f768d737",
-  measurementId: "G-TW1VMF95C9",
+  apiKey: "AIzaSyA5Y7PIj8JGZqlqM2T4Itf27ZZHDMA3NhA",
+  authDomain: "workout-app-7c750.firebaseapp.com",
+  projectId: "workout-app-7c750",
+  storageBucket: "workout-app-7c750.appspot.com",
+  messagingSenderId: "858918925908",
+  appId: "1:858918925908:web:cddeef71e7dfe7b8515fc1",
+  measurementId: "G-WEGYNKW83R",
 };
 
 // Initialize Firebase
