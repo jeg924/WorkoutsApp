@@ -38,6 +38,9 @@ export default function WorkoutReview({ navigation, route }) {
       });
       allMyStats.filter((x) => x.exerciseInputData);
 
+      console.log("all my stats");
+      console.log(allMyStats);
+
       const latestDoc = await recordedWorkoutRef
         .orderBy("timeStarted", "desc")
         .limit(1)
@@ -49,19 +52,38 @@ export default function WorkoutReview({ navigation, route }) {
       });
       setLatestStats(latest.exerciseInputData);
 
+      // not good enough. Could be partially empty.
       let best = latest.exerciseInputData;
       let totalReps = [];
       let totalWeight = [];
       let totalTime = [];
       let totalRecords = allMyStats.length;
-      let totalExercisesPerRecord = allMyStats[0].exerciseInputData.length;
+      let maxExercisesPerRecord = exercises.length;
+      let totalRecordsPerExerciseThatTrackReps = [];
+      let totalRecordsPerExerciseThatTrackWeight = [];
+      let totalRecordsPerExerciseThatTrackTime = [];
+
+      // todo: handle reps or time or weight is null. Handle missing entries for some exercises.
 
       for (var i = 0; i < totalRecords; ++i) {
-        for (var j = 0; j < totalExercisesPerRecord; ++j) {
-          let reps = parseInt(allMyStats[i].exerciseInputData[j].reps);
-          let weight = parseInt(allMyStats[i].exerciseInputData[j].weight);
-          let time = parseInt(allMyStats[i].exerciseInputData[j].time);
+        for (var j = 0; j < maxExercisesPerRecord; ++j) {
+          if (allMyStats[i].exerciseInputData[j] == undefined) {
+            // the user started a workout but didn't finish.
+            continue;
+          }
+          let reps = allMyStats[i].exerciseInputData[j].reps
+            ? parseInt(allMyStats[i].exerciseInputData[j].reps)
+            : null;
+          let weight = allMyStats[i].exerciseInputData[j].weight
+            ? parseInt(allMyStats[i].exerciseInputData[j].weight)
+            : null;
+          let time = allMyStats[i].exerciseInputData[j].time
+            ? parseInt(allMyStats[i].exerciseInputData[j].time)
+            : null;
 
+          // assuming for now the only way they can get to the workout review,
+          // is that their latest (and best) has complete exercise input data.
+          // even if that data is null.
           if (reps > best[j].reps) {
             best[j].reps = reps;
           }
@@ -73,27 +95,53 @@ export default function WorkoutReview({ navigation, route }) {
           }
 
           if (i == 0) {
-            totalReps[j] = reps;
-            totalWeight[j] = weight;
-            totalTime[j] = time;
+            if (reps) {
+              totalReps[j] = reps;
+              totalRecordsPerExerciseThatTrackReps[j] = 1;
+            }
+            if (weight) {
+              totalWeight[j] = weight;
+              totalRecordsPerExerciseThatTrackWeight[j] = 1;
+            }
+            if (time) {
+              totalTime[j] = time;
+              totalRecordsPerExerciseThatTrackTime[j] = 1;
+            }
           } else {
-            totalReps[j] += reps;
-            totalWeight[j] += weight;
-            totalTime[j] += time;
+            if (reps) {
+              totalReps[j] += reps;
+              totalRecordsPerExerciseThatTrackReps[j] += 1;
+            }
+            if (weight) {
+              totalWeight[j] += weight;
+              totalRecordsPerExerciseThatTrackWeight[j] += 1;
+            }
+            if (time) {
+              totalTime[j] += time;
+              totalRecordsPerExerciseThatTrackTime[j] += 1;
+            }
           }
         }
       }
 
       let average = [];
 
-      for (var k = 0; k < totalExercisesPerRecord; ++k) {
+      for (var k = 0; k < maxExercisesPerRecord; ++k) {
         var exerciseAverageStats = {};
         exerciseAverageStats.name = allMyStats[0].exerciseInputData[k].name;
-        exerciseAverageStats.reps = Math.round(totalReps[k] / totalRecords);
-        // exerciseAverageStats.weight = Math.round(totalWeight[k] / totalRecords);
-        // exerciseAverageStats.time = Math.round(totalTime[k] / totalRecords);
+        exerciseAverageStats.reps = Math.round(
+          totalReps[k] / totalRecordsPerExerciseThatTrackReps[k]
+        );
+        exerciseAverageStats.weight = Math.round(
+          totalWeight[k] / totalRecordsPerExerciseThatTrackWeight[k]
+        );
+        exerciseAverageStats.time = Math.round(
+          totalTime[k] / totalRecordsPerExerciseThatTrackTime[k]
+        );
         average[k] = exerciseAverageStats;
       }
+      console.log("average");
+      console.log(average);
       setAverageStats(average);
       setBestStats(best);
 
