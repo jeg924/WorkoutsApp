@@ -29,17 +29,11 @@ export default function WorkoutVideoScreen({ navigation, route }) {
           margin: 20,
         }}
       >
-        <Text>
-          There shouldn't be workouts without exercises but here we are.
-        </Text>
+        <Text>This workout has no exercises.</Text>
       </View>
     );
   }
-  console.log("recordID: " + recordID);
-  console.log("workout: " + workout);
-  console.log("exercises: " + exercises);
-  console.log("current exercise: " + currentExercise);
-  console.log("video url: " + exercises[currentExercise].video);
+
   return (
     <View style={{ flex: 1 }}>
       <View>

@@ -23,12 +23,12 @@ export default function WorkoutReview({ navigation, route }) {
       setLoading(true);
 
       const workoutID = workout.workoutID;
-      const authID = firebase.auth().currentUser.uid;
+      const myID = firebase.auth().currentUser.uid;
 
       const recordedWorkoutRef = firebase
         .firestore()
         .collection("users")
-        .doc(authID)
+        .doc(myID)
         .collection("recorded workouts")
         .where("workoutID", "==", workoutID);
       const recordedWorkoutDocs = await recordedWorkoutRef.get();
@@ -47,90 +47,78 @@ export default function WorkoutReview({ navigation, route }) {
       latestDoc.forEach((doc) => {
         latest = doc.data();
       });
-      var average = allMyStats[0];
+      setLatestStats(latest.exerciseInputData);
 
-      var best = allMyStats[0];
-      console.log("latest: " + latest.exerciseInputData[0].reps);
-      console.log("average: " + average.exerciseInputData[0].reps);
-      console.log("best: " + best.exerciseInputData[0].reps);
+      let best = latest.exerciseInputData;
+      let totalReps = [];
+      let totalWeight = [];
+      let totalTime = [];
+      let totalRecords = allMyStats.length;
+      let totalExercisesPerRecord = allMyStats[0].exerciseInputData.length;
 
-      for (var i = 1; i < allMyStats.length; ++i) {
-        for (var j = 0; j < allMyStats[i].exerciseInputData.length; ++j) {
-          // reps
-          if (allMyStats[i].exerciseInputData[j].reps != undefined) {
-            average.exerciseInputData[j].reps +=
-              allMyStats[i].exerciseInputData[j].reps;
-            if (
-              allMyStats[i].exerciseInputData[j].reps >
-              best.exerciseInputData[j].reps
-            ) {
-              best.exerciseInputData[j].reps =
-                allMyStats[i].exerciseInputData[j].reps;
-            }
+      for (var i = 0; i < totalRecords; ++i) {
+        for (var j = 0; j < totalExercisesPerRecord; ++j) {
+          let reps = parseInt(allMyStats[i].exerciseInputData[j].reps);
+          let weight = parseInt(allMyStats[i].exerciseInputData[j].weight);
+          let time = parseInt(allMyStats[i].exerciseInputData[j].time);
+
+          if (reps > best[j].reps) {
+            best[j].reps = reps;
           }
-          // weight
-          if (allMyStats[i].exerciseInputData[j].weight != undefined) {
-            average.exerciseInputData[j].weight +=
-              allMyStats[i].exerciseInputData[j].weight;
-            if (
-              allMyStats[i].exerciseInputData[j].weight >
-              best.exerciseInputData[j].weight
-            ) {
-              best.exerciseInputData[j].reps =
-                allMyStats[i].exerciseInputData[j].reps;
-            }
+          if (weight > best[j].weight) {
+            best[j].weight = weight;
           }
-          // time
-          if (allMyStats[i].exerciseInputData[j].time != undefined) {
-            average.exerciseInputData[j].time +=
-              allMyStats[i].exerciseInputData[j].time;
-            if (
-              allMyStats[i].exerciseInputData[j].time >
-              best.exerciseInputData[j].time
-            ) {
-              best.exerciseInputData[j].reps =
-                allMyStats[i].exerciseInputData[j].reps;
-            }
+          if (time > best[j].time) {
+            best[j].time = time;
+          }
+
+          if (i == 0) {
+            totalReps[j] = reps;
+            totalWeight[j] = weight;
+            totalTime[j] = time;
+          } else {
+            totalReps[j] += reps;
+            totalWeight[j] += weight;
+            totalTime[j] += time;
           }
         }
       }
-      for (var j = 0; j < average.exerciseInputData.length; ++j) {
-        average.exerciseInputData[j].reps = Math.round(
-          average.exerciseInputData[j].reps / allMyStats.length
-        );
-        average.exerciseInputData[j].weight = Math.round(
-          average.exerciseInputData[j].weight / allMyStats.length
-        );
-        average.exerciseInputData[j].time = Math.round(
-          average.exerciseInputData[j].time / allMyStats.length
-        );
+
+      let average = [];
+
+      for (var k = 0; k < totalExercisesPerRecord; ++k) {
+        var exerciseAverageStats = {};
+        exerciseAverageStats.name = allMyStats[0].exerciseInputData[k].name;
+        exerciseAverageStats.reps = Math.round(totalReps[k] / totalRecords);
+        // exerciseAverageStats.weight = Math.round(totalWeight[k] / totalRecords);
+        // exerciseAverageStats.time = Math.round(totalTime[k] / totalRecords);
+        average[k] = exerciseAverageStats;
       }
-      console.log(latest);
-      console.log(average);
-      console.log(best);
-      setLatestStats(latest);
       setAverageStats(average);
       setBestStats(best);
 
-      const userRef = firebase.firestore().collection("users").doc(authID);
-      const userDoc = await userRef.get();
-      const user = userDoc.data();
+      const myRef = firebase.firestore().collection("users").doc(myID);
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
 
-      if (!user.friends) {
+      if (!my.friends) {
         setLoading(false);
         return;
       }
 
-      const friends = [...user.friends];
+      const friends = [...my.friends];
 
       setMyFriendsIDs[friends];
       const friendsWorkouts = [];
       const friendStatsQueries = [];
+      console.log("got here 1");
       for (let i = 0; i < friends.length; ++i) {
+        let friend = friends[i].userID;
+        console.log(friend);
         var friendsStatRef = firebase
           .firestore()
           .collection("users")
-          .doc(friends[i])
+          .doc(friend)
           .collection("recorded workouts")
           .where("workoutID", "==", workoutID)
           .orderBy("timeStarted", "desc")
@@ -142,10 +130,13 @@ export default function WorkoutReview({ navigation, route }) {
             friendsWorkouts.push(friendStatData);
           }
         });
+
         friendStatsQueries.push(friendStatPromise);
       }
+      console.log("got here 2");
       Promise.all(friendStatsQueries).then(() => {
-        // if you need to do calculations
+        console.log("friends workouts");
+        console.log(friendsWorkouts);
         setFriendsStats(friendsWorkouts);
       });
     } catch (error) {
@@ -164,7 +155,7 @@ export default function WorkoutReview({ navigation, route }) {
   }
   return (
     <View style={{ justifyContent: "center" }}>
-      <View style={{ margin: 20, marginTop: 30 }}>
+      <View style={{ margin: 20, marginTop: 40 }}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>
           {workout.workoutName}
         </Text>
@@ -173,7 +164,6 @@ export default function WorkoutReview({ navigation, route }) {
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "center",
           }}
         >
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>Latest</Text>
@@ -185,18 +175,70 @@ export default function WorkoutReview({ navigation, route }) {
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "center",
                 }}
               >
                 <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
                 <Text>
-                  R: {item.latestReps} W: {item.latestWeight} T:
-                  {item.latestTime}
+                  {item.reps ? "Reps: " + item.reps : " "}
+                  {item.weight ? "Weight: " + item.weight : " "}
+                  {item.time ? "Time: " + item.time : " "}
                 </Text>
               </View>
             )}
           />
         </View>
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+        }}
+      >
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Average</Text>
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        <FlatList
+          data={averageStats}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+              <Text>
+                {item.reps ? "Reps: " + item.reps : " "}
+                {item.weight ? "Weight: " + item.weight : " "}
+                {item.time ? "Time: " + item.time : " "}
+              </Text>
+            </View>
+          )}
+        />
+      </View>
+      <View
+        style={{
+          flexDirection: "row",
+        }}
+      >
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Best</Text>
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        <FlatList
+          data={bestStats}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+              <Text>
+                {item.reps ? "Reps: " + item.reps : " "}
+                {item.weight ? "Weight: " + item.weight : " "}
+                {item.time ? "Time: " + item.time : " "}
+              </Text>
+            </View>
+          )}
+        />
       </View>
     </View>
   );

@@ -47,7 +47,6 @@ export default function StartWorkout({ navigation, route }) {
       const workout = workoutDoc.data();
       if (workout) {
         Image.prefetch(workout.workoutImage);
-        console.log("got here");
       }
       setWorkout(workout);
       // load exercise data
@@ -57,7 +56,7 @@ export default function StartWorkout({ navigation, route }) {
         .firestore()
         .collection("exercises")
         .where("workoutID", "==", workoutID);
-      console.log("got here 2");
+
       const exerciseDocs = await exerciseRefs.get();
       exerciseDocs.forEach((doc) => {
         exercises.push(doc.data());
@@ -71,10 +70,10 @@ export default function StartWorkout({ navigation, route }) {
         .firestore()
         .collection("users")
         .doc(workout.authorID);
-      console.log("got here 3");
+
       const authorDoc = await authorRef.get();
       const author = authorDoc.data();
-      console.log("got here 4");
+
       setAuthor(author);
     } catch (error) {
       console.log("error is " + error);
@@ -84,7 +83,6 @@ export default function StartWorkout({ navigation, route }) {
   }
 
   async function loadStatData() {
-    console.log("######################");
     const statsRef = firebase
       .firestore()
       .collection("users")
@@ -154,26 +152,33 @@ export default function StartWorkout({ navigation, route }) {
         }
       }
 
-      // create a document to collect stats
-      const recordRef = myRef.collection("recorded workouts").doc();
-      setRecordID(recordRef.id);
+      if (recordID == null) {
+        // create a document to collect stats
+        const recordRef = myRef.collection("recorded workouts").doc();
+        setRecordID(recordRef.id);
 
-      await recordRef.set({
-        recordID: recordRef.id,
-        workoutID: workout.workoutID,
-        timeStarted: Date(),
-      });
+        await recordRef.set({
+          recordID: recordRef.id,
+          workoutID: workout.workoutID,
+          timeStarted: Date(),
+        });
 
-      console.log("current exercise is " + currentExercise);
-
-      navigation.navigate("Workout Video Screen", {
-        recordID: recordRef.id,
-        workout: workout,
-        currentExercise: currentExercise,
-        exercises: exercises,
-      });
+        navigation.navigate("Workout Video Screen", {
+          recordID: recordRef.id,
+          workout: workout,
+          currentExercise: currentExercise,
+          exercises: exercises,
+        });
+      } else {
+        navigation.navigate("Workout Video Screen", {
+          recordID: recordID,
+          workout: workout,
+          currentExercise: currentExercise,
+          exercises: exercises,
+        });
+      }
     } catch (error) {
-      console.log("Error is", error);
+      console.log("error is", error);
     } finally {
       setStarting(false);
     }

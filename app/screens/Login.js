@@ -45,7 +45,7 @@ export default function Login() {
       <Text
         style={{
           fontWeight: "bold",
-          fontSize: "30",
+          fontSize: 30,
           marginTop: 100,
           marginBottom: 20,
           color: "white",
