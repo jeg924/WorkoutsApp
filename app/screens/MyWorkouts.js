@@ -14,20 +14,71 @@ import {
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
 export default function MyWorkouts({ navigation, route }) {
+  const [loading, setLoading] = React.useState(false);
   const [deletingUpload, setDeletingUpload] = React.useState(false);
   const [myHistoryCategory, setMyHistoryCategory] = React.useState(false);
   const [myLibraryCategory, setMyLibraryCategory] = React.useState(false);
   const [myUploadsCategory, setMyUploadsCategory] = React.useState(true);
+  const [uploads, setUploads] = React.useState(null);
+  const [library, setLibrary] = React.useState(null);
+  const [history, setHistory] = React.useState(null);
 
-  const [uploads, loading, error] = useCollectionData(
-    firebase
-      .firestore()
-      .collection("workouts")
-      .where("authorID", "==", firebase.auth().currentUser.uid)
-      .where("deleted", "==", false)
-  );
-  const history = [];
-  const library = [];
+  // const [uploads, loading, error] = useCollectionData(
+  //   firebase
+  //     .firestore()
+  //     .collection("workouts")
+  //     .where("authorID", "==", firebase.auth().currentUser.uid)
+  //     .where("deleted", "==", false)
+  // );
+  // const history = [];
+  // const library = [];
+
+  React.useEffect(() => {
+    loadData();
+  }, []);
+
+  async function loadData() {
+    try {
+      setLoading(true);
+      // set uploads
+      let uploads = [];
+      const uploadsRef = firebase
+        .firestore()
+        .collection("workouts")
+        .where("authorID", "==", firebase.auth().currentUser.uid)
+        .where("deleted", "==", false);
+      const uploadsDocs = await uploadsRef.get();
+      uploadsDocs.forEach((doc) => {
+        uploads.push(doc.data());
+      });
+      console.log("uploads");
+      console.log(uploads);
+      setUploads(uploads);
+      // set library
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+      console.log("library");
+      console.log(my.library);
+      console.log("history");
+      console.log(my.history);
+
+      if (my.library) {
+        setLibrary(my.library);
+      }
+      // set history
+      if (my.history) {
+        setHistory(my.history);
+      }
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   if (loading) {
     return (
@@ -37,10 +88,10 @@ export default function MyWorkouts({ navigation, route }) {
     );
   }
 
-  if (error) {
+  if (deletingUpload) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Error</Text>
+        <Text>Deleting Upload</Text>
       </View>
     );
   }

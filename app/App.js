@@ -1,8 +1,7 @@
-// TODO: For all screens. When loading images and vidoes.
-// TODO: First, have them save to firebase storage.
-// TODO: Second, have them load from firebase storage.
-// TODO: Third, prefetch using the string that represents their location.
-// TODO: Fourth, have their prop set to force cache so that they load with the rest of the screen.
+// todo: what happens when loading blank data? no input, but next clicked.
+// todo: better navigation in general. Back buttons and listeners.
+// todo: figure out what's happening on the first load of workoutReview
+// todo:
 
 import React from "react";
 import { Text, View } from "react-native";

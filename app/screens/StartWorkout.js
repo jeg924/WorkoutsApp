@@ -107,11 +107,26 @@ export default function StartWorkout({ navigation, route }) {
         if (my.library) {
           let library = [...my.library];
           if (!library.includes(workout.workoutID)) {
-            library = library.concat(workout.workoutID);
+            library = library.concat({
+              workoutID: workout.workoutID,
+              workoutName: workout.workoutName,
+              workoutImage: workout.workoutImage,
+            });
             myRef.set({ library: library }, { merge: true });
           }
         } else {
-          myRef.set({ library: [workout.workoutID] }, { merge: true });
+          myRef.set(
+            {
+              library: [
+                {
+                  workoutID: workout.workoutID,
+                  workoutName: workout.workoutName,
+                  workoutImage: workout.workoutImage,
+                },
+              ],
+            },
+            { merge: true }
+          );
         }
       }
     } catch (error) {
@@ -135,7 +150,12 @@ export default function StartWorkout({ navigation, route }) {
       if (my) {
         if (my.history) {
           let history = [...my.history];
-          history.concat({ id: workoutID, timeStamp: Date() });
+          history.concat({
+            workoutID: workoutID,
+            workoutName: workout.workoutName,
+            workoutImage: workout.workoutImage,
+            timeStamp: Date(),
+          });
           myRef.set(
             {
               history: history,
@@ -145,7 +165,14 @@ export default function StartWorkout({ navigation, route }) {
         } else {
           myRef.set(
             {
-              history: [{ id: workoutID, timeStamp: Date() }],
+              history: [
+                {
+                  workoutID: workoutID,
+                  workoutName: workout.workoutName,
+                  workoutImage: workout.workoutImage,
+                  timeStamp: Date(),
+                },
+              ],
             },
             { merge: true }
           );
