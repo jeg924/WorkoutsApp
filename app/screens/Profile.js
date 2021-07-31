@@ -99,7 +99,7 @@ export default function Profile({ navigation, route }) {
           <View style={{}}>
             <TouchableHighlight
               onPress={() => {
-                navigation.navigate("Edit Profile");
+                navigation.navigate("Edit Profile", { edited: edited });
               }}
             >
               <Text style={{ fontWeight: "bold" }}>Edit Profile</Text>

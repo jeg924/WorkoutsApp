@@ -14,9 +14,9 @@ import { Video } from "expo-av";
 export default function WorkoutVideoScreen({ navigation, route }) {
   const { recordID, workout, currentExercise, exercises } = route.params;
   const user = firebase.auth().currentUser.uid;
-  const [amountOfWeight, setAmountOfWeight] = React.useState(0);
-  const [numberOfReps, setNumberOfReps] = React.useState(0);
-  const [amountOfTime, setAmountOfTime] = React.useState(0);
+  const [amountOfWeight, setAmountOfWeight] = React.useState(null);
+  const [numberOfReps, setNumberOfReps] = React.useState(null);
+  const [amountOfTime, setAmountOfTime] = React.useState(null);
 
   if (exercises.length == 0) {
     return (
@@ -158,11 +158,9 @@ export default function WorkoutVideoScreen({ navigation, route }) {
             if (recordedWorkout) {
               var exerciseInputObject = {};
               exerciseInputObject.name = exercises[currentExercise].name;
-              numberOfReps ? (exerciseInputObject.reps = numberOfReps) : null;
-              amountOfWeight
-                ? (exerciseInputObject.weight = amountOfWeight)
-                : null;
-              amountOfTime ? (exerciseInputObject.time = amountOfTime) : null;
+              exerciseInputObject.reps = numberOfReps;
+              exerciseInputObject.weight = amountOfWeight;
+              exerciseInputObject.time = amountOfTime;
 
               if (recordedWorkout.exerciseInputData) {
                 let exerciseInputData = [...recordedWorkout.exerciseInputData];
@@ -183,18 +181,10 @@ export default function WorkoutVideoScreen({ navigation, route }) {
                 );
               }
             }
-
-            if (currentExercise == exercises.length - 1) {
-              navigation.navigate("Workout Review", {
-                workout: workout,
-                exercises: exercises,
-              });
-            } else {
-              // update current exercise
-              navigation.navigate("Start Workout", {
-                current: currentExercise + 1,
-              });
-            }
+            // update current exercise
+            navigation.navigate("Start Workout", {
+              current: currentExercise + 1,
+            });
           }}
         >
           <View
@@ -206,7 +196,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
               alignItems: "center",
             }}
           >
-            <Text style={{ color: "white" }}>Next exercise</Text>
+            <Text style={{ color: "white" }}>Continue</Text>
           </View>
         </TouchableHighlight>
       </View>

@@ -52,7 +52,7 @@ export default function WorkoutReview({ navigation, route }) {
       });
       setLatestStats(latest.exerciseInputData);
 
-      // not good enough. Could be partially empty.
+      // Could be partially empty.
       let best = latest.exerciseInputData;
       let totalReps = [];
       let totalWeight = [];
@@ -94,6 +94,9 @@ export default function WorkoutReview({ navigation, route }) {
             best[j].time = time;
           }
 
+          // only input is counted. if the user skipped exercises
+          // or completed them but didn't fill out all the input data
+          // they're just not counted in the calculation for average.
           if (i == 0) {
             if (reps) {
               totalReps[j] = reps;
@@ -143,6 +146,8 @@ export default function WorkoutReview({ navigation, route }) {
       console.log("average");
       console.log(average);
       setAverageStats(average);
+      console.log("best");
+      console.log(best);
       setBestStats(best);
 
       const myRef = firebase.firestore().collection("users").doc(myID);
@@ -159,7 +164,6 @@ export default function WorkoutReview({ navigation, route }) {
       setMyFriendsIDs[friends];
       const friendsWorkouts = [];
       const friendStatsQueries = [];
-      console.log("got here 1");
       for (let i = 0; i < friends.length; ++i) {
         let friend = friends[i].userID;
         console.log(friend);
@@ -181,7 +185,6 @@ export default function WorkoutReview({ navigation, route }) {
 
         friendStatsQueries.push(friendStatPromise);
       }
-      console.log("got here 2");
       Promise.all(friendStatsQueries).then(() => {
         console.log("friends workouts");
         console.log(friendsWorkouts);

@@ -50,7 +50,10 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
           return item.type === "user" ? (
             <TouchableHighlight
               onPress={() => {
-                navigation.navigate("Profile", { userID: item.objectID });
+                navigation.navigate("Profile", {
+                  userID: item.objectID,
+                  edited: 0,
+                });
               }}
             >
               <View

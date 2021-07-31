@@ -8,7 +8,7 @@ import { Icon } from "react-native-elements";
 import MyButton from "../components/Button";
 import { concat, set } from "react-native-reanimated";
 
-// todo: I need to change previous best, to just show the results from last inputs
+// todo: need to have one button at the bottom that says: start workout, next exercise, and then review workout.
 
 export default function StartWorkout({ navigation, route }) {
   const { workoutID, current } = route.params;
@@ -354,6 +354,19 @@ export default function StartWorkout({ navigation, route }) {
             </View>
           )}
         />
+      </View>
+      <View>
+        {currentExercise == exercises?.length ? (
+          <MyButton
+            title="Review Workout"
+            onPress={() => {
+              navigation.navigate("Workout Review", {
+                workout: workout,
+                exercises: exercises,
+              });
+            }}
+          />
+        ) : null}
       </View>
     </View>
   );

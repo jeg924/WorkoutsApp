@@ -14,6 +14,7 @@ import Constants from "expo-constants";
 const uuidv4 = require("uuid/v4");
 
 export default function EditProfile({ navigation, route }) {
+  const { edited } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
   const [profilePicture, setProfilePicture] = React.useState("");
@@ -168,13 +169,14 @@ export default function EditProfile({ navigation, route }) {
                 setProfilePictureChanged(false);
                 setSaving(false);
                 navigation.navigate("Profile", {
-                  edited: true,
+                  edited: edited + 1,
                 });
               }
               if (profilePictureChanged) {
                 // update storage
                 const response = await fetch(profilePicture);
                 const blob = await response.blob();
+                console.log(uuidv4() + ".png");
                 const imageSnapshot = await firebase
                   .storage()
                   .ref()
@@ -197,7 +199,7 @@ export default function EditProfile({ navigation, route }) {
                 setProfilePictureChanged(false);
                 setSaving(false);
                 navigation.navigate("Profile", {
-                  edited: true,
+                  edited: edited + 1,
                 });
               }
               if (displayNameChanged) {
@@ -216,7 +218,7 @@ export default function EditProfile({ navigation, route }) {
                 setProfilePictureChanged(false);
                 setSaving(false);
                 navigation.navigate("Profile", {
-                  edited: true,
+                  edited: edited + 1,
                 });
               }
             } catch (error) {
