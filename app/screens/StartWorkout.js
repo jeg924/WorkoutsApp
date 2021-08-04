@@ -8,8 +8,6 @@ import { Icon } from "react-native-elements";
 import MyButton from "../components/Button";
 import { concat, set } from "react-native-reanimated";
 
-// todo: need to have one button at the bottom that says: start workout, next exercise, and then review workout.
-
 export default function StartWorkout({ navigation, route }) {
   const { workoutID, current } = route.params;
   const [loading, setLoading] = React.useState(true);
@@ -263,23 +261,6 @@ export default function StartWorkout({ navigation, route }) {
             Time: {workout?.lengthInMinutes} minutes
           </Text>
         </View>
-        <View style={{ flexDirection: "row", marginLeft: 40 }}>
-          <Icon
-            type="material-community"
-            name="dumbbell"
-            color="orange"
-            size={30}
-          />
-          <Text style={{ fontWeight: "bold", marginLeft: 10, marginTop: 5 }}>
-            Beginner
-          </Text>
-        </View>
-      </View>
-      <View style={{ width: "90%", marginLeft: 15 }}>
-        <MyButton
-          title={currentExercise ? "Next Exercise" : "Start Workout"}
-          onPress={startExercise}
-        />
       </View>
       <View style={{ flex: 1 }}>
         <FlatList
@@ -366,7 +347,12 @@ export default function StartWorkout({ navigation, route }) {
               });
             }}
           />
-        ) : null}
+        ) : (
+          <MyButton
+            title={currentExercise ? "Next Exercise" : "Start Workout"}
+            onPress={startExercise}
+          />
+        )}
       </View>
     </View>
   );

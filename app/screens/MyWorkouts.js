@@ -36,6 +36,7 @@ export default function MyWorkouts({ navigation, route }) {
   React.useEffect(() => {
     loadData();
   }, []);
+  // needs to load everytime the screen is refreshed.
 
   async function loadData() {
     try {
@@ -79,6 +80,8 @@ export default function MyWorkouts({ navigation, route }) {
       setLoading(false);
     }
   }
+
+  console.log(library);
 
   if (loading) {
     return (
