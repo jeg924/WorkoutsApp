@@ -23,20 +23,17 @@ export default function MyWorkouts({ navigation, route }) {
   const [library, setLibrary] = React.useState(null);
   const [history, setHistory] = React.useState(null);
 
-  // const [uploads, loading, error] = useCollectionData(
-  //   firebase
-  //     .firestore()
-  //     .collection("workouts")
-  //     .where("authorID", "==", firebase.auth().currentUser.uid)
-  //     .where("deleted", "==", false)
-  // );
-  // const history = [];
-  // const library = [];
-
   React.useEffect(() => {
-    loadData();
-  }, []);
-  // needs to load everytime the screen is refreshed.
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action
+      console.log("back in focus");
+      loadData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   async function loadData() {
     try {
@@ -52,8 +49,6 @@ export default function MyWorkouts({ navigation, route }) {
       uploadsDocs.forEach((doc) => {
         uploads.push(doc.data());
       });
-      console.log("uploads");
-      console.log(uploads);
       setUploads(uploads);
       // set library
       const myRef = firebase
@@ -62,17 +57,18 @@ export default function MyWorkouts({ navigation, route }) {
         .doc(firebase.auth().currentUser.uid);
       const myDoc = await myRef.get();
       const my = myDoc.data();
-      console.log("library");
-      console.log(my.library);
-      console.log("history");
-      console.log(my.history);
 
+      console.log(my.library);
       if (my.library) {
         setLibrary(my.library);
+      } else {
+        setLibrary(null);
       }
       // set history
       if (my.history) {
         setHistory(my.history);
+      } else {
+        setHistory(null);
       }
     } catch (error) {
       console.log("error is " + error);
@@ -80,8 +76,6 @@ export default function MyWorkouts({ navigation, route }) {
       setLoading(false);
     }
   }
-
-  console.log(library);
 
   if (loading) {
     return (
