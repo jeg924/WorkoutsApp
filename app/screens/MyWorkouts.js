@@ -27,7 +27,6 @@ export default function MyWorkouts({ navigation, route }) {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
       // Call any action
-      console.log("back in focus");
       loadData();
     });
 
@@ -58,7 +57,6 @@ export default function MyWorkouts({ navigation, route }) {
       const myDoc = await myRef.get();
       const my = myDoc.data();
 
-      console.log(my.library);
       if (my.library) {
         setLibrary(my.library);
       } else {

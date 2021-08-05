@@ -14,7 +14,6 @@ export default function Home({ navigation }) {
         onPress={() =>
           navigation.navigate("Profile", {
             userID: firebase.auth().currentUser.uid,
-            edited: 0,
           })
         }
         title="My profile"

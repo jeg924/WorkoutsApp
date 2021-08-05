@@ -52,7 +52,6 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
               onPress={() => {
                 navigation.navigate("Profile", {
                   userID: item.objectID,
-                  edited: 0,
                 });
               }}
             >

@@ -18,12 +18,20 @@ import { GlobalContext } from "../App";
 export default function Profile({ navigation, route }) {
   // const { myUserId, myFriends } = React.useContext(GlobalContext);
 
-  const { userID, edited } = route.params;
+  const { userID } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
   const [profilePicture, setProfilePicture] = React.useState("");
   const [addingFriend, setAddingFriend] = React.useState(false);
   const [isFriend, setIsFriend] = React.useState(false);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadUserData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   async function loadUserData() {
     setLoading(true);
@@ -32,6 +40,7 @@ export default function Profile({ navigation, route }) {
     const userDoc = await userRef.get();
     const user = userDoc.data();
     if (user) {
+      console.log(user);
       setDisplayName(user.displayName);
       if (user.photoURL) {
         await Image.prefetch(user.photoURL);
@@ -53,14 +62,6 @@ export default function Profile({ navigation, route }) {
     }
     setLoading(false);
   }
-
-  React.useEffect(() => {
-    loadUserData();
-  }, [userID]);
-
-  React.useEffect(() => {
-    loadUserData();
-  }, [edited]);
 
   if (loading) {
     return (
@@ -99,7 +100,7 @@ export default function Profile({ navigation, route }) {
           <View style={{}}>
             <TouchableHighlight
               onPress={() => {
-                navigation.navigate("Edit Profile", { edited: edited });
+                navigation.navigate("Edit Profile");
               }}
             >
               <Text style={{ fontWeight: "bold" }}>Edit Profile</Text>

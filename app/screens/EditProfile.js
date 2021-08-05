@@ -14,7 +14,6 @@ import Constants from "expo-constants";
 const uuidv4 = require("uuid/v4");
 
 export default function EditProfile({ navigation, route }) {
-  const { edited } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
   const [profilePicture, setProfilePicture] = React.useState("");
@@ -35,7 +34,9 @@ export default function EditProfile({ navigation, route }) {
       .doc(firebase.auth().currentUser.uid);
     const myDoc = await myRef.get();
     const my = myDoc.data();
-    setDisplayName(my.displayName);
+    if (my?.displayName) {
+      setDisplayName(my.displayName);
+    }
     if (my?.photoURL) {
       setProfilePicture(my.photoURL);
       await Image.prefetch(my.photoURL);
@@ -165,12 +166,11 @@ export default function EditProfile({ navigation, route }) {
                     },
                     { merge: true }
                   );
+                console.log(profilePicture);
                 setDisplayNameChanged(false);
                 setProfilePictureChanged(false);
                 setSaving(false);
-                navigation.navigate("Profile", {
-                  edited: edited + 1,
-                });
+                navigation.goBack();
               }
               if (profilePictureChanged) {
                 // update storage
@@ -198,9 +198,7 @@ export default function EditProfile({ navigation, route }) {
                 setDisplayNameChanged(false);
                 setProfilePictureChanged(false);
                 setSaving(false);
-                navigation.navigate("Profile", {
-                  edited: edited + 1,
-                });
+                navigation.goBack();
               }
               if (displayNameChanged) {
                 // update firestore
@@ -217,9 +215,7 @@ export default function EditProfile({ navigation, route }) {
                 setDisplayNameChanged(false);
                 setProfilePictureChanged(false);
                 setSaving(false);
-                navigation.navigate("Profile", {
-                  edited: edited + 1,
-                });
+                navigation.goBack();
               }
             } catch (error) {
               console.log("Error is " + error);
