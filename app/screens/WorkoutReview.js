@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import firebase from "firebase";
-import { View, TextInput, Text, Image, Button } from "react-native";
+import { View, TextInput, Text, Image, Button, Modal } from "react-native";
 import { SafeAreaView } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import MyButton from "../components/Button";
+import { Picker } from "@react-native-picker/picker";
 
 export default function WorkoutReview({ navigation, route }) {
   const { workout, exercises } = route.params;
@@ -11,12 +13,18 @@ export default function WorkoutReview({ navigation, route }) {
   const [averageStats, setAverageStats] = React.useState(null);
   const [bestStats, setBestStats] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const [myFriendsIDs, setMyFriendsIDs] = React.useState(null);
+  const [friends, setFriends] = React.useState(null);
   const [friendsStats, setFriendsStats] = React.useState(null); // [{ workoutId, recordId, timeStarted, exerciseInputData }, { ... }
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [friend, setFriend] = React.useState(null);
 
-  useEffect(() => {
-    loadData();
-  }, [workout]);
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   async function loadData() {
     try {
@@ -50,10 +58,12 @@ export default function WorkoutReview({ navigation, route }) {
       latestDoc.forEach((doc) => {
         latest = doc.data();
       });
+      console.log("latest");
+      console.log(latest);
       setLatestStats(latest.exerciseInputData);
 
       // Could be partially empty.
-      let best = latest.exerciseInputData;
+      let best = JSON.parse(JSON.stringify(latest.exerciseInputData));
       let totalReps = [];
       let totalWeight = [];
       let totalTime = [];
@@ -143,12 +153,6 @@ export default function WorkoutReview({ navigation, route }) {
         );
         average[k] = exerciseAverageStats;
       }
-      console.log("average");
-      console.log(average);
-      setAverageStats(average);
-      console.log("best");
-      console.log(best);
-      setBestStats(best);
 
       const myRef = firebase.firestore().collection("users").doc(myID);
       const myDoc = await myRef.get();
@@ -160,8 +164,10 @@ export default function WorkoutReview({ navigation, route }) {
       }
 
       const friends = [...my.friends];
+      console.log("friends are...");
+      console.log(friends);
 
-      setMyFriendsIDs[friends];
+      setFriends(friends);
       const friendsWorkouts = [];
       const friendStatsQueries = [];
       for (let i = 0; i < friends.length; ++i) {
@@ -196,6 +202,11 @@ export default function WorkoutReview({ navigation, route }) {
       setLoading(false);
     }
   }
+
+  console.log("my friends");
+  console.log(friends);
+  console.log("friend");
+  console.log(friend);
 
   if (loading) {
     return (
@@ -291,6 +302,54 @@ export default function WorkoutReview({ navigation, route }) {
           )}
         />
       </View>
+      <View>
+        <MyButton
+          title="Compare with friend"
+          onPress={() => {
+            setModalVisible(!modalVisible);
+          }}
+        />
+      </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          // this.closeButtonFunction()
+        }}
+      >
+        <View
+          style={{
+            height: "50%",
+            marginTop: "auto",
+            backgroundColor: "white",
+          }}
+        >
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Picker
+              style={{ width: "100%" }}
+              selectedValue={friend}
+              onValueChange={(itemValue) => setFriend(itemValue)}
+            >
+              {friends?.map((friend) => {
+                return (
+                  <Picker.Item
+                    label={friend.displayName}
+                    value={friend.userID}
+                  />
+                );
+              })}
+            </Picker>
+            <TouchableOpacity
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            >
+              <Text>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

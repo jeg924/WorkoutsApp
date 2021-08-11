@@ -23,6 +23,7 @@ export default function Profile({ navigation, route }) {
   const [displayName, setDisplayName] = React.useState("");
   const [profilePicture, setProfilePicture] = React.useState("");
   const [addingFriend, setAddingFriend] = React.useState(false);
+  const [removingFriend, setRemovingFriend] = React.useState(false);
   const [isFriend, setIsFriend] = React.useState(false);
 
   React.useEffect(() => {
@@ -55,12 +56,66 @@ export default function Profile({ navigation, route }) {
         .doc(firebase.auth().currentUser.uid);
       const myDoc = await myRef.get();
       const my = myDoc.data();
-
-      if (my?.friends?.includes(userID)) {
+      console.log(userID);
+      console.log(my.friends);
+      if (my?.friends?.some((friend) => friend.userID === userID)) {
         setIsFriend(true);
       }
     }
     setLoading(false);
+  }
+
+  async function addFriend() {
+    try {
+      setAddingFriend(true);
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+
+      var friends = [];
+      if (my.friends) {
+        friends = [...my.friends];
+      }
+      friends.push({
+        userID: userID,
+        displayName: displayName,
+        profilePicture: profilePicture,
+      });
+      console.log("FRIENDS ++++++++");
+      console.log(friends);
+      await myRef.set({ friends: friends }, { merge: true });
+
+      setIsFriend(true);
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setAddingFriend(false);
+    }
+  }
+
+  async function removeFriend() {
+    try {
+      setRemovingFriend(true);
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+      let friends = [...my.friends];
+      friends = friends.filter((friend) => friend.userID !== userID);
+      myRef.set({ friends: friends }, { merge: true });
+      setIsFriend(false);
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setRemovingFriend(false);
+    }
   }
 
   if (loading) {
@@ -111,43 +166,7 @@ export default function Profile({ navigation, route }) {
             <Text>Adding Friend...</Text>
           ) : (
             <View style={{}}>
-              <TouchableHighlight
-                onPress={async () => {
-                  setAddingFriend(true);
-                  const myRef = firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(firebase.auth().currentUser.uid);
-
-                  const myDoc = await myRef.get();
-                  const my = myDoc.data();
-
-                  if (my) {
-                    let friends = [];
-                    if (my.friends) {
-                      friends = [...my.friends];
-                      friends.concat({
-                        userID: userID,
-                        displayName: displayName,
-                        profilePicture: profilePicture,
-                      });
-                    } else {
-                      friends = [
-                        {
-                          userID: userID,
-                          displayName: displayName,
-                          profilePicture: profilePicture,
-                        },
-                      ];
-                    }
-
-                    myRef.set({ friends: friends }, { merge: true });
-                  }
-
-                  setIsFriend(true);
-                  setAddingFriend(false);
-                }}
-              >
+              <TouchableHighlight onPress={addFriend}>
                 <View style={{ flexDirection: "row" }}>
                   <Feather name="heart" color="orange" size={30} />
                   <Text
@@ -159,9 +178,22 @@ export default function Profile({ navigation, route }) {
               </TouchableHighlight>
             </View>
           )
+        ) : removingFriend ? (
+          <Text>Removing friend...</Text>
         ) : (
           // already my friend
-          <Text>Friend</Text>
+          <View style={{}}>
+            <TouchableHighlight onPress={removeFriend}>
+              <View style={{ flexDirection: "row" }}>
+                <Feather name="heart" color="orange" size={30} />
+                <Text
+                  style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
+                >
+                  Remove Friend
+                </Text>
+              </View>
+            </TouchableHighlight>
+          </View>
         )}
       </View>
     </View>
