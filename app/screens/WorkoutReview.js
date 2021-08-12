@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import firebase from "firebase";
-import { View, TextInput, Text, Image, Button, Modal } from "react-native";
-import { SafeAreaView } from "react-native";
+import { View, Text, Modal } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import MyButton from "../components/Button";
 import { Picker } from "@react-native-picker/picker";

@@ -5,9 +5,9 @@ export default function MyButton({ title, onPress, ...rest }) {
   return (
     <TouchableHighlight
       style={{
-        backgroundColor: "orange",
-        borderRadius: "100%",
-        width: "100%",
+        backgroundColor: "blue",
+        borderRadius: "10%",
+        width: "90%",
         justifyContent: "center",
         alignItems: "center",
         padding: 15,

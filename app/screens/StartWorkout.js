@@ -1,12 +1,10 @@
 import React from "react";
 import firebase from "firebase";
-import { View, TextInput, Text, Image } from "react-native";
+import { View, Text, Image } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { FlatList, TouchableHighlight } from "react-native-gesture-handler";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Icon } from "react-native-elements";
+import { Feather } from "@expo/vector-icons";
 import MyButton from "../components/Button";
-import { concat, set } from "react-native-reanimated";
 
 export default function StartWorkout({ navigation, route }) {
   const { workoutID, current } = route.params;
@@ -233,7 +231,7 @@ export default function StartWorkout({ navigation, route }) {
   return (
     <View style={{ flex: 1 }}>
       <Image
-        style={{ width: "100%", height: "30%" }}
+        style={{ width: "100%", height: "35%", marginTop: "10%" }}
         source={
           workout?.workoutImage
             ? { uri: workout.workoutImage, cache: "force-cache" }
@@ -246,23 +244,41 @@ export default function StartWorkout({ navigation, route }) {
         </Text>
         <Text>By {author?.displayName}</Text>
       </View>
-      <View style={{ flexDirection: "row" }}>
+      <View style={{ flexDirection: "row", marginLeft: "5%" }}>
         <TouchableHighlight onPress={addToLibrary}>
           <View style={{ flexDirection: "row" }}>
-            <Feather name="plus-circle" color="orange" size={30} />
-            <Text style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}>
+            <Feather name="plus-circle" color="blue" size={30} />
+            <Text style={{ fontSize: 12, marginLeft: 8, marginTop: 8 }}>
               Add to Library
             </Text>
           </View>
         </TouchableHighlight>
         <View style={{ flexDirection: "row", marginLeft: 40 }}>
-          <Feather name="clock" color="orange" size={30} />
-          <Text style={{ fontWeight: "bold", marginLeft: 10, marginTop: 5 }}>
-            Time: {workout?.lengthInMinutes} minutes
+          <Feather name="clock" color="blue" size={30} />
+          <Text style={{ fontSize: 12, marginLeft: 8, marginTop: 8 }}>
+            {workout?.lengthInMinutes} minutes
           </Text>
         </View>
       </View>
-      <View style={{ flex: 1 }}>
+      <View style={{ margin: "4.8%", width: "100%" }}>
+        {currentExercise == exercises?.length ? (
+          <MyButton
+            title="Review Workout"
+            onPress={() => {
+              navigation.navigate("Workout Review", {
+                workout: workout,
+                exercises: exercises,
+              });
+            }}
+          />
+        ) : (
+          <MyButton
+            title={currentExercise ? "Next Exercise" : "Start Workout"}
+            onPress={startExercise}
+          />
+        )}
+      </View>
+      <View style={{ flex: 1, marginLeft: "10%" }}>
         <FlatList
           data={exercises}
           renderItem={({ item, index }) => (
@@ -335,24 +351,6 @@ export default function StartWorkout({ navigation, route }) {
             </View>
           )}
         />
-      </View>
-      <View>
-        {currentExercise == exercises?.length ? (
-          <MyButton
-            title="Review Workout"
-            onPress={() => {
-              navigation.navigate("Workout Review", {
-                workout: workout,
-                exercises: exercises,
-              });
-            }}
-          />
-        ) : (
-          <MyButton
-            title={currentExercise ? "Next Exercise" : "Start Workout"}
-            onPress={startExercise}
-          />
-        )}
       </View>
     </View>
   );
