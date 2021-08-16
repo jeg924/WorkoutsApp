@@ -1,7 +1,4 @@
-// todo: what happens when loading blank data? no input, but next clicked.
 // todo: better navigation in general. Back buttons and listeners.
-// todo: figure out what's happening on the first load of workoutReview
-// todo:
 
 import React from "react";
 import { Text, View } from "react-native";

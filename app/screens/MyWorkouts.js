@@ -20,7 +20,7 @@ export default function MyWorkouts({ navigation, route }) {
   const [myHistoryCategory, setMyHistoryCategory] = React.useState(false);
   const [myLibraryCategory, setMyLibraryCategory] = React.useState(false);
   const [myUploadsCategory, setMyUploadsCategory] = React.useState(true);
-  const [uploads, setUploads] = React.useState(null);
+  const [uploads, setUploads] = React.useState([]);
   const [library, setLibrary] = React.useState(null);
   const [history, setHistory] = React.useState(null);
 
@@ -100,12 +100,12 @@ export default function MyWorkouts({ navigation, route }) {
     >
       <View
         style={{
-          flex: 1,
           flexDirection: "column",
           justifyContent: "center",
           position: "fixed",
-          height: "auto",
           marginTop: 20,
+          backgroundColor: "red",
+          height: 120,
         }}
       >
         <View
@@ -204,11 +204,13 @@ export default function MyWorkouts({ navigation, route }) {
           </View>
         </View>
       </View>
-      <SafeAreaView style={{ flex: 4, alignItems: "center" }}>
+      <SafeAreaView
+        style={{ flex: 4, alignItems: "center", backgroundColor: "cyan" }}
+      >
         {myUploadsCategory && !uploads.length ? (
           <View
             style={{
-              flex: 4,
+              flex: 1,
               justifyContent: "center",
               alignItems: "center",
               width: "100%",
