@@ -1,13 +1,6 @@
 import React from "react";
 import firebase from "firebase";
-import {
-  View,
-  Text,
-  Button,
-  Image,
-  Dimensions,
-  TouchableHighlight,
-} from "react-native";
+import { View, Text, Image, TouchableHighlight } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
@@ -168,7 +161,7 @@ export default function Profile({ navigation, route }) {
             <View style={{}}>
               <TouchableHighlight onPress={addFriend}>
                 <View style={{ flexDirection: "row" }}>
-                  <Feather name="heart" color="orange" size={30} />
+                  <Feather name="heart" color="blue" size={30} />
                   <Text
                     style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
                   >
@@ -185,7 +178,7 @@ export default function Profile({ navigation, route }) {
           <View style={{}}>
             <TouchableHighlight onPress={removeFriend}>
               <View style={{ flexDirection: "row" }}>
-                <Feather name="heart" color="orange" size={30} />
+                <Feather name="heart" color="blue" size={30} />
                 <Text
                   style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
                 >

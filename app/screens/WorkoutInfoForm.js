@@ -161,7 +161,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
           }}
           style={{
             margin: 10,
-            backgroundColor: "orange",
+            backgroundColor: "blue",
             borderRadius: "100%",
             padding: 5,
           }}
@@ -208,7 +208,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
             }
           }}
           style={{
-            backgroundColor: "orange",
+            backgroundColor: "blue",
             borderRadius: "100%",
             padding: 5,
           }}
@@ -271,7 +271,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
         <TouchableHighlight
           style={{
             borderRadius: "100%",
-            backgroundColor: "orange",
+            backgroundColor: "blue",
             justifyContent: "center",
             alignItems: "center",
             padding: 10,

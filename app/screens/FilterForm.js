@@ -28,7 +28,7 @@ export default function FilterForm({ navigation, route }) {
         <Text style={{ fontWeight: "bold" }}>Filter by Type</Text>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={workoutFilter ? true : false}
             onPress={() => {
               if (workoutFilter) {
@@ -44,7 +44,7 @@ export default function FilterForm({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={userFilter ? true : false}
             onPress={() => {
               if (userFilter) {
@@ -63,7 +63,7 @@ export default function FilterForm({ navigation, route }) {
         <Text style={{ fontWeight: "bold" }}>Filter by Category</Text>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={strengthFilter ? true : false}
             onPress={() =>
               strengthFilter
@@ -75,7 +75,7 @@ export default function FilterForm({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={cardioFilter ? true : false}
             onPress={() =>
               cardioFilter ? setCardioFilter(false) : setCardioFilter(true)
@@ -85,7 +85,7 @@ export default function FilterForm({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={yogaFilter ? true : false}
             onPress={() =>
               yogaFilter ? setYogaFilter(false) : setYogaFilter(true)
@@ -95,7 +95,7 @@ export default function FilterForm({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={balanceFilter ? true : false}
             onPress={() =>
               balanceFilter ? setBalanceFilter(false) : setBalanceFilter(true)
@@ -105,7 +105,7 @@ export default function FilterForm({ navigation, route }) {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={speedFilter ? true : false}
             onPress={() =>
               speedFilter ? setSpeedFilter(false) : setSpeedFilter(true)
@@ -118,7 +118,7 @@ export default function FilterForm({ navigation, route }) {
         <Text style={{ fontWeight: "bold" }}>Filter by equipment</Text>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
-            color="orange"
+            color="blue"
             checked={equipmentless ? true : false}
             onPress={() =>
               equipmentless ? setEquipmentless(false) : setEquipmentless(true)
@@ -130,7 +130,7 @@ export default function FilterForm({ navigation, route }) {
           <Text style={{ fontWeight: "bold" }}>Time to Complete</Text>
           <View style={{ marginTop: 10, flexDirection: "row" }}>
             <CheckBox
-              color="orange"
+              color="blue"
               checked={timeLimit ? true : false}
               onPress={() =>
                 timeLimit ? setTimeLimit(false) : setTimeLimit(true)
@@ -146,7 +146,7 @@ export default function FilterForm({ navigation, route }) {
               <Slider
                 value={maxTime}
                 step={0.01}
-                thumbTintColor="orange"
+                thumbTintColor="blue"
                 onValueChange={(value) => {
                   setMaxTime(value);
                 }}
@@ -159,7 +159,7 @@ export default function FilterForm({ navigation, route }) {
         <View style={{ margin: 10, marginTop: 40 }}>
           <TouchableHighlight
             style={{
-              backgroundColor: "orange",
+              backgroundColor: "blue",
               borderRadius: "100%",
               width: "100%",
               justifyContent: "center",

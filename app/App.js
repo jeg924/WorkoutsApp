@@ -173,7 +173,7 @@ function App() {
               },
             })}
             tabBarOptions={{
-              activeTintColor: "orange",
+              activeTintColor: "blue",
               inactiveTintColor: "#708090",
             }}
           >

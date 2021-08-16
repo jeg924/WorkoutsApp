@@ -150,7 +150,7 @@ export default function StartWorkout({ navigation, route }) {
             workoutID: workoutID,
             workoutName: workout.workoutName,
             workoutImage: workout.workoutImage,
-            timeStamp: Date(),
+            timeStamp: Date.now(),
           });
           myRef.set(
             {
@@ -166,7 +166,7 @@ export default function StartWorkout({ navigation, route }) {
                   workoutID: workoutID,
                   workoutName: workout.workoutName,
                   workoutImage: workout.workoutImage,
-                  timeStamp: Date(),
+                  timeStamp: Date.now(),
                 },
               ],
             },
@@ -183,7 +183,7 @@ export default function StartWorkout({ navigation, route }) {
         await recordRef.set({
           recordID: recordRef.id,
           workoutID: workout.workoutID,
-          timeStarted: Date(),
+          timeStarted: Date.now(),
         });
 
         navigation.navigate("Workout Video Screen", {
@@ -204,6 +204,33 @@ export default function StartWorkout({ navigation, route }) {
       console.log("error is", error);
     } finally {
       setStarting(false);
+    }
+  }
+
+  async function ReviewWorkout() {
+    setLoading(true);
+    try {
+      const recordRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("recorded workouts")
+        .doc(recordID);
+
+      await recordRef.set(
+        {
+          timeCompleted: Date.now(),
+        },
+        { merge: true }
+      );
+      navigation.navigate("Workout Review", {
+        workout: workout,
+        exercises: exercises,
+      });
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -262,18 +289,10 @@ export default function StartWorkout({ navigation, route }) {
       </View>
       <View style={{ margin: "4.8%", width: "100%" }}>
         {currentExercise == exercises?.length ? (
-          <MyButton
-            title="Review Workout"
-            onPress={() => {
-              navigation.navigate("Workout Review", {
-                workout: workout,
-                exercises: exercises,
-              });
-            }}
-          />
+          <MyButton title="Review Workout" onPress={ReviewWorkout} />
         ) : (
           <MyButton
-            title={currentExercise ? "Next Exercise" : "Start Workout"}
+            title={currentExercise !== 0 ? "Next Exercise" : "Start Workout"}
             onPress={startExercise}
           />
         )}

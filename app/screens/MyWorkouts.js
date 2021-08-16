@@ -12,6 +12,7 @@ import {
   ActionSheetIOS,
 } from "react-native";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import MyButton from "../components/Button";
 
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
@@ -95,32 +96,38 @@ export default function MyWorkouts({ navigation, route }) {
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "red",
       }}
     >
       <View
         style={{
+          flex: 1,
+          flexDirection: "column",
           justifyContent: "center",
-          alignItems: "center",
-          margin: 20,
           position: "fixed",
           height: "auto",
+          backgroundColor: "pink",
+          marginTop: 20,
         }}
       >
-        <Text
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-          }}
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          My Workouts
-        </Text>
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+            }}
+          >
+            My Workouts
+          </Text>
+        </View>
         <View
           style={{
+            flex: 1,
             flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 5,
+            justifyContent: "space-around",
+            alignItems: "center",
           }}
         >
           <TouchableHighlight
@@ -133,7 +140,7 @@ export default function MyWorkouts({ navigation, route }) {
             <Text
               style={{
                 fontWeight: "bold",
-                color: myHistoryCategory ? "orange" : "black",
+                color: myHistoryCategory ? "blue" : "black",
               }}
             >
               History
@@ -148,10 +155,8 @@ export default function MyWorkouts({ navigation, route }) {
           >
             <Text
               style={{
-                paddingRight: 15,
-                paddingLeft: 15,
                 fontWeight: "bold",
-                color: myLibraryCategory ? "orange" : "black",
+                color: myLibraryCategory ? "blue" : "black",
               }}
             >
               Library
@@ -167,7 +172,7 @@ export default function MyWorkouts({ navigation, route }) {
             <Text
               style={{
                 fontWeight: "bold",
-                color: myUploadsCategory ? "orange" : "black",
+                color: myUploadsCategory ? "blue" : "black",
               }}
             >
               Uploads
@@ -175,14 +180,23 @@ export default function MyWorkouts({ navigation, route }) {
           </TouchableHighlight>
         </View>
       </View>
-      <View style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{ flex: 4, backgroundColor: "cyan", alignItems: "center" }}
+      >
         <FlatList
+          style={{
+            flex: 1,
+            flexDirection: "column",
+            backgroundColor: "green",
+          }}
           data={
             myUploadsCategory ? uploads : myHistoryCategory ? history : library
           }
+          keyExtractor={(item, index) => index}
           renderItem={({ item }) => {
             return (
               <TouchableHighlight
+                style={{ margin: 20 }}
                 onPress={() => {
                   navigation.navigate("Start Workout", {
                     workoutID: item.workoutID,
@@ -243,27 +257,25 @@ export default function MyWorkouts({ navigation, route }) {
               </TouchableHighlight>
             );
           }}
-          numColumns={2}
-          style={{ padding: 10 }}
+          numColumns={3}
         />
-      </View>
+      </SafeAreaView>
 
-      <TouchableHighlight
-        onPress={() =>
-          navigation.navigate("Workout Info Form", { workoutID: null })
-        }
+      <View
         style={{
-          backgroundColor: "orange",
-          borderRadius: "100%",
-          width: "80%",
-          padding: 10,
-          margin: 10,
+          width: "100%",
           justifyContent: "center",
           alignItems: "center",
+          marginBottom: "5%",
         }}
       >
-        <Text>Create a workout</Text>
-      </TouchableHighlight>
+        <MyButton
+          title="Create Workout"
+          onPress={() =>
+            navigation.navigate("Workout Info Form", { workoutID: null })
+          }
+        />
+      </View>
     </View>
   );
 }

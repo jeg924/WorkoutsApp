@@ -65,7 +65,7 @@ export default function Login() {
           style={{
             marginRight: 10,
             borderBottomWidth: returningUser ? 2 : 0,
-            borderBottomColor: "orange",
+            borderBottomColor: "blue",
           }}
         >
           <TouchableHighlight
@@ -80,7 +80,7 @@ export default function Login() {
           style={{
             marginLeft: 10,
             borderBottomWidth: !returningUser ? 2 : 0,
-            borderBottomColor: "orange",
+            borderBottomColor: "blue",
           }}
         >
           <TouchableHighlight
@@ -131,7 +131,7 @@ export default function Login() {
             <TouchableHighlight
               onPress={signin}
               style={{
-                backgroundColor: "orange",
+                backgroundColor: "blue",
                 borderRadius: "100%",
                 width: "100%",
                 justifyContent: "center",
@@ -205,7 +205,7 @@ export default function Login() {
             <TouchableHighlight
               onPress={signup}
               style={{
-                backgroundColor: "orange",
+                backgroundColor: "blue",
                 borderRadius: "100%",
                 width: "100%",
                 justifyContent: "center",

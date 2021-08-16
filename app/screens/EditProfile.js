@@ -133,7 +133,7 @@ export default function EditProfile({ navigation, route }) {
         <TouchableHighlight
           style={{
             marginTop: 50,
-            backgroundColor: "orange",
+            backgroundColor: "blue",
             width: "80%",
             height: 40,
             justifyContent: "center",
