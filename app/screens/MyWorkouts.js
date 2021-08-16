@@ -96,7 +96,6 @@ export default function MyWorkouts({ navigation, route }) {
     <View
       style={{
         flex: 1,
-        backgroundColor: "red",
       }}
     >
       <View
@@ -106,7 +105,6 @@ export default function MyWorkouts({ navigation, route }) {
           justifyContent: "center",
           position: "fixed",
           height: "auto",
-          backgroundColor: "pink",
           marginTop: 20,
         }}
       >
@@ -126,156 +124,230 @@ export default function MyWorkouts({ navigation, route }) {
           style={{
             flex: 1,
             flexDirection: "row",
-            justifyContent: "space-around",
             alignItems: "center",
           }}
         >
-          <TouchableHighlight
-            onPress={() => {
-              setMyHistoryCategory(true);
-              setMyLibraryCategory(false);
-              setMyUploadsCategory(false);
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
             }}
           >
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: myHistoryCategory ? "blue" : "black",
+            <TouchableHighlight
+              onPress={() => {
+                setMyHistoryCategory(true);
+                setMyLibraryCategory(false);
+                setMyUploadsCategory(false);
               }}
             >
-              History
-            </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              setMyLibraryCategory(true);
-              setMyHistoryCategory(false);
-              setMyUploadsCategory(false);
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: myLibraryCategory ? "blue" : "black",
-              }}
-            >
-              Library
-            </Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              setMyUploadsCategory(true);
-              setMyHistoryCategory(false);
-              setMyLibraryCategory(false);
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: myUploadsCategory ? "blue" : "black",
-              }}
-            >
-              Uploads
-            </Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-      <SafeAreaView
-        style={{ flex: 4, backgroundColor: "cyan", alignItems: "center" }}
-      >
-        <FlatList
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            backgroundColor: "green",
-          }}
-          data={
-            myUploadsCategory ? uploads : myHistoryCategory ? history : library
-          }
-          keyExtractor={(item, index) => index}
-          renderItem={({ item }) => {
-            return (
-              <TouchableHighlight
-                style={{ margin: 20 }}
-                onPress={() => {
-                  navigation.navigate("Start Workout", {
-                    workoutID: item.workoutID,
-                    current: 0,
-                  });
-                }}
-                onLongPress={() => {
-                  const options = ["start", "edit", "delete", "cancel"];
-                  const destructiveButtonIndex = 2;
-                  const cancelButtonIndex = 3;
-
-                  ActionSheetIOS.showActionSheetWithOptions(
-                    {
-                      options,
-                      cancelButtonIndex,
-                      destructiveButtonIndex,
-                    },
-                    async (buttenIndex) => {
-                      if (buttenIndex == 0) {
-                        navigation.navigate("Start Workout", {
-                          workoutID: item.workoutID,
-                          current: 0,
-                        });
-                      } else if (buttenIndex == 1) {
-                        navigation.navigate("Workout Info Form", {
-                          workoutID: item.workoutID,
-                        });
-                      } else if (buttenIndex == 2) {
-                        setDeletingUpload(true);
-                        const workoutRef = firebase
-                          .firestore()
-                          .collection("workouts")
-                          .doc(item.workoutID);
-                        workoutRef.update({
-                          deleted: true,
-                        });
-                        const workoutExercisesRef = firebase
-                          .firestore()
-                          .collection("exercises")
-                          .where("workoutID", "==", item.workoutID);
-                        const batch = firebase.firestore().batch();
-                        batch.update(workoutExercisesRef, { deleted: true });
-                        await batch.commit();
-
-                        setDeletingUpload(false);
-                      }
-                    }
-                  );
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: myHistoryCategory ? "blue" : "black",
+                  textDecorationLine: myHistoryCategory ? "underline" : "none",
                 }}
               >
-                <View>
-                  <Image
-                    style={{ width: 100, height: 100 }}
-                    source={{ uri: item.workoutImage, cache: "force-cache" }}
-                  />
-                  <Text>{item.workoutName}</Text>
-                </View>
-              </TouchableHighlight>
-            );
-          }}
-          numColumns={3}
-        />
+                History
+              </Text>
+            </TouchableHighlight>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+            }}
+          >
+            <TouchableHighlight
+              onPress={() => {
+                setMyLibraryCategory(true);
+                setMyHistoryCategory(false);
+                setMyUploadsCategory(false);
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: myLibraryCategory ? "blue" : "black",
+                  textDecorationLine: myLibraryCategory ? "underline" : "none",
+                }}
+              >
+                Library
+              </Text>
+            </TouchableHighlight>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              alignItems: "center",
+            }}
+          >
+            <TouchableHighlight
+              onPress={() => {
+                setMyUploadsCategory(true);
+                setMyHistoryCategory(false);
+                setMyLibraryCategory(false);
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  color: myUploadsCategory ? "blue" : "black",
+                  textDecorationLine: myUploadsCategory ? "underline" : "none",
+                }}
+              >
+                Uploads
+              </Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+      <SafeAreaView style={{ flex: 4, alignItems: "center" }}>
+        {myUploadsCategory && !uploads.length ? (
+          <View
+            style={{
+              flex: 4,
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <View
+              style={{
+                flex: 1,
+                width: "50%",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                marginBottom: 20,
+              }}
+            >
+              <Text style={{ fontSize: 18 }}>
+                You haven't created any workouts yet.
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 1,
+                width: "100%",
+                alignItems: "center",
+              }}
+            >
+              <MyButton
+                title="Create Workout"
+                onPress={() =>
+                  navigation.navigate("Workout Info Form", { workoutID: null })
+                }
+              />
+            </View>
+          </View>
+        ) : (
+          <FlatList
+            style={{
+              flex: 1,
+              width: "100%",
+              flexDirection: "column",
+            }}
+            data={
+              myUploadsCategory
+                ? uploads
+                : myHistoryCategory
+                ? history
+                : library
+            }
+            keyExtractor={(item, index) => index}
+            renderItem={({ item }) => {
+              return (
+                <TouchableHighlight
+                  style={{
+                    marginTop: 20,
+                    marginBottom: 20,
+                    marginLeft: "11.3%",
+                    marginRight: "11.3%",
+                  }}
+                  onPress={() => {
+                    navigation.navigate("Start Workout", {
+                      workoutID: item.workoutID,
+                      current: 0,
+                    });
+                  }}
+                  onLongPress={() => {
+                    const options = ["start", "edit", "delete", "cancel"];
+                    const destructiveButtonIndex = 2;
+                    const cancelButtonIndex = 3;
+
+                    ActionSheetIOS.showActionSheetWithOptions(
+                      {
+                        options,
+                        cancelButtonIndex,
+                        destructiveButtonIndex,
+                      },
+                      async (buttenIndex) => {
+                        if (buttenIndex == 0) {
+                          navigation.navigate("Start Workout", {
+                            workoutID: item.workoutID,
+                            current: 0,
+                          });
+                        } else if (buttenIndex == 1) {
+                          navigation.navigate("Workout Info Form", {
+                            workoutID: item.workoutID,
+                          });
+                        } else if (buttenIndex == 2) {
+                          setDeletingUpload(true);
+                          const workoutRef = firebase
+                            .firestore()
+                            .collection("workouts")
+                            .doc(item.workoutID);
+                          workoutRef.update({
+                            deleted: true,
+                          });
+                          const workoutExercisesRef = firebase
+                            .firestore()
+                            .collection("exercises")
+                            .where("workoutID", "==", item.workoutID);
+                          const batch = firebase.firestore().batch();
+                          batch.update(workoutExercisesRef, { deleted: true });
+                          await batch.commit();
+
+                          setDeletingUpload(false);
+                        }
+                      }
+                    );
+                  }}
+                >
+                  <View>
+                    <Image
+                      style={{ width: 100, height: 100 }}
+                      source={{ uri: item.workoutImage, cache: "force-cache" }}
+                    />
+                    <Text>{item.workoutName}</Text>
+                  </View>
+                </TouchableHighlight>
+              );
+            }}
+            numColumns={3}
+          />
+        )}
       </SafeAreaView>
 
-      <View
-        style={{
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: "5%",
-        }}
-      >
-        <MyButton
-          title="Create Workout"
-          onPress={() =>
-            navigation.navigate("Workout Info Form", { workoutID: null })
-          }
-        />
-      </View>
+      {myUploadsCategory && !uploads.length ? null : (
+        <View
+          style={{
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "5%",
+          }}
+        >
+          <MyButton
+            title="Create Workout"
+            onPress={() =>
+              navigation.navigate("Workout Info Form", { workoutID: null })
+            }
+          />
+        </View>
+      )}
     </View>
   );
 }
