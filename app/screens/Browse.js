@@ -27,24 +27,37 @@ import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 // Search all programs
 
 const SearchBox = connectSearchBox(({ currentRefinement, refine }) => (
-  <View style={{ width: "90%", margin: 10 }}>
-    <SearchBar
-      inputStyle={{ backgroundColor: "white" }}
-      containerStyle={{ backgroundColor: "white" }}
-      leftIconContainerStyle={{ backgroundColor: "white" }}
-      rightIconContainerStyle={{ backgroundColor: "white" }}
-      inputContainerStyle={{ backgroundColor: "white" }}
-      value={currentRefinement}
-      onChangeText={(text) => refine(text)}
-      placeholder="type here"
-    />
+  <View style={{ flex: 1, flexDirection: "row" }}>
+    <View style={{ flex: 1 }}></View>
+    <View style={{ flex: 11 }}>
+      <SearchBar
+        containerStyle={{
+          backgroundColor: "white",
+          borderBottomColor: "white",
+          borderTopColor: "white",
+        }}
+        searchIcon={{ size: 20 }}
+        inputContainerStyle={{
+          backgroundColor: "white",
+          borderColor: "black",
+          borderWidth: 1,
+          borderBottomWidth: 1,
+        }}
+        value={currentRefinement}
+        onChangeText={(text) => refine(text)}
+        placeholder="Search for users or workouts"
+        round
+      />
+    </View>
+    <View style={{ flex: 1 }}></View>
   </View>
 ));
 
 const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 7 }}>
       <FlatList
+        style={{ flex: 1 }}
         data={hits}
         renderItem={({ item }) => {
           return item.type === "user" ? (
@@ -57,23 +70,42 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
             >
               <View
                 style={{
+                  flex: 1,
                   flexDirection: "row",
-                  margin: 10,
-                  borderWidth: 1,
-                  padding: 10,
+                  borderBottomWidth: 1,
                 }}
               >
-                <Image
-                  source={{ uri: item.photoURL, cache: "force-cache" }}
-                  style={{ width: 40, height: 40 }}
-                />
-                <View style={{ marginLeft: 10, width: 250 }}>
-                  <Text style={{ fontWeight: "bold" }}>{item.displayName}</Text>
-                  <Text>User</Text>
+                <View style={{ flex: 1 }}></View>
+                <View
+                  style={{
+                    flex: 8,
+                    flexDirection: "row",
+                  }}
+                >
+                  <View style={{ flex: 3 }}>
+                    <Image
+                      source={{ uri: item.photoURL, cache: "force-cache" }}
+                      style={{ width: 50, height: 50, borderRadius: "100%" }}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}></View>
+                  <View style={{ flex: 14, justifyContent: "center" }}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {item.displayName}
+                    </Text>
+                    <Text>User</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 2,
+                      justifyContent: "center",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Feather name="chevron-right" size={30} />
+                  </View>
                 </View>
-                <View style={{}}>
-                  <Feather name="chevron-right" size={30} />
-                </View>
+                <View style={{ flex: 0.8 }}></View>
               </View>
             </TouchableHighlight>
           ) : (
@@ -88,22 +120,50 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
             >
               <View
                 style={{
+                  flex: 1,
                   flexDirection: "row",
-                  margin: 10,
-                  borderWidth: 1,
-                  padding: 10,
+                  borderBottomWidth: 1,
                 }}
               >
-                <Image
-                  source={{ uri: item.workoutImage, cache: "force-cache" }}
-                  style={{ width: 40, height: 40 }}
-                />
-                <View style={{ marginLeft: 10, width: 250 }}>
-                  <Text style={{ fontWeight: "bold" }}>{item.workoutName}</Text>
+                <View style={{ flex: 1 }}></View>
+                <View
+                  style={{
+                    flex: 8,
+                    flexDirection: "row",
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 3,
+                      width: 50,
+                      height: 50,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{ uri: item.workoutImage, cache: "force-cache" }}
+                      style={{ width: 45, height: 45 }}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}></View>
+                  <View style={{ flex: 14, justifyContent: "center" }}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      {item.workoutName}
+                    </Text>
+                    <Text>Workout</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 2,
+                      justifyContent: "center",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Feather name="chevron-right" size={30} />
+                  </View>
                 </View>
-                <View style={{}}>
-                  <Feather name="chevron-right" size={30} />
-                </View>
+                <View style={{ flex: 0.8 }}></View>
               </View>
             </TouchableHighlight>
           );
@@ -140,45 +200,59 @@ export default function Browse({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ fontWeight: "bold", fontSize: 40, margin: 10 }}>
-          Search
-        </Text>
-        <TouchableHighlight
-          onPress={() => {
-            navigation.navigate("Filter Form");
-          }}
-        >
-          <View
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          marginTop: 20,
+        }}
+      >
+        <View style={{ flex: 1 }}></View>
+        <View style={{ flex: 6, justifyContent: "center" }}>
+          <Text
             style={{
-              flexDirection: "row",
-              marginTop: 20,
-              marginRight: 20,
+              fontWeight: "bold",
+              fontSize: 30,
             }}
           >
-            <Text style={{ fontSize: 20 }}>Filter </Text>
-            <Feather name="filter" color="black" size={20} />
-          </View>
-        </TouchableHighlight>
+            Browse
+          </Text>
+        </View>
+        <View style={{ flex: 2 }}>
+          <TouchableHighlight
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              navigation.navigate("Filter Form");
+            }}
+          >
+            <Feather name="filter" color="black" size={30} />
+          </TouchableHighlight>
+        </View>
+        <View style={{ flex: 1 }}></View>
       </View>
-
-      <InstantSearch
-        searchClient={algoliasearch(
-          "1F3XZA4W9N",
-          "84e9912d9e5dd10b8075a7e003b2f421"
-        )}
-        indexName="searchIndex"
-      >
-        <SearchBox />
-        <InfiniteHits navigation={navigation} />
-        {facetFilters || numericFilters ? (
-          <Configure
-            facetFilters={facetFilters}
-            numericFilters={numericFilters}
-          />
-        ) : null}
-      </InstantSearch>
+      <View style={{ flex: 8 }}>
+        <InstantSearch
+          searchClient={algoliasearch(
+            "1F3XZA4W9N",
+            "84e9912d9e5dd10b8075a7e003b2f421"
+          )}
+          indexName="searchIndex"
+        >
+          <SearchBox />
+          <InfiniteHits navigation={navigation} />
+          {facetFilters || numericFilters ? (
+            <Configure
+              facetFilters={facetFilters}
+              numericFilters={numericFilters}
+            />
+          ) : null}
+        </InstantSearch>
+      </View>
     </View>
   );
 }
