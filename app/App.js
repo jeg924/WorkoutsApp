@@ -74,7 +74,7 @@ function MyWorkoutsStackScreen() {
         name="Workout Video Screen"
         component={WorkoutVideoScreen}
       />
-      <MyWorkoutsStack.Screen name="Workout Review" component={WorkoutReview} />
+      <MyWorkoutsStack.Screen name="Review" component={ReviewStackScreen} />
     </MyWorkoutsStack.Navigator>
   );
 }
@@ -91,16 +91,27 @@ function BrowseStackScreen() {
         name="Workout Video Screen"
         component={WorkoutVideoScreen}
       />
-      <BrowseStack.Screen name="Workout Review" component={WorkoutReview} />
-      <BrowseStack.Screen
-        name="Modal Friend Picker"
-        component={ModalFriendPicker}
-      />
+      <BrowseStack.Screen name="Review" component={ReviewStackScreen} />
       <BrowseStack.Screen name="Profile" component={Profile} />
       <BrowseStack.Screen name="Edit profile" component={EditProfile} />
     </BrowseStack.Navigator>
   );
 }
+
+const ReviewStack = createStackNavigator();
+
+function ReviewStackScreen() {
+  return (
+    <ReviewStack.Navigator screenOptions={{ headerShown: false }} mode="modal">
+      <ReviewStack.Screen name="Workout Review" component={WorkoutReview} />
+      <ReviewStack.Screen
+        name="Modal Friend Picker"
+        component={ModalFriendPicker}
+      />
+    </ReviewStack.Navigator>
+  );
+}
+
 const Tab = createBottomTabNavigator();
 
 export const GlobalContext = React.createContext({

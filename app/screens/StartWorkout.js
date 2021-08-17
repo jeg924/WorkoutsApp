@@ -223,12 +223,16 @@ export default function StartWorkout({ navigation, route }) {
         },
         { merge: true }
       );
-      navigation.navigate("Workout Review", {
-        workout: workout,
-        exercises: exercises,
+
+      navigation.navigate("Review", {
+        screen: "Workout Review",
+        params: {
+          workout: workout,
+          exercises: exercises,
+        },
       });
     } catch (error) {
-      console.log("####error is " + error);
+      console.log("error is " + error);
     } finally {
       setLoading(false);
     }
