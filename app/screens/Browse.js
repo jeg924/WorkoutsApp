@@ -82,10 +82,18 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                     flexDirection: "row",
                   }}
                 >
-                  <View style={{ flex: 3 }}>
+                  <View
+                    style={{
+                      flex: 3,
+                      width: 50,
+                      height: 50,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
                     <Image
                       source={{ uri: item.photoURL, cache: "force-cache" }}
-                      style={{ width: 50, height: 50, borderRadius: "100%" }}
+                      style={{ width: 45, height: 45, borderRadius: "100%" }}
                     />
                   </View>
                   <View style={{ flex: 1 }}></View>
