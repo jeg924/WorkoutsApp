@@ -104,7 +104,6 @@ export default function MyWorkouts({ navigation, route }) {
           justifyContent: "center",
           position: "fixed",
           marginTop: 20,
-          backgroundColor: "red",
           height: 120,
         }}
       >
@@ -204,9 +203,7 @@ export default function MyWorkouts({ navigation, route }) {
           </View>
         </View>
       </View>
-      <SafeAreaView
-        style={{ flex: 4, alignItems: "center", backgroundColor: "cyan" }}
-      >
+      <SafeAreaView style={{ flex: 4, alignItems: "center" }}>
         {myUploadsCategory && !uploads.length ? (
           <View
             style={{
@@ -258,7 +255,7 @@ export default function MyWorkouts({ navigation, route }) {
                 ? history
                 : library
             }
-            keyExtractor={(item, index) => index}
+            keyExtractor={(index) => index}
             renderItem={({ item }) => {
               return (
                 <TouchableHighlight
