@@ -25,6 +25,7 @@ import RecordExercise from "./screens/RecordExercise";
 import StartWorkout from "./screens/StartWorkout";
 import WorkoutVideoScreen from "./screens/WorkoutVideoScreen";
 import WorkoutReview from "./screens/WorkoutReview";
+import ModalFriendPicker from "./screens/ModalFriendPicker";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5Y7PIj8JGZqlqM2T4Itf27ZZHDMA3NhA",
@@ -91,6 +92,10 @@ function BrowseStackScreen() {
         component={WorkoutVideoScreen}
       />
       <BrowseStack.Screen name="Workout Review" component={WorkoutReview} />
+      <BrowseStack.Screen
+        name="Modal Friend Picker"
+        component={ModalFriendPicker}
+      />
       <BrowseStack.Screen name="Profile" component={Profile} />
       <BrowseStack.Screen name="Edit profile" component={EditProfile} />
     </BrowseStack.Navigator>

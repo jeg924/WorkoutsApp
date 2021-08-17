@@ -228,7 +228,7 @@ export default function StartWorkout({ navigation, route }) {
         exercises: exercises,
       });
     } catch (error) {
-      console.log("error is " + error);
+      console.log("####error is " + error);
     } finally {
       setLoading(false);
     }

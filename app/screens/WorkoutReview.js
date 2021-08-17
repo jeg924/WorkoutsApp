@@ -707,7 +707,7 @@ export default function WorkoutReview({ navigation, route }) {
         <MyButton
           title="Compare with friend"
           onPress={() => {
-            setModalVisible(!modalVisible);
+            navigation.navigate("Modal Friend Picker");
           }}
         />
       </View>
