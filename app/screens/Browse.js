@@ -85,19 +85,19 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                   <View
                     style={{
                       flex: 3,
-                      width: 50,
-                      height: 50,
+                      width: 70,
+                      height: 70,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
                     <Image
                       source={{ uri: item.photoURL, cache: "force-cache" }}
-                      style={{ width: 45, height: 45, borderRadius: "100%" }}
+                      style={{ width: 60, height: 60, borderRadius: 100 }}
                     />
                   </View>
                   <View style={{ flex: 1 }}></View>
-                  <View style={{ flex: 14, justifyContent: "center" }}>
+                  <View style={{ flex: 10, justifyContent: "center" }}>
                     <Text style={{ fontWeight: "bold" }}>
                       {item.displayName}
                     </Text>
@@ -143,19 +143,19 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                   <View
                     style={{
                       flex: 3,
-                      width: 50,
-                      height: 50,
+                      width: 70,
+                      height: 70,
                       justifyContent: "center",
                       alignItems: "center",
                     }}
                   >
                     <Image
                       source={{ uri: item.workoutImage, cache: "force-cache" }}
-                      style={{ width: 45, height: 45 }}
+                      style={{ width: 60, height: 60 }}
                     />
                   </View>
                   <View style={{ flex: 1 }}></View>
-                  <View style={{ flex: 14, justifyContent: "center" }}>
+                  <View style={{ flex: 10, justifyContent: "center" }}>
                     <Text style={{ fontWeight: "bold" }}>
                       {item.workoutName}
                     </Text>

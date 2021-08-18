@@ -26,8 +26,11 @@ export default function WorkoutReview({ navigation, route }) {
   const [friendsLatestStats, setFriendsLatestStats] = React.useState(null);
   const [friendsBestStats, setFriendsBestStats] = React.useState(null);
   const [friendsAverageStats, setFriendsAverageStats] = React.useState(null);
-  const [modalVisible, setModalVisible] = React.useState(false);
   const [friend, setFriend] = React.useState(null);
+
+  const updateFriend = (friend) => {
+    setFriend(friend);
+  };
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -57,9 +60,9 @@ export default function WorkoutReview({ navigation, route }) {
       });
       allMyStats = allMyStats.filter((record) => record.timeCompleted);
 
-      console.log("all my stats");
-      console.log(allMyStats);
-      console.log(allMyStats.length);
+      // console.log("all my stats");
+      // console.log(allMyStats);
+      // console.log(allMyStats.length);
       setTimesCompleted(allMyStats.length);
 
       const latestDoc = await recordedWorkoutRef
@@ -68,13 +71,13 @@ export default function WorkoutReview({ navigation, route }) {
         .get();
 
       var latest = {};
-      console.log("all the records in latest doc");
+      // console.log("all the records in latest doc");
       latestDoc.forEach((doc) => {
-        console.log(doc.data());
+        // console.log(doc.data());
         latest = doc.data();
       });
-      console.log("latest");
-      console.log(latest);
+      // console.log("latest");
+      // console.log(latest);
       setLatestStats(latest.exerciseInputData);
 
       // Could be partially empty.
@@ -144,8 +147,8 @@ export default function WorkoutReview({ navigation, route }) {
         }
       }
 
-      console.log("best");
-      console.log(best);
+      // console.log("best");
+      // console.log(best);
 
       setBestStats(best);
 
@@ -185,8 +188,8 @@ export default function WorkoutReview({ navigation, route }) {
         average[k] = exerciseAverageStats;
       }
 
-      console.log("average");
-      console.log(average);
+      // console.log("average");
+      // console.log(average);
       setAverageStats(average);
 
       var averageStatsForThisWorkoutObject = {};
@@ -220,6 +223,9 @@ export default function WorkoutReview({ navigation, route }) {
 
       const friendsLatestWorkouts = [];
       const friendLatestStatsQueries = [];
+      const friendsAverageStats = [];
+      const friendsBestStats = [];
+      const friendAverageAndBestStatsQueries = [];
 
       for (let i = 0; i < friends.length; ++i) {
         let friend = friends[i].userID;
@@ -245,54 +251,58 @@ export default function WorkoutReview({ navigation, route }) {
 
         friendLatestStatsQueries.push(friendLatestStatPromise);
 
-        var friendDoc = await friendRef.get();
-        var friendData = friendDoc.data();
-        if (friendData) {
-          if (friendData.averageStats) {
-            let averageStats = [];
-            for (let i = 0; i < friendData.averageStats.length; ++i) {
-              if (friendData.averageStats[i].workoutID === workoutID) {
-                let averageStatsOfAParticularUserForThisParticularWorkout = {};
+        var friendBestAndAverageStatsPromise = friendRef
+          .get()
+          .then((friendDoc) => {
+            var friendData = friendDoc.data();
+            if (friendData) {
+              if (friendData.averageStats) {
+                let averageStats = [];
+                for (let i = 0; i < friendData.averageStats.length; ++i) {
+                  if (friendData.averageStats[i].workoutID === workoutID) {
+                    let averageStatsOfAParticularUserForThisParticularWorkout =
+                      {};
+                    averageStatsOfAParticularUserForThisParticularWorkout.userID =
+                      friend;
+                    averageStatsOfAParticularUserForThisParticularWorkout.workoutID =
+                      workoutID;
+                    averageStatsOfAParticularUserForThisParticularWorkout.exerciseInputData =
+                      friendData.averageStats[i].exerciseInputData;
 
-                averageStatsOfAParticularUserForThisParticularWorkout.userID =
-                  friend;
-                averageStatsOfAParticularUserForThisParticularWorkout.workoutID =
-                  workoutID;
-                averageStatsOfAParticularUserForThisParticularWorkout.exerciseInputData =
-                  friendData.averageStats[i].exerciseInputData;
+                    friendsAverageStats.push(
+                      averageStatsOfAParticularUserForThisParticularWorkout
+                    );
+                  }
+                }
+              }
+              if (friendData.bestStats) {
+                for (let i = 0; i < friendData.averageStats.length; ++i) {
+                  if (friendData.bestStats[i].workoutID === workoutID) {
+                    let bestStatsOfAParticularUserForThisParticularWorkout = {};
 
-                averageStats.push(
-                  averageStatsOfAParticularUserForThisParticularWorkout
-                );
+                    bestStatsOfAParticularUserForThisParticularWorkout.userID =
+                      friend;
+                    bestStatsOfAParticularUserForThisParticularWorkout.workoutID =
+                      workoutID;
+                    bestStatsOfAParticularUserForThisParticularWorkout.exerciseInputData =
+                      friendData.bestStats[i].exerciseInputData;
+
+                    friendsBestStats.push(
+                      bestStatsOfAParticularUserForThisParticularWorkout
+                    );
+                  }
+                }
               }
             }
-            setFriendsAverageStats(averageStats);
-          }
-
-          if (friendData.bestStats) {
-            let bestStats = [];
-            for (let i = 0; i < friendData.averageStats.length; ++i) {
-              if (friendData.bestStats[i].workoutID === workoutID) {
-                let bestStatsOfAParticularUserForThisParticularWorkout = {};
-
-                bestStatsOfAParticularUserForThisParticularWorkout.userID =
-                  friend;
-                bestStatsOfAParticularUserForThisParticularWorkout.workoutID =
-                  workoutID;
-                bestStatsOfAParticularUserForThisParticularWorkout.exerciseInputData =
-                  friendData.bestStats[i].exerciseInputData;
-
-                bestStats.push(
-                  bestStatsOfAParticularUserForThisParticularWorkout
-                );
-              }
-            }
-            setFriendsBestStats(bestStats);
-          }
-        }
+          });
+        friendAverageAndBestStatsQueries.push(friendBestAndAverageStatsPromise);
       }
       Promise.all(friendLatestStatsQueries).then(() => {
         setFriendsLatestStats(friendsLatestWorkouts);
+      });
+      Promise.all(friendAverageAndBestStatsQueries).then(() => {
+        setFriendsAverageStats(friendsAverageStats);
+        setFriendsBestStats(friendsBestStats);
       });
     } catch (error) {
       console.log("error is " + error);
@@ -300,6 +310,9 @@ export default function WorkoutReview({ navigation, route }) {
       setLoading(false);
     }
   }
+
+  // console.log("friendToCompareWith");
+  // console.log(friendToCompareWith);
 
   // console.log("my friends");
   // console.log(friends);
@@ -311,8 +324,8 @@ export default function WorkoutReview({ navigation, route }) {
   // console.log("friend best stats");
   // console.log(friendsBestStats);
 
-  console.log("friend");
-  console.log(friend);
+  // console.log("friend");
+  // console.log(friend);
 
   if (loading) {
     return (
@@ -404,7 +417,7 @@ export default function WorkoutReview({ navigation, route }) {
           </Text>
         </TouchableHighlight>
       </View>
-      <ScrollView>
+      <ScrollView style={{ flex: 1 }}>
         {friend ? (
           <View style={{ flex: 1, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
@@ -441,7 +454,7 @@ export default function WorkoutReview({ navigation, route }) {
                 <Image
                   source={{
                     uri: friend.profilePicture,
-                    cache: "force-cache",
+                    cache: "reload",
                   }}
                   style={{
                     width: 50,
@@ -703,91 +716,28 @@ export default function WorkoutReview({ navigation, route }) {
           ) : null}
         </View>
       </ScrollView>
-      <View>
+      <View
+        style={{
+          flex: 0.2,
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: "5%",
+        }}
+      >
         <MyButton
-          title="Compare with friend"
+          title="Compare with a Friend"
           onPress={() => {
-            navigation.navigate("Modal Friend Picker");
+            navigation.navigate("Modal Friend Picker", {
+              friends: friends,
+              friendsAverageStats: friendsAverageStats,
+              friendsBestStats: friendsBestStats,
+              friendsLatestStats: friendsLatestStats,
+              updateFriend: updateFriend,
+            });
           }}
         />
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          // this.closeButtonFunction()
-        }}
-      >
-        <View
-          style={{
-            height: "50%",
-            marginTop: "auto",
-            backgroundColor: "white",
-          }}
-        >
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Picker
-              style={{ width: "100%" }}
-              selectedValue={friend}
-              onValueChange={(itemValue) => {
-                var friendObject = {};
-                friendObject.userID = itemValue;
-                for (let i = 0; i < friends.length; ++i) {
-                  if (friends[i].userID === itemValue) {
-                    friendObject.displayName = friends[i].displayName;
-                    friendObject.profilePicture = friends[i].profilePicture;
-                  }
-                }
-                for (let i = 0; i < friendsLatestStats.length; ++i) {
-                  if (friendsLatestStats[i].userID === itemValue) {
-                    friendObject.latestStats =
-                      friendsLatestStats[i].exerciseInputData;
-                  }
-                }
-
-                for (let i = 0; i < friendsAverageStats.length; ++i) {
-                  if (friendsAverageStats[i].userID === itemValue) {
-                    friendObject.averageStats =
-                      friendsAverageStats[i].exerciseInputData;
-                  }
-                }
-                for (let i = 0; i < friendsBestStats.length; ++i) {
-                  if (friendsBestStats[i].userID === itemValue) {
-                    friendObject.bestStats =
-                      friendsBestStats[i].exerciseInputData;
-                  }
-                }
-                setFriend(friendObject);
-              }}
-            >
-              {friends?.map((friend) => {
-                return (
-                  <Picker.Item
-                    key={friend.userID}
-                    label={friend.displayName}
-                    value={friend.userID}
-                  />
-                );
-              })}
-            </Picker>
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(!modalVisible);
-              }}
-            >
-              <Text>Done</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setFriend(null);
-              }}
-            >
-              <Text>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }

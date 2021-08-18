@@ -53,24 +53,32 @@ export default function StartWorkout({ navigation, route }) {
         .collection("exercises")
         .where("workoutID", "==", workoutID);
 
-      const exerciseDocs = await exerciseRefs.get();
-      exerciseDocs.forEach((doc) => {
-        exercises.push(doc.data());
+      //todo: start following the promise layout
+
+      const exercisesPromise = exerciseRefs.get().then((exerciseDocs) => {
+        exerciseDocs.forEach((doc) => {
+          exercises.push(doc.data());
+        });
+        orderedExercises = exercises.sort((a, b) => {
+          return a.order - b.order;
+        });
       });
-      orderedExercises = exercises.sort((a, b) => {
-        return a.order - b.order;
-      });
-      setExercises(orderedExercises);
-      // load author datqa
+
+      // load author data
       const authorRef = firebase
         .firestore()
         .collection("users")
         .doc(workout.authorID);
 
-      const authorDoc = await authorRef.get();
-      const author = authorDoc.data();
+      let author = null;
+      const authorPromise = authorRef.get().then((authorDoc) => {
+        author = authorDoc.data();
+      });
 
-      setAuthor(author);
+      Promise.all([exercisesPromise, authorPromise]).then(() => {
+        setExercises(orderedExercises);
+        setAuthor(author);
+      });
     } catch (error) {
       console.log("error is " + error);
     } finally {
