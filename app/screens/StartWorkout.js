@@ -4,7 +4,7 @@ import { View, Text, Image } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { FlatList, TouchableHighlight } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 
 export default function StartWorkout({ navigation, route }) {
   const { workoutID, current } = route.params;
@@ -301,9 +301,9 @@ export default function StartWorkout({ navigation, route }) {
       </View>
       <View style={{ margin: "4.8%", width: "100%" }}>
         {currentExercise == exercises?.length ? (
-          <MyButton title="Review Workout" onPress={ReviewWorkout} />
+          <SolidButton title="Review Workout" onPress={ReviewWorkout} />
         ) : (
-          <MyButton
+          <SolidButton
             title={currentExercise !== 0 ? "Next Exercise" : "Start Workout"}
             onPress={startExercise}
           />

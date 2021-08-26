@@ -11,7 +11,7 @@ import {
 import firebase from "firebase";
 import { Video } from "expo-av";
 import { Picker } from "@react-native-picker/picker";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 import { KeyboardAvoidingView } from "react-native";
 
 export default function WorkoutVideoScreen({ navigation, route }) {
@@ -295,10 +295,10 @@ export default function WorkoutVideoScreen({ navigation, route }) {
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
-                  <MyButton
+                  <SolidButton
                     title="done"
                     onPress={() => setModalVisible(!modalVisible)}
-                  ></MyButton>
+                  ></SolidButton>
                 </View>
               </Modal>
             </View>
@@ -324,7 +324,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
       </ScrollView>
       <KeyboardAvoidingView behavior="padding">
         <View style={{ margin: "4.8%", width: "100%" }}>
-          <MyButton onPress={continueWorkout} title="Resume" />
+          <SolidButton onPress={continueWorkout} title="Resume" />
         </View>
       </KeyboardAvoidingView>
     </View>

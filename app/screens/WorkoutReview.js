@@ -6,7 +6,8 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native-gesture-handler";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
+import SecondaryButton from "../components/SecondaryButton";
 import { Picker } from "@react-native-picker/picker";
 
 export default function WorkoutReview({ navigation, route }) {
@@ -725,7 +726,7 @@ export default function WorkoutReview({ navigation, route }) {
           marginBottom: "5%",
         }}
       >
-        <MyButton
+        <SolidButton
           title="Compare with a Friend"
           onPress={() => {
             navigation.navigate("Modal Friend Picker", {
@@ -738,6 +739,24 @@ export default function WorkoutReview({ navigation, route }) {
           }}
         />
       </View>
+      {friend ? (
+        <View
+          style={{
+            flex: 0.2,
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: "5%",
+          }}
+        >
+          <SecondaryButton
+            title="Stop Comparing"
+            onPress={() => {
+              setFriend(null);
+            }}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

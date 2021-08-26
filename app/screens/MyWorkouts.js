@@ -12,7 +12,7 @@ import {
   ActionSheetIOS,
 } from "react-native";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
@@ -233,7 +233,7 @@ export default function MyWorkouts({ navigation, route }) {
                 alignItems: "center",
               }}
             >
-              <MyButton
+              <SolidButton
                 title="Create Workout"
                 onPress={() =>
                   navigation.navigate("Workout Info Form", { workoutID: null })
@@ -339,7 +339,7 @@ export default function MyWorkouts({ navigation, route }) {
             marginBottom: "5%",
           }}
         >
-          <MyButton
+          <SolidButton
             title="Create Workout"
             onPress={() =>
               navigation.navigate("Workout Info Form", { workoutID: null })

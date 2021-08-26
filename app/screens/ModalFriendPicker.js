@@ -12,7 +12,7 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { SearchBar } from "react-native-elements";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 
 export default function ModalFriendPicker({ navigation, route }) {
   const {
@@ -195,7 +195,7 @@ export default function ModalFriendPicker({ navigation, route }) {
           marginBottom: "5%",
         }}
       >
-        <MyButton
+        <SolidButton
           title="Dismiss"
           onPress={() => {
             navigation.goBack();

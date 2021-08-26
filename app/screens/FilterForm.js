@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Switch } from "react-native";
 import { CheckBox } from "native-base";
 import Slider from "react-native-slider";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 import { DisplayMaxTime } from "../UtilityFunctions";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { set } from "react-native-reanimated";

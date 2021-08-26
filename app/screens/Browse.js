@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { Feather } from "@expo/vector-icons";
-import MyButton from "../components/Button";
+import SolidButton from "../components/SolidButton";
 import { FlatList } from "react-native-gesture-handler";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
 
