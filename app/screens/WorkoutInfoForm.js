@@ -67,9 +67,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
 
   const [isStrength, setStrength] = React.useState(false);
   const [isCardio, setCardio] = React.useState(false);
-  const [isYoga, setYoga] = React.useState(false);
-  const [isSpeed, setSpeed] = React.useState(false);
-  const [isBalance, setBalance] = React.useState(false);
+  const [isFlexibility, setFlexibility] = React.useState(false);
 
   const equipmentNeeded = [
     {
@@ -110,19 +108,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
       description: "Cardio",
     },
     {
-      value: isYoga,
-      onChange: setYoga,
-      description: "Yoga",
-    },
-    {
-      value: isBalance,
-      onChange: setBalance,
-      description: "Balance",
-    },
-    {
-      value: isSpeed,
-      onChange: setSpeed,
-      description: "Speed",
+      value: isFlexibility,
+      onChange: setFlexibility,
+      description: "Flexibility",
     },
   ];
 
@@ -315,9 +303,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
                 isTowelNeeded: isTowelNeeded,
                 isStrength: isStrength,
                 isCardio: isCardio,
-                isYoga: isYoga,
-                isBalance: isBalance,
-                isSpeed: isSpeed,
+                isFlexibility: isFlexibility,
                 lengthInMinutes: 0,
                 deleted: false,
               };

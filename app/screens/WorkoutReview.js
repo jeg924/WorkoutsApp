@@ -10,6 +10,407 @@ import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import { Picker } from "@react-native-picker/picker";
 
+function calculateWinningStatsForThisWorkout() {
+  let averageWinnerObject = {};
+  averageWinnerObject.exerciseWinners = [];
+  averageWinnerObject.winner = "";
+  let winCode = 0;
+  let myAverageWins = 0;
+  let friendAverageWins = 0;
+  for (let i = 0; i < exercises.length; i++) {
+    winCode = calculateWinningStatsForThisExercise(
+      workout.primaryType,
+      averageStats.exerciseInputData[i],
+      friend.averageStats[i]
+    );
+    if (winCode === 0) {
+      averageWinnerObject.exerciseWinners.push("tie");
+    } else if (winCode === 1) {
+      averageWinnerObject.exerciseWinners.push(firebase.auth().currentUser.uid);
+      myAverageWins++;
+    } else {
+      averageWinnerObject.exerciseWinners.push(friend.userID);
+      friendAverageWins++;
+    }
+  }
+  averageWinnerObject.winner =
+    friendAverageWins < myAverageWins
+      ? friend.userID
+      : friendAverageWins > myAverageWins
+      ? firebase.auth().currentUser.uid
+      : "tie";
+}
+
+function calculateWinningStatsForThisExercise(
+  typeOfWorkout,
+  myAverageStatsForThisExercise,
+  friendsAverageStatsForThisExercise
+) {
+  let friendsScoreForThisExercise = 0;
+  let myScoreForThisExercise = 0;
+  if (
+    friendsAverageStatsForThisExercise.reps != NaN &&
+    friendsAverageStatsForThisExercise.weight == NaN &&
+    friendsAverageStatsForThisExercise.time == NaN
+  ) {
+    return friendsAverageStatsForThisExercise.reps >
+      myAverageStatsForThisExercise.reps
+      ? 2
+      : friendsAverageStatsForThisExercise.reps <
+        myAverageStatsForThisExercise.reps
+      ? 1
+      : 0;
+  } else if (
+    friendsAverageStatsForThisExercise.reps == NaN &&
+    friendsAverageStatsForThisExercise.weight != NaN &&
+    friendsAverageStatsForThisExercise.time == NaN
+  ) {
+    return friendsAverageStatsForThisExercise.weight >
+      myAverageStatsForThisExercise.weight
+      ? 2
+      : friendsAverageStatsForThisExercise.weight <
+        myAverageStatsForThisExercise.weight
+      ? 1
+      : 0;
+  } else if (
+    friendsAverageStatsForThisExercise.reps == NaN &&
+    friendsAverageStatsForThisExercise.weight == NaN &&
+    friendsAverageStatsForThisExercise.time != NaN
+  ) {
+    return friendsAverageStatsForThisExercise.time >
+      myAverageStatsForThisExercise.time
+      ? 2
+      : friendsAverageStatsForThisExercise.time <
+        myAverageStatsForThisExercise.time
+      ? 1
+      : 0;
+  } else if (
+    friendsAverageStatsForThisExercise.reps != NaN &&
+    friendsAverageStatsForThisExercise.weight != NaN &&
+    friendsAverageStatsForThisExercise.time == NaN
+  ) {
+    if (typeOfWorkout === "strength") {
+      //todo: if workout is a strength workout, then... weight matters most
+      // only multiply by first 10 reps. additional 10 reps get multiplied by 1/2. additional 10 by 1/4. then
+      // weight && reps:
+      // if (reps >= 30): weight * 17.5, if reps between 20 and 30: weight:  weight * (15 + .25 * reps % 20)...
+      // weight * first 10 secs...
+      // if time & reps. Time is treated like weight. more is better. Time * reps
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps >= 30
+          ? friendsAverageStatsForThisExercise.weight * 17.5
+          : friendsAverageStatsForThisExercise.reps >= 20 &&
+            friendsAverageStatsForThisExercise.reps < 30
+          ? friendsAverageStatsForThisExercise.weight *
+            (15 + 0.25 * (friendsAverageStatsForThisExercise.reps - 20))
+          : friendsAverageStatsForThisExercise.reps >= 10 &&
+            friendsAverageStatsForThisExercise.reps < 20
+          ? friendsAverageStatsForThisExercise.weight *
+            (10 + 0.5 * (friendsAverageStatsForThisExercise.reps - 10))
+          : friendsAverageStatsForThisExercise.weight *
+            friendsAverageStatsForThisExercise.reps;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps >= 30
+          ? myAverageStatsForThisExercise.weight * 17.5
+          : myAverageStatsForThisExercise.reps >= 20 &&
+            myAverageStatsForThisExercise.reps < 30
+          ? myAverageStatsForThisExercise.weight *
+            (15 + 0.25 * (myAverageStatsForThisExercise.reps - 20))
+          : myAverageStatsForThisExercise.reps >= 10 &&
+            myAverageStatsForThisExercise.reps < 20
+          ? myAverageStatsForThisExercise.weight *
+            (10 + 0.5 * (myAverageStatsForThisExercise.reps - 10))
+          : myAverageStatsForThisExercise.weight *
+            myAverageStatsForThisExercise.reps;
+    } else if (typeOfWorkout === "cardio") {
+      //todo: if workout is a cardio. then.. reps matters most
+      // first 10 lbs * reps..
+      // if weight & time. Treat time in seconds like reps. first 10 lbs * time
+      // if time and reps. Treat time as a divider.
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.weight >= 30
+          ? friendsAverageStatsForThisExercise.reps * 17.5
+          : friendsAverageStatsForThisExercise.weight >= 20 &&
+            friendsAverageStatsForThisExercise.weight < 30
+          ? friendsAverageStatsForThisExercise.reps *
+            (15 + 0.25 * (friendsAverageStatsForThisExercise.weight - 20))
+          : friendsAverageStatsForThisExercise.weight >= 10 &&
+            friendsAverageStatsForThisExercise.weight < 20
+          ? friendsAverageStatsForThisExercise.reps *
+            (10 + 0.5 * (friendsAverageStatsForThisExercise.weight - 10))
+          : friendsAverageStatsForThisExercise.reps *
+            friendsAverageStatsForThisExercise.weight;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.weight >= 30
+          ? myAverageStatsForThisExercise.reps * 17.5
+          : myAverageStatsForThisExercise.weight >= 20 &&
+            myAverageStatsForThisExercise.weight < 30
+          ? myAverageStatsForThisExercise.reps *
+            (15 + 0.25 * (myAverageStatsForThisExercise.weight - 20))
+          : myAverageStatsForThisExercise.weight >= 10 &&
+            myAverageStatsForThisExercise.weight < 20
+          ? myAverageStatsForThisExercise.reps *
+            (10 + 0.5 * (myAverageStatsForThisExercise.weight - 10))
+          : myAverageStatsForThisExercise.reps *
+            myAverageStatsForThisExercise.weight;
+    } else if (typeOfWorkout === "flexibility") {
+      // time && reps: time + reps
+      // time && weight: time + weight
+      // weight && reps: reps + weight
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps +
+        friendsAverageStatsForThisExercise.weight;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps +
+        myAverageStatsForThisExercise.weight;
+    }
+    return friendsScoreForThisExercise > myScoreForThisExercise
+      ? 2
+      : friendsScoreForThisExercise < myScoreForThisExercise
+      ? 1
+      : 0;
+  } else if (
+    myAverageStatsForThisExercise.reps != NaN &&
+    friendsAverageStatsForThisExercise.weight == NaN &&
+    friendsAverageStatsForThisExercise.time != NaN
+  ) {
+    if (typeOfWorkout === "strength") {
+      //todo: if workout is a strength workout, then... weight matters most
+      // only multiply by first 10 reps. additional 10 reps get multiplied by 1/2. additional 10 by 1/4. then
+      // weight && reps:
+      // if (reps >= 30): weight * 17.5, if reps between 20 and 30: weight:  weight * (15 + .25 * reps % 20)...
+      // weight * first 10 secs...
+      // if time & reps. Time is treated like weight. more is better. Time * reps
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps *
+        friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps * myAverageStatsForThisExercise.time;
+    } else if (typeOfWorkout === "cardio") {
+      //todo: if workout is a cardio. then.. reps matters most
+      // first 10 lbs * reps..
+      // if weight & time. Treat time in seconds like reps. first 10 lbs * time
+      // if time and reps. Treat time as a divider.
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps -
+        friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps - myAverageStatsForThisExercise.time;
+    } else if (typeOfWorkout === "flexibility") {
+      // time && reps: time + reps
+      // time && weight: time + weight
+      // weight && reps: reps + weight
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps +
+        friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps + myAverageStatsForThisExercise.time;
+    }
+    return friendsScoreForThisExercise > myScoreForThisExercise
+      ? 2
+      : friendsScoreForThisExercise < myScoreForThisExercise
+      ? 1
+      : 0;
+  } else if (
+    friendsAverageStatsForThisExercise.reps == NaN &&
+    friendsAverageStatsForThisExercise.weight != NaN &&
+    friendsAverageStatsForThisExercise.time != NaN
+  ) {
+    if (typeOfWorkout === "strength") {
+      //todo: if workout is a strength workout, then... weight matters most
+      // only multiply by first 10 reps. additional 10 reps get multiplied by 1/2. additional 10 by 1/4. then
+      // weight && reps:
+      // if (reps >= 30): weight * 17.5, if reps between 20 and 30: weight:  weight * (15 + .25 * reps % 20)...
+      // weight * first 10 secs...
+      // if time & reps. Time is treated like weight. more is better. Time * reps
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.time >= 30
+          ? friendsAverageStatsForThisExercise.weight * 17.5
+          : friendsAverageStatsForThisExercise.time >= 20 &&
+            friendsAverageStatsForThisExercise.time < 30
+          ? friendsAverageStatsForThisExercise.weight *
+            (15 + 0.25 * (friendsAverageStatsForThisExercise.time - 20))
+          : friendsAverageStatsForThisExercise.time >= 10 &&
+            friendsAverageStatsForThisExercise.time < 20
+          ? friendsAverageStatsForThisExercise.weight *
+            (10 + 0.5 * (friendsAverageStatsForThisExercise.time - 10))
+          : friendsAverageStatsForThisExercise.weight *
+            friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.time >= 30
+          ? myAverageStatsForThisExercise.weight * 17.5
+          : myAverageStatsForThisExercise.time >= 20 &&
+            myAverageStatsForThisExercise.time < 30
+          ? myAverageStatsForThisExercise.weight *
+            (15 + 0.25 * (myAverageStatsForThisExercise.time - 20))
+          : myAverageStatsForThisExercise.time >= 10 &&
+            myAverageStatsForThisExercise.time < 20
+          ? myAverageStatsForThisExercise.weight *
+            (10 + 0.5 * (myAverageStatsForThisExercise.time - 10))
+          : myAverageStatsForThisExercise.weight *
+            myAverageStatsForThisExercise.time;
+    } else if (typeOfWorkout === "cardio") {
+      //todo: if workout is a cardio. then.. reps matters most
+      // first 10 lbs * reps..
+      // if weight & time. Treat time in seconds like reps. first 10 lbs * time
+      // if time and reps. Treat time as a divider.
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.weight >= 30
+          ? friendsAverageStatsForThisExercise.time * 17.5
+          : friendsAverageStatsForThisExercise.weight >= 20 &&
+            friendsAverageStatsForThisExercise.weight < 30
+          ? friendsAverageStatsForThisExercise.time *
+            (15 + 0.25 * (friendsAverageStatsForThisExercise.weight - 20))
+          : friendsAverageStatsForThisExercise.weight >= 10 &&
+            friendsAverageStatsForThisExercise.weight < 20
+          ? friendsAverageStatsForThisExercise.time *
+            (10 + 0.5 * (friendsAverageStatsForThisExercise.weight - 10))
+          : friendsAverageStatsForThisExercise.time *
+            friendsAverageStatsForThisExercise.weight;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.weight >= 30
+          ? myAverageStatsForThisExercise.time * 17.5
+          : myAverageStatsForThisExercise.weight >= 20 &&
+            myAverageStatsForThisExercise.weight < 30
+          ? myAverageStatsForThisExercise.time *
+            (15 + 0.25 * (myAverageStatsForThisExercise.weight - 20))
+          : myAverageStatsForThisExercise.weight >= 10 &&
+            myAverageStatsForThisExercise.weight < 20
+          ? myAverageStatsForThisExercise.time *
+            (10 + 0.5 * (myAverageStatsForThisExercise.weight - 10))
+          : myAverageStatsForThisExercise.time *
+            myAverageStatsForThisExercise.weight;
+    } else if (typeOfWorkout === "flexibility") {
+      // time && reps: time + reps
+      // time && weight: time + weight
+      // weight && reps: reps + weight
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.weight +
+        friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.weight +
+        myAverageStatsForThisExercise.time;
+    }
+    return friendsScoreForThisExercise > myScoreForThisExercise
+      ? 2
+      : friendsScoreForThisExercise < myScoreForThisExercise
+      ? 1
+      : 0;
+  } else {
+    // all three
+    if (typeOfWorkout === "strength") {
+      //todo: if workout is a strength workout, then... weight matters most
+      // only multiply by first 10 reps. additional 10 reps get multiplied by 1/2. additional 10 by 1/4. then
+      // weight && reps:
+      // if (reps >= 30): weight * 17.5, if reps between 20 and 30: weight:  weight * (15 + .25 * reps % 20)...
+      // weight * first 10 secs...
+      // if time & reps. Time is treated like weight. more is better. Time * reps
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps >= 30
+          ? friendsAverageStatsForThisExercise.weight * 17.5 -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.reps >= 20 &&
+            friendsAverageStatsForThisExercise.reps < 30
+          ? friendsAverageStatsForThisExercise.weight *
+              (15 + 0.25 * (friendsAverageStatsForThisExercise.reps - 20)) -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.reps >= 10 &&
+            friendsAverageStatsForThisExercise.reps < 20
+          ? friendsAverageStatsForThisExercise.weight *
+              (10 + 0.5 * (friendsAverageStatsForThisExercise.reps - 10)) -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.weight *
+              friendsAverageStatsForThisExercise.reps -
+            friendsAverageStatsForThisExercise.time / 10;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps >= 30
+          ? myAverageStatsForThisExercise.weight * 17.5 -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.reps >= 20 &&
+            myAverageStatsForThisExercise.reps < 30
+          ? myAverageStatsForThisExercise.weight *
+              (15 + 0.25 * (myAverageStatsForThisExercise.reps - 20)) -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.reps >= 10 &&
+            myAverageStatsForThisExercise.reps < 20
+          ? myAverageStatsForThisExercise.weight *
+              (10 + 0.5 * (myAverageStatsForThisExercise.reps - 10)) -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.weight *
+              myAverageStatsForThisExercise.reps -
+            myAverageStatsForThisExercise.time / 10;
+    } else if (typeOfWorkout === "cardio") {
+      //todo: if workout is a cardio. then.. reps matters most
+      // first 10 lbs * reps..
+      // if weight & time. Treat time in seconds like reps. first 10 lbs * time
+      // if time and reps. Treat time as a divider.
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.weight >= 30
+          ? friendsAverageStatsForThisExercise.reps * 17.5 -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.weight >= 20 &&
+            friendsAverageStatsForThisExercise.weight < 30
+          ? friendsAverageStatsForThisExercise.reps *
+              (15 + 0.25 * (friendsAverageStatsForThisExercise.weight - 20)) -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.weight >= 10 &&
+            friendsAverageStatsForThisExercise.weight < 20
+          ? friendsAverageStatsForThisExercise.reps *
+              (10 + 0.5 * (friendsAverageStatsForThisExercise.weight - 10)) -
+            friendsAverageStatsForThisExercise.time / 10
+          : friendsAverageStatsForThisExercise.reps *
+              friendsAverageStatsForThisExercise.weight -
+            friendsAverageStatsForThisExercise.time / 10;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.weight >= 30
+          ? myAverageStatsForThisExercise.reps * 17.5 -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.weight >= 20 &&
+            myAverageStatsForThisExercise.weight < 30
+          ? myAverageStatsForThisExercise.reps *
+              (15 + 0.25 * (myAverageStatsForThisExercise.weight - 20)) -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.weight >= 10 &&
+            myAverageStatsForThisExercise.weight < 20
+          ? myAverageStatsForThisExercise.reps *
+              (10 + 0.5 * (myAverageStatsForThisExercise.weight - 10)) -
+            myAverageStatsForThisExercise.time / 10
+          : myAverageStatsForThisExercise.reps *
+              myAverageStatsForThisExercise.weight -
+            myAverageStatsForThisExercise.time / 10;
+    } else if (typeOfWorkout === "flexibility") {
+      // time && reps: time + reps
+      // time && weight: time + weight
+      // weight && reps: reps + weight
+      friendsScoreForThisExercise =
+        friendsAverageStatsForThisExercise.reps +
+        friendsAverageStatsForThisExercise.weight +
+        friendsAverageStatsForThisExercise.time;
+
+      myScoreForThisExercise =
+        myAverageStatsForThisExercise.reps +
+        myAverageStatsForThisExercise.weight +
+        friendsAverageStatsForThisExercise.time;
+    }
+    return friendsScoreForThisExercise > myScoreForThisExercise
+      ? 2
+      : friendsScoreForThisExercise < myScoreForThisExercise
+      ? 1
+      : 0;
+  }
+}
+
 export default function WorkoutReview({ navigation, route }) {
   const { workout, exercises } = route.params;
 
@@ -28,9 +429,21 @@ export default function WorkoutReview({ navigation, route }) {
   const [friendsBestStats, setFriendsBestStats] = React.useState(null);
   const [friendsAverageStats, setFriendsAverageStats] = React.useState(null);
   const [friend, setFriend] = React.useState(null);
+  const [averageWinner, setAverageWinner] = React.useState(null);
+  const [bestWinner, setBestWinner] = React.useState(null);
+  const [latestWinner, setLatestWinner] = React.useState(null);
 
   const updateFriend = (friend) => {
-    setFriend(friend);
+    if (friend.hasStatsForThisWorkout) {
+      setFriend(friend);
+      calculateWinningStatsForThisWorkout();
+    } else {
+      alert("This friend does not have any stats for this workout yet.");
+    }
+    // lets pick a winner based on total exercies.
+    // should be a grid.
+    // average. best. latest.
+    // 1. winner: friend, winner: me, winner: friend...
   };
 
   React.useEffect(() => {
@@ -420,7 +833,9 @@ export default function WorkoutReview({ navigation, route }) {
       </View>
       <ScrollView style={{ flex: 1 }}>
         {friend ? (
-          <View style={{ flex: 1, flexDirection: "row" }}>
+          <View
+            style={{ flex: 1, flexDirection: "row", backgroundColor: "red" }}
+          >
             <View style={{ flex: 1 }}></View>
             <View
               style={{
@@ -431,6 +846,7 @@ export default function WorkoutReview({ navigation, route }) {
               }}
             >
               <View>
+                <Text>{"Winner"}</Text>
                 <Image
                   source={{
                     uri: myProfilePicture,
@@ -452,6 +868,7 @@ export default function WorkoutReview({ navigation, route }) {
                 </Text>
               </View>
               <View>
+                <Text> </Text>
                 <Image
                   source={{
                     uri: friend.profilePicture,

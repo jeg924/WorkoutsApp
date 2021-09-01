@@ -96,19 +96,13 @@ export default function ModalFriendPicker({ navigation, route }) {
                   friendObject.userID = item.userID;
                   friendObject.displayName = item.displayName;
                   friendObject.profilePicture = item.profilePicture;
-
-                  console.log("modal friend picker");
-                  console.log("friend latest stats");
-                  console.log(friendsLatestStats);
-                  console.log("friend average stats");
-                  console.log(friendsAverageStats);
-                  console.log("friend best stats");
-                  console.log(friendsBestStats);
+                  friendObject.hasStatsForThisWorkout = false;
 
                   for (let i = 0; i < friendsLatestStats.length; ++i) {
                     if (friendsLatestStats[i].userID === item.userID) {
                       friendObject.latestStats =
                         friendsLatestStats[i].exerciseInputData;
+                      friendObject.hasStatsForThisWorkout = true;
                     }
                   }
 
@@ -128,6 +122,7 @@ export default function ModalFriendPicker({ navigation, route }) {
 
                   console.log("modal screen friend: ");
                   console.log(friendObject);
+
                   updateFriend(friendObject);
                   navigation.goBack();
                 }}
