@@ -7,7 +7,7 @@ export default function SecondaryButton({ title, onPress, ...rest }) {
       style={{
         backgroundColor: "white",
         borderWidth: 1,
-        borderColor: "black",
+        borderColor: "blue",
         borderRadius: 20,
         width: "90%",
         justifyContent: "center",
@@ -17,7 +17,7 @@ export default function SecondaryButton({ title, onPress, ...rest }) {
       onPress={onPress}
       rest
     >
-      <Text style={{ color: "black" }}>{title}</Text>
+      <Text style={{ color: "blue" }}>{title}</Text>
     </TouchableHighlight>
   );
 }

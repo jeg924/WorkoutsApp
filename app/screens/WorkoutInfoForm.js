@@ -12,8 +12,11 @@ import {
 } from "react-native";
 import { TextInput, ScrollView } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
-
+import SolidButton from "../components/SolidButton";
+import SecondaryButton from "../components/SecondaryButton";
 import Constants from "expo-constants";
+import { Feather } from "@expo/vector-icons";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export default function WorkoutInfoForm({ navigation, route }) {
   const { workoutID } = route.params;
@@ -99,17 +102,29 @@ export default function WorkoutInfoForm({ navigation, route }) {
   const category = [
     {
       value: isStrength,
-      onChange: setStrength,
+      onChange: () => {
+        setStrength(true);
+        setFlexibility(false);
+        setCardio(false);
+      },
       description: "Strength",
     },
     {
       value: isCardio,
-      onChange: setCardio,
+      onChange: () => {
+        setStrength(false);
+        setFlexibility(false);
+        setCardio(true);
+      },
       description: "Cardio",
     },
     {
       value: isFlexibility,
-      onChange: setFlexibility,
+      onChange: () => {
+        setStrength(false);
+        setFlexibility(true);
+        setCardio(false);
+      },
       description: "Flexibility",
     },
   ];
@@ -131,140 +146,167 @@ export default function WorkoutInfoForm({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop: 20, backgroundColor: "white" }}>
       <View
         style={{
+          flex: 1,
           flexDirection: "row",
-          justifyContent: "space-between",
-          marginBottom: 100,
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: "bold", margin: 10 }}>
-          Create a workout
-        </Text>
-        <TouchableHighlight
-          onPress={() => {
-            console.log("getting here but no further");
-            navigation.navigate("My Workouts");
-          }}
-          style={{
-            margin: 10,
-            backgroundColor: "blue",
-            borderRadius: "100%",
-            padding: 5,
-          }}
+        <View style={{ flex: 1 }}></View>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text>cancel</Text>
-        </TouchableHighlight>
+          <Feather name="chevron-left" size={30} />
+        </View>
+        <View style={{ flex: 1 }}></View>
+        <View style={{ flex: 16, justifyContent: "center" }}>
+          <Text style={{ fontSize: 30, fontWeight: "bold", margin: 10 }}>
+            Create a workout
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}></View>
       </View>
-      {workoutImage ? (
-        <Image
-          source={{ uri: workoutImage, cache: "force-cache" }}
-          style={{ width: "100%", height: 200 }}
-        />
-      ) : null}
-      <View
-        style={{
-          padding: 10,
-          width: 165,
-        }}
-      >
-        <TouchableHighlight
-          onPress={async () => {
-            if (Constants.platform.ios) {
-              let { status } = await ImagePicker.getCameraPermissionsAsync();
-              if (status !== "granted") {
-                status = await ImagePicker.requestCameraPermissionsAsync();
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <View style={{ flex: 1 }}></View>
+        {workoutImage ? (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Image
+              source={{ uri: workoutImage, cache: "force-cache" }}
+              style={{ width: 50, height: 50 }}
+            />
+          </View>
+        ) : (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Image
+              source={require("../assets/placeholder-image.png")}
+              style={{ width: 50, height: 50 }}
+            />
+          </View>
+        )}
+        <View style={{ flex: 1 }}></View>
+        <View
+          style={{ flex: 7, justifyContent: "center", alignItems: "center" }}
+        >
+          <SecondaryButton
+            onPress={async () => {
+              if (Constants.platform.ios) {
+                let { status } = await ImagePicker.getCameraPermissionsAsync();
+                if (status !== "granted") {
+                  status = await ImagePicker.requestCameraPermissionsAsync();
+                }
+                if (status !== "granted") {
+                  alert(
+                    "Sorry, we need camera roll permissions to make this work!"
+                  );
+                }
+                let result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                  allowsEditing: true,
+                  aspect: [4, 3],
+                  quality: 1,
+                });
+
+                if (!result.cancelled) {
+                  setWorkoutImage(result.uri);
+                }
               }
-              if (status !== "granted") {
-                alert(
-                  "Sorry, we need camera roll permissions to make this work!"
+            }}
+            title="Upload Cover Image"
+          />
+        </View>
+        <View style={{ flex: 1 }}></View>
+      </View>
+      <View style={{ flex: 7 }}>
+        <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 1 }}></View>
+          <View style={{ flex: 13 }}>
+            <Text style={{ fontWeight: "bold" }}>Workout Name</Text>
+            <TextInput
+              style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                padding: 10,
+                width: "100%",
+              }}
+              onChangeText={(x) => {
+                setWorkoutName(x);
+              }}
+              defaultValue={workoutName}
+            ></TextInput>
+          </View>
+          <View style={{ flex: 1 }}></View>
+        </View>
+        <View style={{ flex: 5 }}>
+          <View style={{ flexDirection: "row", flex: 6 }}>
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 12 }}>
+              <View style={{ flex: 1, justifyContent: "center" }}>
+                <Text style={{ fontWeight: "bold" }}>Equipment Needed</Text>
+              </View>
+              {equipmentNeeded.map((item) => {
+                return (
+                  <View
+                    style={{
+                      flex: 0.8,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <BouncyCheckbox
+                      size={25}
+                      fillColor="blue"
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: "blue" }}
+                      textStyle={{}}
+                      onPress={item.onChange}
+                    />
+                    <Text>{item.description}</Text>
+                  </View>
                 );
-              }
-              let result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [4, 3],
-                quality: 1,
-              });
+              })}
+            </View>
+            <View style={{ flex: 1 }}></View>
+          </View>
 
-              console.log(result.uri);
-
-              if (!result.cancelled) {
-                setWorkoutImage(result.uri);
-              }
-            }
-          }}
-          style={{
-            backgroundColor: "blue",
-            borderRadius: "100%",
-            padding: 5,
-          }}
-        >
-          <Text>Upload Cover Image</Text>
-        </TouchableHighlight>
+          <View style={{ flexDirection: "row", flex: 4 }}>
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 12 }}>
+              <View style={{ flex: 1, justifyContent: "center" }}>
+                <Text style={{ fontWeight: "bold" }}>Category</Text>
+              </View>
+              {category.map((item) => {
+                return (
+                  <View
+                    style={{
+                      flex: 0.8,
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <BouncyCheckbox
+                      size={25}
+                      fillColor="blue"
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: "blue" }}
+                      textStyle={{}}
+                      onPress={item.onChange}
+                    />
+                    <Text>{item.description}</Text>
+                  </View>
+                );
+              })}
+            </View>
+            <View style={{ flex: 1 }}></View>
+          </View>
+        </View>
       </View>
-
-      <Text style={{ marginLeft: 10 }}>Workout Name</Text>
-      <TextInput
-        style={{
-          borderColor: "#000000",
-          borderBottomWidth: 1,
-          padding: 10,
-          margin: 10,
-        }}
-        onChangeText={(x) => {
-          setWorkoutName(x);
-        }}
-        defaultValue={workoutName}
-      ></TextInput>
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView bounces style={{ flex: 1 }}>
-          <Text>Equipment Needed</Text>
-          {equipmentNeeded.map((item) => {
-            return (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "row",
-                }}
-              >
-                <Switch
-                  value={item.value}
-                  onValueChange={item.onChange}
-                  style={{ alignSelf: "center" }}
-                />
-                <Text style={{ margin: 10 }}>{item.description}</Text>
-              </View>
-            );
-          })}
-          <Text>Category</Text>
-          {category.map((item) => {
-            return (
-              <View style={{ flexDirection: "row" }}>
-                <Switch
-                  value={item.value}
-                  onValueChange={item.onChange}
-                  style={{ alignSelf: "center" }}
-                />
-                <Text style={{ margin: 10 }}>{item.description}</Text>
-              </View>
-            );
-          })}
-        </ScrollView>
-      </SafeAreaView>
-      {isSubmitting ? (
-        <Text>Submitting</Text>
-      ) : (
-        <TouchableHighlight
-          style={{
-            borderRadius: "100%",
-            backgroundColor: "blue",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 10,
-            margin: 10,
-          }}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <SolidButton
           onPress={async () => {
             try {
               setIsSubmitting(true);
@@ -318,10 +360,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
               setIsSubmitting(false);
             }
           }}
-        >
-          <Text>Edit Exercises</Text>
-        </TouchableHighlight>
-      )}
+          title="Edit Exercises"
+        />
+      </View>
     </View>
   );
 }
