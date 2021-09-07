@@ -13,11 +13,15 @@ import {
 } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { Feather } from "@expo/vector-icons";
+import SolidButton from "../components/SolidButton";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function WorkoutEditor({ navigation, route }) {
   const { workoutID } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [workout, setWorkout] = React.useState(null);
+  const [authorName, setAuthorName] = React.useState(null);
 
   const [exercises, eloading, error] = useCollectionData(
     firebase
@@ -40,17 +44,32 @@ export default function WorkoutEditor({ navigation, route }) {
   }, []);
 
   async function loadWorkoutData() {
-    setLoading(true);
-    const workoutRef = firebase
-      .firestore()
-      .collection("workouts")
-      .doc(workoutID);
+    // todo: current problem. get author name.
+    try {
+      setLoading(true);
+      const workoutRef = firebase
+        .firestore()
+        .collection("workouts")
+        .doc(workoutID);
 
-    const workoutDoc = await workoutRef.get();
-    const workoutData = workoutDoc.data();
-    await Image.prefetch(workoutData.workoutImage);
-    setWorkout(workoutData);
-    setLoading(false);
+      const workoutDoc = await workoutRef.get();
+      const workoutData = workoutDoc.data();
+      await Image.prefetch(workoutData.workoutImage);
+      setWorkout(workoutData);
+
+      const userRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(workoutData.authorID);
+
+      const userDoc = await userRef.get();
+      const user = userDoc.data();
+      setAuthorName(user.displayName);
+    } catch (error) {
+      console.log("error is " + error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   // gotta get the info from firebase instead of route params.
@@ -63,66 +82,44 @@ export default function WorkoutEditor({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, marginTop: 20, backgroundColor: "white" }}>
       <View
         style={{
+          flex: 1,
           flexDirection: "row",
-          justifyContent: "space-between",
-          padding: 10,
         }}
       >
-        <Button
-          title="Edit Workout Details"
-          onPress={() =>
-            navigation.navigate("Workout Info Form", {
-              workoutID: workoutID,
-            })
-          }
-        />
-        <Button
-          title="Publish"
-          onPress={async () => {
-            // need to change the minute counting to be a listener
-            // that listens to changes in firebase when a new exercise with
-            // this workout ID is added.
-            // that way the publish button will only publish.
-
-            console.log(orderedExercises.length);
-
-            let lengthInMinutes = 0;
-            for (let i = 0; i < orderedExercises.length; ++i) {
-              lengthInMinutes += Math.floor(
-                (orderedExercises[i].duration / (1000 * 60)) % 60
-              );
-            }
-
-            const workoutRef = firebase
-              .firestore()
-              .collection("workouts")
-              .doc(workoutID);
-
-            await workoutRef.set(
-              {
-                published: true,
-                lengthInMinutes: lengthInMinutes,
-              },
-              { merge: true }
-            );
-            console.log("got here with no problem");
-            navigation.navigate("My Workouts");
-          }}
-        />
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Feather name="chevron-left" size={30} />
+        </View>
+        <View
+          style={{ flex: 4, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ fontSize: 30, fontWeight: "bold", margin: 10 }}>
+            Add Exercises
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}></View>
       </View>
-      <Image
-        style={{ width: "100%", height: "30%", backgroundColor: "red" }}
-        source={{ uri: workout.workoutImage, cache: "force-cache" }}
-      ></Image>
-      <View style={{ marginTop: 50, marginLeft: 10 }}>
-        <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-          {workout.workoutName}
-        </Text>
+      <View style={{ flex: 3 }}>
+        <Image
+          style={{ width: "100%", height: "100%" }}
+          source={{ uri: workout.workoutImage, cache: "force-cache" }}
+        ></Image>
       </View>
-      <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 0.7, flexDirection: "row" }}>
+        <View style={{ flex: 1 }}></View>
+        <View style={{ flex: 16 }}>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            {workout.workoutName}
+          </Text>
+          <Text style={{ fontSize: 14 }}>{"by " + authorName}</Text>
+        </View>
+        <View style={{ flex: 1 }}></View>
+      </View>
+      <View style={{ flex: 4 }}>
         {eloading ? (
           console.log(eloading)
         ) : (
@@ -130,16 +127,59 @@ export default function WorkoutEditor({ navigation, route }) {
             style={{}}
             data={orderedExercises}
             ListFooterComponent={
-              <Button
-                title="Add an Exercise"
-                onPress={() => {
-                  navigation.navigate("Record Exercise", {
-                    order: exercises.length,
-                    exerciseObj: null,
-                    workoutID: workoutID,
-                  });
-                }}
-              />
+              orderedExercises.length ? (
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <SolidButton
+                    title="Add an Exercise"
+                    onPress={() => {
+                      navigation.navigate("Record Exercise", {
+                        order: exercises.length,
+                        exerciseObj: null,
+                        workoutID: workoutID,
+                      });
+                    }}
+                  />
+                </View>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <View
+                    style={{
+                      flex: 1,
+
+                      flexDirection: "row",
+                    }}
+                  >
+                    <View style={{ flex: 1 }}></View>
+                    <View style={{ flex: 2, alignItems: "center" }}>
+                      <Text style={{ fontWeight: "500", textAlign: "center" }}>
+                        To get started, add your first exercise video.
+                      </Text>
+                      <Text></Text>
+                    </View>
+                    <View style={{ flex: 1 }}></View>
+                  </View>
+                  <View style={{ width: "70%", alignItems: "center" }}>
+                    <SolidButton
+                      title="Add an Exercise"
+                      onPress={() => {
+                        navigation.navigate("Record Exercise", {
+                          order: exercises.length,
+                          exerciseObj: null,
+                          workoutID: workoutID,
+                        });
+                      }}
+                    />
+                  </View>
+                </View>
+              )
             }
             renderItem={({ item }) => (
               <View style={{ flexDirection: "row" }}>
@@ -172,7 +212,12 @@ export default function WorkoutEditor({ navigation, route }) {
             )}
           />
         )}
-      </SafeAreaView>
+      </View>
+      {orderedExercises.length ? (
+        <View>
+          <SecondaryButton title="Finish" />
+        </View>
+      ) : null}
     </View>
   );
 }

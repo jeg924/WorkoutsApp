@@ -79,7 +79,7 @@ export default function MyWorkouts({ navigation, route }) {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading</Text>
+        <Text>Loading aljflafjafjla</Text>
       </View>
     );
   }
@@ -272,7 +272,7 @@ export default function MyWorkouts({ navigation, route }) {
                     });
                   }}
                   onLongPress={() => {
-                    const options = ["start", "edit", "delete", "cancel"];
+                    const options = ["Start", "Edit", "Delete", "Cancel"];
                     const destructiveButtonIndex = 2;
                     const cancelButtonIndex = 3;
 
@@ -293,23 +293,33 @@ export default function MyWorkouts({ navigation, route }) {
                             workoutID: item.workoutID,
                           });
                         } else if (buttenIndex == 2) {
-                          setDeletingUpload(true);
-                          const workoutRef = firebase
-                            .firestore()
-                            .collection("workouts")
-                            .doc(item.workoutID);
-                          workoutRef.update({
-                            deleted: true,
-                          });
-                          const workoutExercisesRef = firebase
-                            .firestore()
-                            .collection("exercises")
-                            .where("workoutID", "==", item.workoutID);
-                          const batch = firebase.firestore().batch();
-                          batch.update(workoutExercisesRef, { deleted: true });
-                          await batch.commit();
+                          try {
+                            setDeletingUpload(true);
+                            const batch = firebase.firestore().batch();
+                            const workoutRef = firebase
+                              .firestore()
+                              .collection("workouts")
+                              .doc(item.workoutID);
+                            await workoutRef.update({
+                              deleted: true,
+                            });
+                            const workoutExercisesRef = firebase
+                              .firestore()
+                              .collection("exercises")
+                              .where("workoutID", "==", item.workoutID);
+                            const workoutExercises =
+                              await workoutExercisesRef.get();
+                            workoutExercises.forEach((doc) => {
+                              batch.update(doc.ref, { deleted: true });
+                            });
+                            await batch.commit();
 
-                          setDeletingUpload(false);
+                            loadData();
+                          } catch (error) {
+                            console.log("error is " + error);
+                          } finally {
+                            setDeletingUpload(false);
+                          }
                         }
                       }
                     );

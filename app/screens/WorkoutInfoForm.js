@@ -20,47 +20,14 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export default function WorkoutInfoForm({ navigation, route }) {
   const { workoutID } = route.params;
-  var published = false;
-  async function loadWorkoutData() {
-    setLoading(true);
-    if (workoutID) {
-      const workoutRef = firebase
-        .firestore()
-        .collection("workouts")
-        .doc(workoutID);
-      const workoutDoc = await workoutRef.get();
-      const workout = workoutDoc.data();
-      if (workout) {
-        setWorkoutName(workout.workoutName);
-        setWorkoutImage(workout.workoutImage);
-        setWeightNeeded(workout.isWeightNeeded);
-        setBarNeeded(workout.isBarNeeded);
-        setChairNeeded(workout.isChairNeeded);
-        setMatNeeded(workout.isMatNeeded);
-        setTowelNeeded(workout.isTowelNeeded);
-
-        setStrength(workout.isStrength);
-        setCardio(workout.isCardio);
-        setYoga(workout.isYoga);
-        setSpeed(workout.isSpeed);
-        setBalance(workout.isBalance);
-
-        published = workout.published;
-        Image.prefetch(workoutImage);
-      }
-    }
-    setLoading(false);
-  }
-
-  React.useEffect(() => {
-    loadWorkoutData();
-  }, []);
 
   const [loading, setLoading] = React.useState(true);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const [workoutName, setWorkoutName] = React.useState("");
   const [workoutImage, setWorkoutImage] = React.useState(null);
+
+  const [publicWorkout, setPublicWorkout] = React.useState(false);
 
   const [isWeightNeeded, setWeightNeeded] = React.useState(false);
   const [isBarNeeded, setBarNeeded] = React.useState(false);
@@ -70,69 +37,179 @@ export default function WorkoutInfoForm({ navigation, route }) {
 
   const [isStrength, setStrength] = React.useState(false);
   const [isCardio, setCardio] = React.useState(false);
-  const [isFlexibility, setFlexibility] = React.useState(false);
+  const [isBalance, setBalance] = React.useState(false);
+  const [isYoga, setYoga] = React.useState(false);
+  const [isSpeed, setSpeed] = React.useState(false);
 
-  const equipmentNeeded = [
-    {
-      value: isWeightNeeded,
-      onChange: setWeightNeeded,
-      description: "Weights or resistance bands",
-    },
-    {
-      value: isBarNeeded,
-      onChange: setBarNeeded,
-      description: "Chin-Up Bar",
-    },
-    {
-      value: isChairNeeded,
-      onChange: setChairNeeded,
-      description: "Bench or chair",
-    },
-    {
-      value: isMatNeeded,
-      onChange: setMatNeeded,
-      description: "Mat",
-    },
-    {
-      value: isTowelNeeded,
-      onChange: setTowelNeeded,
-      description: "Towel",
-    },
-  ];
-  const category = [
-    {
-      value: isStrength,
-      onChange: () => {
-        setStrength(true);
-        setFlexibility(false);
-        setCardio(false);
-      },
-      description: "Strength",
-    },
-    {
-      value: isCardio,
-      onChange: () => {
-        setStrength(false);
-        setFlexibility(false);
-        setCardio(true);
-      },
-      description: "Cardio",
-    },
-    {
-      value: isFlexibility,
-      onChange: () => {
-        setStrength(false);
-        setFlexibility(true);
-        setCardio(false);
-      },
-      description: "Flexibility",
-    },
-  ];
+  const [equipmentNeeded, setEquipmentNeeded] = React.useState(null);
+  const [category, setCategory] = React.useState(null);
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadWorkoutData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  async function loadWorkoutData() {
+    try {
+      setLoading(true);
+      var equipmentNeeded;
+      var category;
+      if (workoutID) {
+        const workoutRef = firebase
+          .firestore()
+          .collection("workouts")
+          .doc(workoutID);
+        const workoutDoc = await workoutRef.get();
+        const workout = workoutDoc.data();
+        if (workout) {
+          setWorkoutName(workout.workoutName);
+          setWorkoutImage(workout.workoutImage);
+
+          setPublicWorkout(workout.public);
+
+          setWeightNeeded(workout.isWeightNeeded);
+          setBarNeeded(workout.isBarNeeded);
+          setChairNeeded(workout.isChairNeeded);
+          setMatNeeded(workout.isMatNeeded);
+          setTowelNeeded(workout.isTowelNeeded);
+
+          setStrength(workout.isStrength);
+          setCardio(workout.isCardio);
+          setYoga(workout.isYoga);
+          setSpeed(workout.isSpeed);
+          setBalance(workout.isBalance);
+
+          Image.prefetch(workoutImage);
+
+          equipmentNeeded = [
+            {
+              value: workout.isWeightNeeded,
+              onChange: setWeightNeeded,
+              description: "Weights or resistance bands",
+            },
+            {
+              value: workout.isBarNeeded,
+              onChange: setBarNeeded,
+              description: "Chin-Up Bar",
+            },
+            {
+              value: workout.isChairNeeded,
+              onChange: setChairNeeded,
+              description: "Bench or chair",
+            },
+            {
+              value: workout.isMatNeeded,
+              onChange: setMatNeeded,
+              description: "Mat",
+            },
+            {
+              value: workout.isTowelNeeded,
+              onChange: setTowelNeeded,
+              description: "Towel",
+            },
+          ];
+          category = [
+            {
+              value: workout.isStrength,
+              onChange: setStrength,
+              description: "Strength",
+            },
+            {
+              value: workout.isCardio,
+              onChange: setCardio,
+              description: "Cardio",
+            },
+            {
+              value: workout.isBalance,
+              onChange: setBalance,
+              description: "Balance",
+            },
+            {
+              value: workout.isSpeed,
+              onChange: setSpeed,
+              description: "Speed",
+            },
+            {
+              value: workout.isYoga,
+              onChange: setYoga,
+              description: "Yoga",
+            },
+          ];
+        }
+      } else {
+        equipmentNeeded = [
+          {
+            value: isWeightNeeded,
+            onChange: setWeightNeeded,
+            description: "Weights or resistance bands",
+          },
+          {
+            value: isBarNeeded,
+            onChange: setBarNeeded,
+            description: "Chin-Up Bar",
+          },
+          {
+            value: isChairNeeded,
+            onChange: setChairNeeded,
+            description: "Bench or chair",
+          },
+          {
+            value: isMatNeeded,
+            onChange: setMatNeeded,
+            description: "Mat",
+          },
+          {
+            value: isTowelNeeded,
+            onChange: setTowelNeeded,
+            description: "Towel",
+          },
+        ];
+        category = [
+          {
+            value: isStrength,
+            onChange: () => {
+              setStrength(!isStrength);
+            },
+            description: "Strength",
+          },
+          {
+            value: isCardio,
+            onChange: setCardio,
+            description: "Cardio",
+          },
+          {
+            value: isBalance,
+            onChange: setBalance,
+            description: "Balance",
+          },
+          {
+            value: isSpeed,
+            onChange: setSpeed,
+            description: "Speed",
+          },
+          {
+            value: isYoga,
+            onChange: setYoga,
+            description: "Yoga",
+          },
+        ];
+      }
+      setEquipmentNeeded(equipmentNeeded);
+      setCategory(category);
+    } catch (error) {
+      console.log("error is ###" + error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading</Text>
+        <Text>Loading blablabla</Text>
       </View>
     );
   }
@@ -242,67 +319,133 @@ export default function WorkoutInfoForm({ navigation, route }) {
           <View style={{ flex: 1 }}></View>
         </View>
         <View style={{ flex: 5 }}>
-          <View style={{ flexDirection: "row", flex: 6 }}>
-            <View style={{ flex: 1 }}></View>
-            <View style={{ flex: 12 }}>
-              <View style={{ flex: 1, justifyContent: "center" }}>
-                <Text style={{ fontWeight: "bold" }}>Equipment Needed</Text>
-              </View>
-              {equipmentNeeded.map((item) => {
-                return (
-                  <View
-                    style={{
-                      flex: 0.8,
-                      flexDirection: "row",
-                      alignItems: "center",
+          <ScrollView style={{}}>
+            <View style={{}}>
+              <View style={{ flexDirection: "row" }}>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 1 }}>
+                  <TouchableHighlight
+                    onPress={() => {
+                      setPublicWorkout(false);
                     }}
                   >
-                    <BouncyCheckbox
-                      size={25}
-                      fillColor="blue"
-                      unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
-                      textStyle={{}}
-                      onPress={item.onChange}
-                    />
-                    <Text>{item.description}</Text>
-                  </View>
-                );
-              })}
-            </View>
-            <View style={{ flex: 1 }}></View>
-          </View>
-
-          <View style={{ flexDirection: "row", flex: 4 }}>
-            <View style={{ flex: 1 }}></View>
-            <View style={{ flex: 12 }}>
-              <View style={{ flex: 1, justifyContent: "center" }}>
-                <Text style={{ fontWeight: "bold" }}>Category</Text>
-              </View>
-              {category.map((item) => {
-                return (
-                  <View
-                    style={{
-                      flex: 0.8,
-                      flexDirection: "row",
-                      alignItems: "center",
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 20,
+                        color: !publicWorkout ? "blue" : "black",
+                        textDecorationLine: !publicWorkout
+                          ? "underline"
+                          : "none",
+                      }}
+                    >
+                      Private
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text style={{ fontWeight: "bold" }}>{" OR "}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <TouchableHighlight
+                    onPress={() => {
+                      setPublicWorkout(true);
                     }}
                   >
-                    <BouncyCheckbox
-                      size={25}
-                      fillColor="blue"
-                      unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
-                      textStyle={{}}
-                      onPress={item.onChange}
-                    />
-                    <Text>{item.description}</Text>
-                  </View>
-                );
-              })}
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 20,
+                        color: publicWorkout ? "blue" : "black",
+                        textDecorationLine: publicWorkout
+                          ? "underline"
+                          : "none",
+                      }}
+                    >
+                      Public
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+                <View style={{ flex: 1 }}></View>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 12 }}>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      marginBottom: "2%",
+                      marginTop: "2%",
+                    }}
+                  >
+                    Equipment Needed
+                  </Text>
+                  {equipmentNeeded.map((item) => {
+                    return (
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          margin: "1%",
+                        }}
+                      >
+                        <BouncyCheckbox
+                          isChecked={item.value}
+                          size={25}
+                          fillColor="blue"
+                          unfillColor="#FFFFFF"
+                          iconStyle={{ borderColor: "blue" }}
+                          textStyle={{}}
+                          onPress={item.onChange}
+                        />
+                        <Text>{item.description}</Text>
+                      </View>
+                    );
+                  })}
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      marginBottom: "2%",
+                      marginTop: "2%",
+                    }}
+                  >
+                    Category
+                  </Text>
+                  {category.map((item) => {
+                    return (
+                      <View
+                        style={{
+                          flex: 0.8,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          margin: "1%",
+                        }}
+                      >
+                        <BouncyCheckbox
+                          isChecked={item.value}
+                          size={25}
+                          fillColor="blue"
+                          unfillColor="#FFFFFF"
+                          iconStyle={{ borderColor: "blue" }}
+                          textStyle={{}}
+                          onPress={item.onChange}
+                        />
+                        <Text>{item.description}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+                <View style={{ flex: 1 }}></View>
+              </View>
             </View>
-            <View style={{ flex: 1 }}></View>
-          </View>
+          </ScrollView>
         </View>
       </View>
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -311,7 +454,6 @@ export default function WorkoutInfoForm({ navigation, route }) {
             try {
               setIsSubmitting(true);
               let workoutRef = null;
-              let published = false;
               if (workoutID) {
                 workoutRef = firebase
                   .firestore()
@@ -335,9 +477,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
               const workoutData = {
                 workoutID: workoutRef.id,
                 authorID: firebase.auth().currentUser.uid,
-                published: published,
                 workoutName: workoutName,
                 workoutImage: photoURL,
+                public: publicWorkout,
                 isWeightNeeded: isWeightNeeded,
                 isBarNeeded: isBarNeeded,
                 isChairNeeded: isChairNeeded,
@@ -345,7 +487,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                 isTowelNeeded: isTowelNeeded,
                 isStrength: isStrength,
                 isCardio: isCardio,
-                isFlexibility: isFlexibility,
+                isBalance: isBalance,
+                isYoga: isYoga,
+                isSpeed: isSpeed,
                 lengthInMinutes: 0,
                 deleted: false,
               };
@@ -360,7 +504,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
               setIsSubmitting(false);
             }
           }}
-          title="Edit Exercises"
+          title="Add Exercises"
         />
       </View>
     </View>

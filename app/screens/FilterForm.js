@@ -11,7 +11,7 @@ export default function FilterForm({ navigation, route }) {
   const [userFilter, setUserFilter] = React.useState(false);
   const [strengthFilter, setStrengthFilter] = React.useState(false);
   const [cardioFilter, setCardioFilter] = React.useState(false);
-  const [flexibilityFilter, setFlexibilityFilter] = React.useState(false);
+  const [yogaFilter, setYogaFilter] = React.useState(false);
   const [balanceFilter, setBalanceFilter] = React.useState(false);
   const [speedFilter, setSpeedFilter] = React.useState(false);
   const [equipmentless, setEquipmentless] = React.useState(false);
@@ -86,14 +86,32 @@ export default function FilterForm({ navigation, route }) {
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <CheckBox
             color="blue"
-            checked={flexibilityFilter ? true : false}
+            checked={yogaFilter ? true : false}
             onPress={() =>
-              cardioFilter
-                ? setFlexibilityFilter(false)
-                : setFlexibilityFilter(true)
+              yogaFilter ? setYogaFilter(false) : setYogaFilter(true)
             }
           />
-          <Text style={{ marginLeft: 20 }}>Flexibility</Text>
+          <Text style={{ marginLeft: 20 }}>Yoga</Text>
+        </View>
+        <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <CheckBox
+            color="blue"
+            checked={balanceFilter ? true : false}
+            onPress={() =>
+              balanceFilter ? setBalanceFilter(false) : setBalanceFilter(true)
+            }
+          />
+          <Text style={{ marginLeft: 20 }}>Balance</Text>
+        </View>
+        <View style={{ flexDirection: "row", marginTop: 10 }}>
+          <CheckBox
+            color="blue"
+            checked={speedFilter ? true : false}
+            onPress={() =>
+              speedFilter ? setSpeedFilter(false) : setSpeedFilter(true)
+            }
+          />
+          <Text style={{ marginLeft: 20 }}>Speed</Text>
         </View>
       </View>
       <View style={{ margin: 10 }}>
