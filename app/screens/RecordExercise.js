@@ -195,8 +195,8 @@ export default function RecordExercise({ navigation, route }) {
                 shouldPlay
                 initialStatus={{ resizeMode: "stretch" }}
                 style={{
-                  width: "90%",
-                  height: "100%",
+                  width: "88%",
+                  height: "90%",
                 }}
                 onLoad={(data) => {
                   setExerciseVideoDuration(data.durationMillis);
