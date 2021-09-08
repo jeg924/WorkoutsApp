@@ -9,6 +9,7 @@ import { Feather } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
 import { AppLoading } from "expo";
 import { set } from "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import * as firebase from "firebase";
 
@@ -155,51 +156,58 @@ function App() {
       </View>
     );
   } else if (user === null) {
-    return <Login />;
+    return (
+      <SafeAreaProvider>
+        <Login />
+      </SafeAreaProvider>
+    );
   } else {
     return (
-      <GlobalContext.Provider
-        value={{
-          myUserId: firebase.auth().currentUser.uid,
-          myFriends: [
-            {
-              id: 123,
-              displayName: "Robert G",
-              profilePicture: "https://google.com",
-            },
-          ],
-        }}
-      >
-        <NavigationContainer>
-          <Tab.Navigator
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ focused, color, size }) => {
-                let iconName;
-                if (route.name === "Home") {
-                  iconName = "home";
-                } else if (route.name === "My Workouts") {
-                  iconName = "activity";
-                } else if (route.name === "Browse") {
-                  iconName = "search";
-                }
-                return <Feather name={iconName} color={color} size={size} />;
+      <SafeAreaProvider>
+        <GlobalContext.Provider
+          value={{
+            myUserId: firebase.auth().currentUser.uid,
+            myFriends: [
+              {
+                id: 123,
+                displayName: "Robert G",
+                profilePicture: "https://google.com",
               },
-            })}
-            tabBarOptions={{
-              activeTintColor: "blue",
-              inactiveTintColor: "#708090",
-            }}
-          >
-            <Tab.Screen name="Home" component={HomeStackScreen} />
-            <Tab.Screen name="My Workouts" component={MyWorkoutsStackScreen} />
-            <Tab.Screen name="Browse" component={BrowseStackScreen} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </GlobalContext.Provider>
+            ],
+          }}
+        >
+          <NavigationContainer>
+            <Tab.Navigator
+              screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                  let iconName;
+                  if (route.name === "Home") {
+                    iconName = "home";
+                  } else if (route.name === "My Workouts") {
+                    iconName = "activity";
+                  } else if (route.name === "Browse") {
+                    iconName = "search";
+                  }
+                  return <Feather name={iconName} color={color} size={size} />;
+                },
+              })}
+              tabBarOptions={{
+                activeTintColor: "blue",
+                inactiveTintColor: "#708090",
+              }}
+            >
+              <Tab.Screen name="Home" component={HomeStackScreen} />
+              <Tab.Screen
+                name="My Workouts"
+                component={MyWorkoutsStackScreen}
+              />
+              <Tab.Screen name="Browse" component={BrowseStackScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </GlobalContext.Provider>
+      </SafeAreaProvider>
     );
   }
 }
 
 export default App;
-
-console.disableYellowBox = true;

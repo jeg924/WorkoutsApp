@@ -7,6 +7,7 @@ import {
   Button,
   TextInput,
   KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import { Switch } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
@@ -17,6 +18,8 @@ import { Feather } from "@expo/vector-icons";
 import SecondaryButton from "../components/SecondaryButton";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import SolidButton from "../components/SolidButton";
+import Header from "../components/Header";
+import { DisplayTime } from "../UtilityFunctions";
 
 export default function RecordExercise({ navigation, route }) {
   const { order, exerciseObj, workoutID } = route.params;
@@ -43,6 +46,8 @@ export default function RecordExercise({ navigation, route }) {
     exerciseObj ? exerciseObj.time : false
   );
 
+  console.log(exerciseVideo);
+
   if (saving) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -52,32 +57,10 @@ export default function RecordExercise({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1, marginTop: 20, backgroundColor: "white" }}>
-      <View style={{ height: "55%" }}>
-        <View
-          style={{
-            flex: 1.1,
-            flexDirection: "row",
-            backgroundColor: "orange",
-          }}
-        >
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Feather name="chevron-left" size={30} />
-          </View>
-          <View
-            style={{ flex: 4, justifyContent: "center", alignItems: "center" }}
-          >
-            <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-              Add Exercise
-            </Text>
-          </View>
-          <View style={{ flex: 1 }}></View>
-        </View>
-        <View
-          style={{ flex: 1.4, flexDirection: "row", backgroundColor: "yellow" }}
-        >
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <Header title="Add Exercise" />
+      <ScrollView>
+        <View style={{ height: 70, flexDirection: "row" }}>
           <View style={{ flex: 1 }}></View>
           <View style={{ flex: 13 }}>
             <Text style={{ fontWeight: "bold" }}>Exercise Name</Text>
@@ -96,94 +79,159 @@ export default function RecordExercise({ navigation, route }) {
           </View>
           <View style={{ flex: 1 }}></View>
         </View>
-        <View style={{ flex: 0.3, flexDirection: "row" }}>
+        <View style={{ height: 20, flexDirection: "row" }}>
           <View style={{ flex: 1 }}></View>
           <View style={{ flex: 13, justifyContent: "flex-end" }}>
             <Text style={{ fontWeight: "bold" }}>Exercise Video</Text>
           </View>
           <View style={{ flex: 1 }}></View>
         </View>
-        <View
-          style={{ flex: 1.3, flexDirection: "row", backgroundColor: "green" }}
-        >
-          <View style={{ flex: 1 }}></View>
-          <View
-            style={{ flex: 6, justifyContent: "center", alignItems: "center" }}
-          >
-            <SecondaryButton
-              title="Record Video"
-              onPress={async () => {
-                if (Constants.platform.ios) {
-                  const { status } =
-                    await ImagePicker.getCameraPermissionsAsync();
-                  if (status !== "granted") {
-                    status = await ImagePicker.requestCameraPermissionsAsync();
-                  }
-                  if (status !== "granted") {
-                    alert(
-                      "You need to grant camera permissions before you can record a video."
-                    );
-                  }
-
-                  let result = await ImagePicker.launchCameraAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                    allowsEditing: true,
-                  });
-
-                  if (!result.cancelled) {
-                    setExerciseVideo(result.uri);
-                    setReplacedVideo(true);
-                  }
-                }
-              }}
-            />
-          </View>
-          <View
-            style={{ flex: 3, justifyContent: "center", alignItems: "center" }}
-          >
-            <Text
+        {!exerciseVideo ? (
+          <View style={{ height: 60, flexDirection: "row" }}>
+            <View style={{ flex: 1 }}></View>
+            <View
               style={{
-                fontWeight: "bold",
+                flex: 6,
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              OR
-            </Text>
-          </View>
-          <View
-            style={{ flex: 6, justifyContent: "center", alignItems: "center" }}
-          >
-            <SecondaryButton
-              title="Upload Video"
-              onPress={async () => {
-                if (Constants.platform.ios) {
-                  let { status } =
-                    await ImagePicker.getCameraRollPermissionsAsync();
-                  if (status !== "granted") {
-                    status =
-                      await ImagePicker.requestCameraRollPermissionsAsync();
-                  }
-                  if (status !== "granted") {
-                    alert(
-                      "Sorry, we need camera permissions to make this work"
-                    );
-                  }
-                  let result = await ImagePicker.launchImageLibraryAsync({
-                    mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-                    allowsEditing: true,
-                  });
+              <SecondaryButton
+                title="Record Video"
+                onPress={async () => {
+                  if (Constants.platform.ios) {
+                    const { status } =
+                      await ImagePicker.getCameraPermissionsAsync();
+                    if (status !== "granted") {
+                      status =
+                        await ImagePicker.requestCameraPermissionsAsync();
+                    }
+                    if (status !== "granted") {
+                      alert(
+                        "You need to grant camera permissions before you can record a video."
+                      );
+                    }
 
-                  if (!result.cancelled) {
-                    setExerciseVideo(result.uri);
-                    setReplacedVideo(true);
+                    let result = await ImagePicker.launchCameraAsync({
+                      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+                      allowsEditing: true,
+                    });
+
+                    if (!result.cancelled) {
+                      setExerciseVideo(result.uri);
+                      setReplacedVideo(true);
+                    }
                   }
-                }
+                }}
+              />
+            </View>
+            <View
+              style={{
+                flex: 3,
+                justifyContent: "center",
+                alignItems: "center",
               }}
-            />
-          </View>
-          <View style={{ flex: 1 }}></View>
-        </View>
+            >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                OR
+              </Text>
+            </View>
+            <View
+              style={{
+                flex: 6,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <SecondaryButton
+                title="Upload Video"
+                onPress={async () => {
+                  if (Constants.platform.ios) {
+                    let { status } =
+                      await ImagePicker.getCameraRollPermissionsAsync();
+                    if (status !== "granted") {
+                      status =
+                        await ImagePicker.requestCameraRollPermissionsAsync();
+                    }
+                    if (status !== "granted") {
+                      alert(
+                        "Sorry, we need camera permissions to make this work"
+                      );
+                    }
+                    let result = await ImagePicker.launchImageLibraryAsync({
+                      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+                      allowsEditing: true,
+                    });
 
-        <View style={{ flex: 3, backgroundColor: "cyan" }}>
+                    if (!result.cancelled) {
+                      setExerciseVideo(result.uri);
+                      setReplacedVideo(true);
+                    }
+                  }
+                }}
+              />
+            </View>
+            <View style={{ flex: 1 }}></View>
+          </View>
+        ) : (
+          <View
+            style={{
+              height: 260,
+            }}
+          >
+            <View
+              style={{
+                height: 200,
+                width: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Video
+                shouldPlay
+                initialStatus={{ resizeMode: "stretch" }}
+                style={{
+                  width: "90%",
+                  height: "100%",
+                }}
+                onLoad={(data) => {
+                  setExerciseVideoDuration(data.durationMillis);
+                }}
+                useNativeControls
+                resizeMode="contain"
+                source={{ uri: exerciseVideo }}
+                onPlaybackStatusUpdate={(playbackStatus) => {}}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={{ fontWeight: "bold" }}>
+                  {"Duration " + DisplayTime(exerciseVideoDuration)}
+                </Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <SecondaryButton
+                  title="Replace"
+                  onPress={() => {
+                    setExerciseVideo(null);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
+        <View style={{ height: 120 }}>
           <View style={{ flex: 0.6, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
             <View style={{ flex: 13, justifyContent: "flex-end" }}>
@@ -196,71 +244,85 @@ export default function RecordExercise({ navigation, route }) {
               flex: 1,
               flexDirection: "row",
               alignItems: "center",
-              margin: "1%",
             }}
           >
-            <BouncyCheckbox
-              isChecked={trackReps}
-              size={25}
-              fillColor="blue"
-              unfillColor="#FFFFFF"
-              iconStyle={{ borderColor: "blue" }}
-              textStyle={{}}
-              onPress={() => {
-                setTrackReps(!trackReps);
-              }}
-            />
-            <Text>Number of Reps</Text>
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 1.5 }}>
+              <BouncyCheckbox
+                isChecked={trackReps}
+                size={25}
+                fillColor="blue"
+                unfillColor="#FFFFFF"
+                iconStyle={{ borderColor: "blue" }}
+                textStyle={{}}
+                onPress={() => {
+                  setTrackReps(!trackReps);
+                }}
+              />
+            </View>
+            <View style={{ flex: 10 }}>
+              <Text>Number of Reps</Text>
+            </View>
+            <View style={{ flex: 1 }}></View>
           </View>
           <View
             style={{
               flex: 1,
               flexDirection: "row",
               alignItems: "center",
-              margin: "1%",
             }}
           >
-            <BouncyCheckbox
-              isChecked={trackWeight}
-              size={25}
-              fillColor="blue"
-              unfillColor="#FFFFFF"
-              iconStyle={{ borderColor: "blue" }}
-              textStyle={{}}
-              onPress={() => {
-                setTrackWeight(!trackWeight);
-              }}
-            />
-            <Text>Weight of dumbbells or bands used</Text>
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 1.5 }}>
+              <BouncyCheckbox
+                isChecked={trackWeight}
+                size={25}
+                fillColor="blue"
+                unfillColor="#FFFFFF"
+                iconStyle={{ borderColor: "blue" }}
+                textStyle={{}}
+                onPress={() => {
+                  setTrackWeight(!trackWeight);
+                }}
+              />
+            </View>
+            <View style={{ flex: 10 }}>
+              <Text>Weight of dumbbells or bands used</Text>
+            </View>
+            <View style={{ flex: 1 }}></View>
           </View>
           <View
             style={{
               flex: 1,
               flexDirection: "row",
               alignItems: "center",
-              margin: "1%",
             }}
           >
-            <BouncyCheckbox
-              isChecked={trackTime}
-              size={25}
-              fillColor="blue"
-              unfillColor="#FFFFFF"
-              iconStyle={{ borderColor: "blue" }}
-              textStyle={{}}
-              onPress={() => {
-                setTrackTime(!trackTime);
-              }}
-            />
-            <Text>Length of Time</Text>
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 1.5 }}>
+              <BouncyCheckbox
+                isChecked={trackTime}
+                size={25}
+                fillColor="blue"
+                unfillColor="#FFFFFF"
+                iconStyle={{ borderColor: "blue" }}
+                textStyle={{}}
+                onPress={() => {
+                  setTrackTime(!trackTime);
+                }}
+              />
+            </View>
+            <View style={{ flex: 10 }}>
+              <Text>Length of Time</Text>
+            </View>
+            <View style={{ flex: 1 }}></View>
           </View>
         </View>
-      </View>
-      <View style={{ flex: 3, backgroundColor: "red" }}></View>
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={20}>
+      </ScrollView>
+
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={0}>
         <View
           style={{
-            backgroundColor: "orange",
             justifyContent: "center",
             alignItems: "center",
           }}
