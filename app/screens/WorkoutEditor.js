@@ -10,12 +10,15 @@ import {
   Image,
   FlatList,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { Feather } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
+import Header from "../components/Header";
+import Svg, { Circle, Line } from "react-native-svg";
 
 export default function WorkoutEditor({ navigation, route }) {
   const { workoutID } = route.params;
@@ -82,140 +85,188 @@ export default function WorkoutEditor({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1, marginTop: 20, backgroundColor: "white" }}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-        }}
-      >
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Feather name="chevron-left" size={30} />
-        </View>
-        <View
-          style={{ flex: 4, justifyContent: "center", alignItems: "center" }}
-        >
-          <Text style={{ fontSize: 30, fontWeight: "bold", margin: 10 }}>
-            Add Exercises
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}></View>
-      </View>
-      <View style={{ flex: 3 }}>
-        <Image
-          style={{ width: "100%", height: "100%" }}
-          source={{ uri: workout.workoutImage, cache: "force-cache" }}
-        ></Image>
-      </View>
-      <View style={{ flex: 0.7, flexDirection: "row" }}>
-        <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 16 }}>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {workout.workoutName}
-          </Text>
-          <Text style={{ fontSize: 14 }}>{"by " + authorName}</Text>
-        </View>
-        <View style={{ flex: 1 }}></View>
-      </View>
-      <View style={{ flex: 4 }}>
-        {eloading ? (
-          console.log(eloading)
-        ) : (
-          <FlatList
-            style={{}}
-            data={orderedExercises}
-            ListFooterComponent={
-              orderedExercises.length ? (
-                <View
-                  style={{ alignItems: "center", justifyContent: "center" }}
-                >
-                  <SolidButton
-                    title="Add an Exercise"
-                    onPress={() => {
-                      navigation.navigate("Record Exercise", {
-                        order: exercises.length,
-                        exerciseObj: null,
-                        workoutID: workoutID,
-                      });
-                    }}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-
-                      flexDirection: "row",
-                    }}
-                  >
-                    <View style={{ flex: 1 }}></View>
-                    <View style={{ flex: 2, alignItems: "center" }}>
-                      <Text style={{ fontWeight: "500", textAlign: "center" }}>
-                        To get started, add your first exercise video.
-                      </Text>
-                      <Text></Text>
-                    </View>
-                    <View style={{ flex: 1 }}></View>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <Header title="Add Exercises" />
+      <ScrollView>
+        <View style={{ flex: 1 }}>
+          <View style={{ width: "100%", height: 200 }}>
+            <Image
+              style={{ width: "100%", height: "100%" }}
+              source={{ uri: workout.workoutImage, cache: "force-cache" }}
+            ></Image>
+          </View>
+          <View
+            style={{
+              flex: 0.7,
+              flexDirection: "row",
+              borderBottomColor: "black",
+              borderBottomWidth: 1,
+            }}
+          >
+            <View style={{ flex: 1 }}></View>
+            <View style={{ flex: 16 }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                {workout.workoutName}
+              </Text>
+              <Text style={{ fontSize: 14 }}>{"by " + authorName}</Text>
+            </View>
+            <View style={{ flex: 1 }}></View>
+          </View>
+          <View style={{ flex: 4, flexDirection: "row" }}>
+            <View style={{ flex: 0.4 }}>
+              {orderedExercises.map((exercise) => {
+                return (
+                  <View>
+                    <Svg height={79} width={50}>
+                      <Line
+                        x1="15"
+                        y1="0"
+                        x2="15"
+                        y2="66"
+                        stroke="black"
+                        strokeWidth="1"
+                      />
+                      <Circle
+                        cx="15"
+                        cy="70"
+                        r="8"
+                        stroke="blue"
+                        strokeWidth="2"
+                        fill="blue"
+                      />
+                    </Svg>
                   </View>
-                  <View style={{ width: "70%", alignItems: "center" }}>
-                    <SolidButton
-                      title="Add an Exercise"
-                      onPress={() => {
-                        navigation.navigate("Record Exercise", {
-                          order: exercises.length,
-                          exerciseObj: null,
-                          workoutID: workoutID,
-                        });
-                      }}
-                    />
-                  </View>
-                </View>
-              )
-            }
-            renderItem={({ item }) => (
-              <View style={{ flexDirection: "row" }}>
-                <View>
-                  <Text>
-                    {DisplayTimeSegment(
-                      orderedExercises,
-                      item.order,
-                      item.duration
-                    )}
-                  </Text>
-                  <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-                  <Text>{item.reps ? "reps" : ""}</Text>
-                  <Text>{item.weight ? "weight" : ""}</Text>
-                  <Text>{item.time ? "time" : ""}</Text>
-                </View>
-                <View>
-                  <Button
-                    title="Edit exercise"
-                    onPress={() => {
-                      navigation.navigate("Record Exercise", {
-                        order: item.order,
-                        exerciseObj: item,
-                        workoutID: workoutID,
-                      });
-                    }}
+                );
+              })}
+              <View>
+                <Svg height={79} width={50}>
+                  <Line
+                    x1="15"
+                    y1="0"
+                    x2="15"
+                    y2="66"
+                    stroke="black"
+                    strokeWidth="1"
                   />
-                </View>
+                  <Circle
+                    cx="15"
+                    cy="70"
+                    r="8"
+                    stroke="black"
+                    strokeWidth="2"
+                    fill="blue"
+                  />
+                </Svg>
               </View>
-            )}
-          />
-        )}
-      </View>
+            </View>
+            <View style={{ flex: 4 }}>
+              <View style={{ height: 44 }}></View>
+              <FlatList
+                style={{}}
+                data={orderedExercises}
+                ListFooterComponent={
+                  orderedExercises.length ? (
+                    <View
+                      style={{
+                        alignItems: "flex-end",
+                        justifyContent: "flex-end",
+                        width: "60%",
+                      }}
+                    >
+                      <SolidButton
+                        title="Add an Exercise"
+                        onPress={() => {
+                          navigation.navigate("Record Exercise", {
+                            order: exercises.length,
+                            exerciseObj: null,
+                            workoutID: workoutID,
+                          });
+                        }}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          flex: 1,
+
+                          flexDirection: "row",
+                        }}
+                      >
+                        <View style={{ flex: 1 }}></View>
+                        <View style={{ flex: 2, alignItems: "center" }}>
+                          <Text
+                            style={{ fontWeight: "500", textAlign: "center" }}
+                          >
+                            To get started, add your first exercise video.
+                          </Text>
+                          <Text></Text>
+                        </View>
+                        <View style={{ flex: 1 }}></View>
+                      </View>
+                      <View style={{ width: "70%", alignItems: "center" }}>
+                        <SolidButton
+                          title="Add an Exercise"
+                          onPress={() => {
+                            navigation.navigate("Record Exercise", {
+                              order: exercises.length,
+                              exerciseObj: null,
+                              workoutID: workoutID,
+                            });
+                          }}
+                        />
+                      </View>
+                    </View>
+                  )
+                }
+                renderItem={({ item }) => (
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ flex: 2 }}>
+                      <Text>
+                        {DisplayTimeSegment(
+                          orderedExercises,
+                          item.order,
+                          item.duration
+                        )}
+                      </Text>
+                      <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                      <Text>{item.reps ? "reps" : ""}</Text>
+                      <Text>{item.weight ? "weight" : ""}</Text>
+                      <Text>{item.time ? "time" : ""}</Text>
+                    </View>
+                    <View style={{ flex: 2 }}>
+                      <SecondaryButton
+                        title="Edit exercise"
+                        onPress={() => {
+                          navigation.navigate("Record Exercise", {
+                            order: item.order,
+                            exerciseObj: item,
+                            workoutID: workoutID,
+                          });
+                        }}
+                      />
+                    </View>
+                  </View>
+                )}
+              />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
       {orderedExercises.length ? (
-        <View>
-          <SecondaryButton title="Finish" />
+        <View style={{ alignItems: "center" }}>
+          <SecondaryButton
+            title="Finish"
+            onPress={() => {
+              navigation.navigate("My Workouts");
+            }}
+          />
         </View>
       ) : null}
     </View>

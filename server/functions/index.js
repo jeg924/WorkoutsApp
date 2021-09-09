@@ -24,9 +24,12 @@ exports.syncWorkoutsToAlgolia = functions.firestore
           console.log("deleting...");
           await searchIndex.deleteObject(context.params.id);
         }
-        if (object.published) {
+        if (object.public) {
           console.log("saving...");
           await searchIndex.saveObject(object);
+        } else {
+          console.log("deleting...");
+          await searchIndex.deleteObject(context.params.id);
         }
       } else {
         console.log("deleting...");
