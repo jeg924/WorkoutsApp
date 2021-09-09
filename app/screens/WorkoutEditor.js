@@ -152,9 +152,9 @@ export default function WorkoutEditor({ navigation, route }) {
                     cx="15"
                     cy="70"
                     r="8"
-                    stroke="black"
+                    stroke="blue"
                     strokeWidth="2"
-                    fill="blue"
+                    fill="indigo"
                   />
                 </Svg>
               </View>
@@ -226,7 +226,9 @@ export default function WorkoutEditor({ navigation, route }) {
                   )
                 }
                 renderItem={({ item }) => (
-                  <View style={{ flexDirection: "row" }}>
+                  <View
+                    style={{ flexDirection: "row", backgroundColor: "orange" }}
+                  >
                     <View style={{ flex: 2 }}>
                       <Text>
                         {DisplayTimeSegment(
