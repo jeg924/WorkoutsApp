@@ -12,6 +12,8 @@ export default function Header({ title, navigation }) {
         flexDirection: "row",
         backgroundColor: "white",
         height: 70,
+        borderBottomWidth: 1,
+        borderBottomColor: "black",
       }}
     >
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

@@ -7,6 +7,9 @@ import Constants from "expo-constants";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { set } from "react-native-reanimated";
 import { GlobalContext } from "../App";
+import Header from "../components/Header";
+import SolidButton from "../components/SolidButton";
+import SecondaryButton from "../components/SecondaryButton";
 
 export default function Profile({ navigation, route }) {
   // const { myUserId, myFriends } = React.useContext(GlobalContext);
@@ -123,71 +126,86 @@ export default function Profile({ navigation, route }) {
     <View
       style={{
         flex: 1,
-        justifyContent: "space-around",
-        alignItems: "center",
+        backgroundColor: "white",
       }}
     >
-      <Text style={{ fontWeight: "bold", fontSize: 30 }}>{displayName}</Text>
-      {profilePicture ? (
-        <Image
-          source={{
-            uri: profilePicture,
-            cache: "force-cache",
-          }}
+      <Header navigation={navigation} title="Profile" />
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
+        <View
           style={{
-            width: 200,
-            height: 200,
-            borderRadius: 100,
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
           }}
-        />
-      ) : (
-        <Text>No picture yet.</Text>
-      )}
-      <View>
-        {userID === firebase.auth().currentUser.uid ? ( // is this my own profile?
-          <View style={{}}>
-            <TouchableHighlight
-              onPress={() => {
-                navigation.navigate("Edit Profile");
+        >
+          <Text style={{ fontWeight: "bold", fontSize: 30 }}>
+            {displayName}
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {profilePicture ? (
+            <Image
+              source={{
+                uri: profilePicture,
+                cache: "force-cache",
               }}
-            >
-              <Text style={{ fontWeight: "bold" }}>Edit Profile</Text>
-            </TouchableHighlight>
-          </View>
-        ) : !isFriend ? ( // is this my Friend?
-          addingFriend ? ( // am I currently adding this person to my friends list?
-            <Text>Adding Friend...</Text>
+              style={{
+                width: 200,
+                height: 200,
+                borderRadius: 100,
+              }}
+            />
           ) : (
-            <View style={{}}>
-              <TouchableHighlight onPress={addFriend}>
-                <View style={{ flexDirection: "row" }}>
-                  <Feather name="heart" color="blue" size={30} />
-                  <Text
-                    style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
-                  >
-                    Add Friend
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            </View>
-          )
-        ) : removingFriend ? (
-          <Text>Removing friend...</Text>
-        ) : (
-          // already my friend
-          <View style={{}}>
-            <TouchableHighlight onPress={removeFriend}>
-              <View style={{ flexDirection: "row" }}>
-                <Feather name="heart" color="blue" size={30} />
-                <Text
-                  style={{ fontWeight: "bold", marginTop: 5, marginLeft: 10 }}
-                >
-                  Remove Friend
-                </Text>
+            <Text>No picture yet.</Text>
+          )}
+        </View>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            flexDirection: "row",
+          }}
+        >
+          <View style={{ flex: 2 }}></View>
+          <View style={{ flex: 10 }}>
+            {userID === firebase.auth().currentUser.uid ? ( // is this my own profile?
+              <View style={{}}>
+                <SolidButton
+                  onPress={() => {
+                    navigation.navigate("Edit Profile");
+                  }}
+                  title="Edit Profile"
+                />
               </View>
-            </TouchableHighlight>
+            ) : !isFriend ? ( // is this my Friend?
+              addingFriend ? ( // am I currently adding this person to my friends list?
+                <Text>Adding Friend...</Text>
+              ) : (
+                <View style={{}}>
+                  <SolidButton onPress={addFriend} title="Add Friend" />
+                </View>
+              )
+            ) : removingFriend ? (
+              <Text>Removing friend...</Text>
+            ) : (
+              // already my friend
+              <View style={{}}>
+                <SecondaryButton onPress={removeFriend} title="Remove Friend" />
+              </View>
+            )}
           </View>
-        )}
+          <View style={{ flex: 1 }}></View>
+        </View>
       </View>
     </View>
   );

@@ -416,7 +416,7 @@ export default function StartWorkout({ navigation, route }) {
                             </Text>
                           ) : item.reps && item.time && !item.weight ? (
                             <Text>
-                              Reps {stats.exerciseInputData[index]?.reps} & Time{" "}
+                              Reps {stats.exerciseInputData[index]?.reps} & Time
                               {stats.exerciseInputData[index]?.time}
                             </Text>
                           ) : item.weight && item.time && !item.reps ? (
@@ -437,7 +437,7 @@ export default function StartWorkout({ navigation, route }) {
                               Time {stats.exerciseInputData[index]?.time}
                             </Text>
                           ) : (
-                            ""
+                            <Text></Text>
                           )
                         ) : item.reps && item.weight && item.time ? (
                           <Text>Reps & Weight & Time</Text>
@@ -454,7 +454,7 @@ export default function StartWorkout({ navigation, route }) {
                         ) : item.time && !item.weight && !item.reps ? (
                           <Text>Time</Text>
                         ) : (
-                          ""
+                          <Text></Text>
                         )}
                       </View>
                     </View>

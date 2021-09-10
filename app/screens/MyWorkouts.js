@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import SolidButton from "../components/SolidButton";
+import SegmentedControl from "@react-native-segmented-control/segmented-control";
 
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
