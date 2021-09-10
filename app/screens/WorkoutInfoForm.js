@@ -16,6 +16,7 @@ import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Constants from "expo-constants";
 import { Feather } from "@expo/vector-icons";
+import Header from "../components/Header";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 export default function WorkoutInfoForm({ navigation, route }) {
@@ -223,27 +224,8 @@ export default function WorkoutInfoForm({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1, marginTop: 20, backgroundColor: "white" }}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-        }}
-      >
-        <View style={{ flex: 1 }}></View>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <Feather name="chevron-left" size={30} />
-        </View>
-        <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 16, justifyContent: "center" }}>
-          <Text style={{ fontSize: 30, fontWeight: "bold", margin: 10 }}>
-            Create a workout
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}></View>
-      </View>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <Header title="Create a Workout" navigation={navigation} />
       <View style={{ flex: 1, flexDirection: "row" }}>
         <View style={{ flex: 1 }}></View>
         {workoutImage ? (

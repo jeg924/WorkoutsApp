@@ -13,14 +13,19 @@ import {
 } from "react-native";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import SolidButton from "../components/SolidButton";
+import Header from "../components/Header";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
   const [deletingUpload, setDeletingUpload] = React.useState(false);
+
   const [myHistoryCategory, setMyHistoryCategory] = React.useState(false);
   const [myLibraryCategory, setMyLibraryCategory] = React.useState(false);
   const [myUploadsCategory, setMyUploadsCategory] = React.useState(true);
+
+  const [tabIndex, setTabIndex] = React.useState(2);
+
   const [uploads, setUploads] = React.useState([]);
   const [library, setLibrary] = React.useState(null);
   const [history, setHistory] = React.useState(null);
@@ -97,115 +102,23 @@ export default function MyWorkouts({ navigation, route }) {
     <View
       style={{
         flex: 1,
+        backgroundColor: "white",
       }}
     >
-      <View
-        style={{
-          flexDirection: "column",
-          justifyContent: "center",
-          position: "fixed",
-          marginTop: 20,
-          height: 120,
+      <Header title="My Workouts" tabScreen />
+      <SegmentedControl
+        values={["History", "Library", "Uploads"]}
+        selectedIndex={tabIndex}
+        onChange={(event) => {
+          setTabIndex(event.nativeEvent.selectedSegmentIndex);
         }}
-      >
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text
-            style={{
-              fontSize: 30,
-              fontWeight: "bold",
-            }}
-          >
-            My Workouts
-          </Text>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-            }}
-          >
-            <TouchableHighlight
-              onPress={() => {
-                setMyHistoryCategory(true);
-                setMyLibraryCategory(false);
-                setMyUploadsCategory(false);
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: myHistoryCategory ? "blue" : "black",
-                  textDecorationLine: myHistoryCategory ? "underline" : "none",
-                }}
-              >
-                History
-              </Text>
-            </TouchableHighlight>
-          </View>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-            }}
-          >
-            <TouchableHighlight
-              onPress={() => {
-                setMyLibraryCategory(true);
-                setMyHistoryCategory(false);
-                setMyUploadsCategory(false);
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: myLibraryCategory ? "blue" : "black",
-                  textDecorationLine: myLibraryCategory ? "underline" : "none",
-                }}
-              >
-                Library
-              </Text>
-            </TouchableHighlight>
-          </View>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-            }}
-          >
-            <TouchableHighlight
-              onPress={() => {
-                setMyUploadsCategory(true);
-                setMyHistoryCategory(false);
-                setMyLibraryCategory(false);
-              }}
-            >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 20,
-                  color: myUploadsCategory ? "blue" : "black",
-                  textDecorationLine: myUploadsCategory ? "underline" : "none",
-                }}
-              >
-                Uploads
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>
+        tintColor="blue"
+        fontStyle={{ color: "black" }}
+        activeFontStyle={{ color: "white" }}
+        style={{ height: 50 }}
+      />
       <SafeAreaView style={{ flex: 4, alignItems: "center" }}>
-        {myUploadsCategory && !uploads.length ? (
+        {tabIndex === 2 && !uploads.length ? (
           <View
             style={{
               flex: 1,
@@ -249,13 +162,7 @@ export default function MyWorkouts({ navigation, route }) {
               width: "100%",
               flexDirection: "column",
             }}
-            data={
-              myUploadsCategory
-                ? uploads
-                : myHistoryCategory
-                ? history
-                : library
-            }
+            data={tabIndex === 2 ? uploads : tabIndex === 1 ? library : history}
             keyExtractor={(index) => index}
             renderItem={({ item }) => {
               return (
@@ -350,8 +257,7 @@ export default function MyWorkouts({ navigation, route }) {
           />
         )}
       </SafeAreaView>
-
-      {myUploadsCategory && !uploads.length ? null : (
+      {tabIndex === 2 && !uploads.length ? null : (
         <View
           style={{
             width: "100%",

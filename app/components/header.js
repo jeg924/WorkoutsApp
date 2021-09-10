@@ -3,7 +3,7 @@ import { Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function Header({ title, navigation }) {
+export default function Header({ title, navigation, tabScreen }) {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -17,13 +17,15 @@ export default function Header({ title, navigation }) {
       }}
     >
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Pressable
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <Feather name="chevron-left" size={30} />
-        </Pressable>
+        {tabScreen ? null : (
+          <Pressable
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            <Feather name="chevron-left" size={30} />
+          </Pressable>
+        )}
       </View>
       <View style={{ flex: 4, justifyContent: "center", alignItems: "center" }}>
         <Text style={{ fontSize: 30, fontWeight: "bold" }}>{title}</Text>

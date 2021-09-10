@@ -6,6 +6,7 @@ import SolidButton from "../components/SolidButton";
 import { DisplayMaxTime } from "../UtilityFunctions";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { set } from "react-native-reanimated";
+
 export default function FilterForm({ navigation, route }) {
   const [workoutFilter, setWorkoutFilter] = React.useState(false);
   const [userFilter, setUserFilter] = React.useState(false);
