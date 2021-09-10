@@ -427,6 +427,24 @@ export default function RecordExercise({ navigation, route }) {
                   deleted: false,
                 };
                 exerciseRef.set(exerciseData, { merge: true });
+
+                const workoutRef = firebase
+                  .firestore()
+                  .collection("workouts")
+                  .doc(workoutID);
+
+                const workoutDoc = await workoutRef.get();
+                const workout = workoutDoc.data();
+                if (workout) {
+                  let time = workout.time;
+                  time += exerciseVideoDuration;
+                  workoutRef.set(
+                    {
+                      time: time,
+                    },
+                    { merge: true }
+                  );
+                }
                 navigation.goBack();
               } catch (error) {
                 alert(error.message);

@@ -56,14 +56,17 @@ export default function WorkoutEditor({ navigation, route }) {
         .doc(workoutID);
 
       const workoutDoc = await workoutRef.get();
-      const workoutData = workoutDoc.data();
-      await Image.prefetch(workoutData.workoutImage);
-      setWorkout(workoutData);
+      const workout = workoutDoc.data();
+      if (workout?.workoutImage) {
+        await Image.prefetch(workout.workoutImage);
+      }
+
+      setWorkout(workout);
 
       const userRef = firebase
         .firestore()
         .collection("users")
-        .doc(workoutData.authorID);
+        .doc(workout.authorID);
 
       const userDoc = await userRef.get();
       const user = userDoc.data();
@@ -90,10 +93,14 @@ export default function WorkoutEditor({ navigation, route }) {
       <ScrollView>
         <View style={{ flex: 1 }}>
           <View style={{ width: "100%", height: 200 }}>
-            <Image
-              style={{ width: "100%", height: "100%" }}
-              source={{ uri: workout.workoutImage, cache: "force-cache" }}
-            ></Image>
+            {workout?.workoutImage ? (
+              <Image
+                style={{ width: "100%", height: "100%" }}
+                source={{ uri: workout.workoutImage, cache: "force-cache" }}
+              ></Image>
+            ) : (
+              <View></View>
+            )}
           </View>
           <View
             style={{
@@ -138,26 +145,28 @@ export default function WorkoutEditor({ navigation, route }) {
                   </View>
                 );
               })}
-              <View>
-                <Svg height={79} width={50}>
-                  <Line
-                    x1="15"
-                    y1="0"
-                    x2="15"
-                    y2="66"
-                    stroke="black"
-                    strokeWidth="1"
-                  />
-                  <Circle
-                    cx="15"
-                    cy="70"
-                    r="8"
-                    stroke="blue"
-                    strokeWidth="2"
-                    fill="indigo"
-                  />
-                </Svg>
-              </View>
+              {orderedExercises.length ? (
+                <View>
+                  <Svg height={79} width={50}>
+                    <Line
+                      x1="15"
+                      y1="0"
+                      x2="15"
+                      y2="66"
+                      stroke="black"
+                      strokeWidth="1"
+                    />
+                    <Circle
+                      cx="15"
+                      cy="70"
+                      r="8"
+                      stroke="blue"
+                      strokeWidth="2"
+                      fill="indigo"
+                    />
+                  </Svg>
+                </View>
+              ) : null}
             </View>
             <View style={{ flex: 4 }}>
               <View style={{ height: 44 }}></View>
@@ -168,9 +177,8 @@ export default function WorkoutEditor({ navigation, route }) {
                   orderedExercises.length ? (
                     <View
                       style={{
-                        alignItems: "flex-end",
                         justifyContent: "flex-end",
-                        width: "60%",
+                        width: "70%",
                       }}
                     >
                       <SolidButton
@@ -185,50 +193,50 @@ export default function WorkoutEditor({ navigation, route }) {
                       />
                     </View>
                   ) : (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
+                    <View style={{ flex: 1, flexDirection: "row" }}>
                       <View
                         style={{
-                          flex: 1,
-
-                          flexDirection: "row",
+                          flex: 10,
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                       >
-                        <View style={{ flex: 1 }}></View>
-                        <View style={{ flex: 2, alignItems: "center" }}>
-                          <Text
-                            style={{ fontWeight: "500", textAlign: "center" }}
-                          >
-                            To get started, add your first exercise video.
-                          </Text>
-                          <Text></Text>
-                        </View>
-                        <View style={{ flex: 1 }}></View>
-                      </View>
-                      <View style={{ width: "70%", alignItems: "center" }}>
-                        <SolidButton
-                          title="Add an Exercise"
-                          onPress={() => {
-                            navigation.navigate("Record Exercise", {
-                              order: exercises.length,
-                              exerciseObj: null,
-                              workoutID: workoutID,
-                            });
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
                           }}
-                        />
+                        >
+                          <View style={{ flex: 1 }}></View>
+                          <View style={{ flex: 2, alignItems: "center" }}>
+                            <Text
+                              style={{ fontWeight: "500", textAlign: "center" }}
+                            >
+                              To get started, add your first exercise video.
+                            </Text>
+                            <Text></Text>
+                          </View>
+                          <View style={{ flex: 1 }}></View>
+                        </View>
+                        <View style={{ width: "80%", alignItems: "center" }}>
+                          <SolidButton
+                            title="Add an Exercise"
+                            onPress={() => {
+                              navigation.navigate("Record Exercise", {
+                                order: exercises.length,
+                                exerciseObj: null,
+                                workoutID: workoutID,
+                              });
+                            }}
+                          />
+                        </View>
                       </View>
+                      <View style={{ flex: 1 }}></View>
                     </View>
                   )
                 }
                 renderItem={({ item }) => (
-                  <View
-                    style={{ flexDirection: "row", backgroundColor: "orange" }}
-                  >
+                  <View style={{ flexDirection: "row", height: 80 }}>
                     <View style={{ flex: 2 }}>
                       <Text>
                         {DisplayTimeSegment(
@@ -238,9 +246,21 @@ export default function WorkoutEditor({ navigation, route }) {
                         )}
                       </Text>
                       <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-                      <Text>{item.reps ? "reps" : ""}</Text>
-                      <Text>{item.weight ? "weight" : ""}</Text>
-                      <Text>{item.time ? "time" : ""}</Text>
+                      {item.reps && item.weight && item.time ? (
+                        <Text>Reps & Weight & Time</Text>
+                      ) : item.reps && item.weight && !item.time ? (
+                        <Text>Reps & Weight</Text>
+                      ) : item.reps && item.time && !item.weight ? (
+                        <Text>Reps & Time</Text>
+                      ) : item.weight && item.time && !item.reps ? (
+                        <Text>Weight & Time</Text>
+                      ) : item.reps && !item.weight && !item.time ? (
+                        <Text>Reps</Text>
+                      ) : item.weight && !item.reps && !item.time ? (
+                        <Text>Weight</Text>
+                      ) : (
+                        <Text>Time</Text>
+                      )}
                     </View>
                     <View style={{ flex: 2 }}>
                       <SecondaryButton
@@ -264,7 +284,7 @@ export default function WorkoutEditor({ navigation, route }) {
       {orderedExercises.length ? (
         <View style={{ alignItems: "center" }}>
           <SecondaryButton
-            title="Finish"
+            title="Save"
             onPress={() => {
               navigation.navigate("My Workouts");
             }}

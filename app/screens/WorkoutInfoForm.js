@@ -463,16 +463,21 @@ export default function WorkoutInfoForm({ navigation, route }) {
                 workoutRef = firebase.firestore().collection("workouts").doc();
               }
               // update firebase storage
-              const response = await fetch(workoutImage);
-              const blob = await response.blob();
-              const imageSnapshot = await firebase
-                .storage()
-                .ref()
-                .child("workoutImages")
-                .child(workoutRef.id + ".png")
-                .put(blob);
 
-              const photoURL = await imageSnapshot.ref.getDownloadURL();
+              if (workoutImage) {
+                const response = await fetch(workoutImage);
+                const blob = await response.blob();
+                const imageSnapshot = await firebase
+                  .storage()
+                  .ref()
+                  .child("workoutImages")
+                  .child(workoutRef.id + ".png")
+                  .put(blob);
+              }
+
+              const photoURL = workoutImage
+                ? await imageSnapshot.ref.getDownloadURL()
+                : null;
 
               const workoutData = {
                 workoutID: workoutRef.id,
@@ -490,7 +495,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
                 isBalance: isBalance,
                 isYoga: isYoga,
                 isSpeed: isSpeed,
-                lengthInMinutes: 0,
+                time: 0,
                 deleted: false,
               };
               workoutRef.set(workoutData, { merge: true });

@@ -8,6 +8,7 @@ import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
 import Svg, { Circle, Line } from "react-native-svg";
+import { DisplayTime } from "../UtilityFunctions";
 
 export default function StartWorkout({ navigation, route }) {
   const { workoutID, current } = route.params;
@@ -272,7 +273,7 @@ export default function StartWorkout({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Header title={workout?.workoutName} />
+      <Header title={workout?.workoutName} navigation={navigation} />
       <Image
         style={{ width: "100%", height: 200 }}
         source={
@@ -314,7 +315,7 @@ export default function StartWorkout({ navigation, route }) {
         >
           <Feather name="clock" color="blue" size={25} />
           <Text style={{ paddingLeft: 10 }}>
-            {workout?.lengthInMinutes} minutes
+            {workout ? DisplayTime(workout.time) : ""}
           </Text>
         </View>
       </View>
@@ -337,7 +338,9 @@ export default function StartWorkout({ navigation, route }) {
                   r="8"
                   stroke="blue"
                   strokeWidth="2"
-                  fill="blue"
+                  fill={
+                    currentExercise == exercises?.length ? "indigo" : "blue"
+                  }
                 />
               </Svg>
             </View>

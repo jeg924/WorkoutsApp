@@ -272,9 +272,15 @@ export default function MyWorkouts({ navigation, route }) {
                     });
                   }}
                   onLongPress={() => {
-                    const options = ["Start", "Edit", "Delete", "Cancel"];
-                    const destructiveButtonIndex = 2;
-                    const cancelButtonIndex = 3;
+                    const options = [
+                      "Start Workout",
+                      "Edit Details",
+                      "Edit Exercises",
+                      "Delete",
+                      "Cancel",
+                    ];
+                    const destructiveButtonIndex = 3;
+                    const cancelButtonIndex = 4;
 
                     ActionSheetIOS.showActionSheetWithOptions(
                       {
@@ -289,10 +295,14 @@ export default function MyWorkouts({ navigation, route }) {
                             current: 0,
                           });
                         } else if (buttenIndex == 1) {
-                          navigation.navigate("Workout Info Form", {
+                          navigation.navigate("Workout Editor", {
                             workoutID: item.workoutID,
                           });
                         } else if (buttenIndex == 2) {
+                          navigation.navigate("Workout Info Form", {
+                            workoutID: item.workoutID,
+                          });
+                        } else if (buttenIndex == 3) {
                           try {
                             setDeletingUpload(true);
                             const batch = firebase.firestore().batch();
