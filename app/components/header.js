@@ -3,7 +3,7 @@ import { Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function Header({ title, navigation, tabScreen }) {
+export default function Header({ title, navigation, route, tabScreen }) {
   const insets = useSafeAreaInsets();
   return (
     <View
@@ -20,7 +20,10 @@ export default function Header({ title, navigation, tabScreen }) {
         {tabScreen ? null : (
           <Pressable
             onPress={() => {
-              navigation.goBack();
+              if (!route) navigation.goBack();
+              else {
+                navigation.navigate(route.screen, route.params);
+              }
             }}
           >
             <Feather name="chevron-left" size={30} />

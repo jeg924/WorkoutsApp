@@ -85,7 +85,7 @@ export default function MyWorkouts({ navigation, route }) {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading aljflafjafjla</Text>
+        <Text>Loading</Text>
       </View>
     );
   }
@@ -203,11 +203,11 @@ export default function MyWorkouts({ navigation, route }) {
                             current: 0,
                           });
                         } else if (buttenIndex == 1) {
-                          navigation.navigate("Workout Editor", {
+                          navigation.navigate("Workout Info Form", {
                             workoutID: item.workoutID,
                           });
                         } else if (buttenIndex == 2) {
-                          navigation.navigate("Workout Info Form", {
+                          navigation.navigate("Workout Editor", {
                             workoutID: item.workoutID,
                           });
                         } else if (buttenIndex == 3) {

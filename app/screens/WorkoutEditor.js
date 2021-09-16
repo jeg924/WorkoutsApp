@@ -41,10 +41,14 @@ export default function WorkoutEditor({ navigation, route }) {
       return a.order > b.order ? 1 : -1;
     });
   }
-  // load last saved state of workout & exercises
+
   React.useEffect(() => {
-    loadWorkoutData();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadWorkoutData();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   async function loadWorkoutData() {
     // todo: current problem. get author name.
@@ -58,11 +62,14 @@ export default function WorkoutEditor({ navigation, route }) {
       const workoutDoc = await workoutRef.get();
       const workout = workoutDoc.data();
       if (workout?.workoutImage) {
+        console.log("got here");
+        console.log(workout.workoutImage);
         await Image.prefetch(workout.workoutImage);
       }
 
       setWorkout(workout);
-
+      console.log("got here 2");
+      console.log(workout.authorID);
       const userRef = firebase
         .firestore()
         .collection("users")
@@ -89,7 +96,14 @@ export default function WorkoutEditor({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Header title="Add Exercises" />
+      <Header
+        title="Add Exercises"
+        navigation={navigation}
+        route={{
+          screen: "Workout Info Form",
+          params: { workoutID: workoutID },
+        }}
+      />
       <ScrollView>
         <View style={{ flex: 1 }}>
           <View style={{ width: "100%", height: 200 }}>
