@@ -320,38 +320,101 @@ export default function RecordExercise({ navigation, route }) {
         </View>
       </ScrollView>
 
-      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={0}>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SolidButton
-            title="Save exercise"
-            onPress={async () => {
-              setSaving(true);
+      {exerciseVideo ? (
+        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={0}>
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SolidButton
+              title="Save exercise"
+              onPress={async () => {
+                setSaving(true);
 
-              // 1. check if existing excercise
-              // 1a. If no existing exercise, create
-              // 2. check if new video
-              // 2a. if new video, upload
-              // 3. update exercise w/ video url any anything else
+                // 1. check if existing excercise
+                // 1a. If no existing exercise, create
+                // 2. check if new video
+                // 2a. if new video, upload
+                // 3. update exercise w/ video url any anything else
 
-              try {
-                var exerciseRef = {};
-                if (exerciseObj) {
-                  exerciseRef = firebase
-                    .firestore()
-                    .collection("exercises")
-                    .doc(exerciseObj.id);
-                } else {
-                  exerciseRef = firebase
-                    .firestore()
-                    .collection("exercises")
-                    .doc();
-                }
-                if (!replacedVideo) {
+                try {
+                  var exerciseRef = {};
+                  if (exerciseObj) {
+                    exerciseRef = firebase
+                      .firestore()
+                      .collection("exercises")
+                      .doc(exerciseObj.id);
+                  } else {
+                    exerciseRef = firebase
+                      .firestore()
+                      .collection("exercises")
+                      .doc();
+                  }
+                  if (!replacedVideo) {
+                    const exerciseData = {
+                      id: exerciseRef.id,
+                      name: exerciseName,
+                      video: exerciseVideo,
+                      duration: exerciseVideoDuration,
+                      reps: trackReps,
+                      weight: trackWeight,
+                      time: trackTime,
+                      order: order,
+                      workoutID: workoutID,
+                      deleted: false,
+                    };
+                    exerciseRef.set(exerciseData, { merge: true });
+                    navigation.goBack();
+                    return;
+                  }
+
+                  // update storage
+                  const response = await fetch(exerciseVideo);
+                  const blob = await response.blob();
+
+                  const uploadTask = firebase
+                    .storage()
+                    .ref()
+                    .child("exerciseVideos")
+                    .child(exerciseRef.id + ".mp4")
+                    .put(blob);
+
+                  // Register three observers:
+                  // 1. 'state_changed' observer, called any time the state changes
+                  // 2. Error observer, called on failure
+                  // 3. Completion observer, called on successful completion
+                  uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                      // Observe state change events such as progress, pause, and resume
+                      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                      var progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      console.log("Upload is " + progress + "% done");
+                      switch (snapshot.state) {
+                        case firebase.storage.TaskState.PAUSED: // or 'paused'
+                          console.log("Upload is paused");
+                          break;
+                        case firebase.storage.TaskState.RUNNING: // or 'running'
+                          console.log("Upload is running");
+                          break;
+                      }
+                    },
+                    (error) => {
+                      // Handle unsuccessful uploads
+                    },
+                    async () => {
+                      // Handle successful uploads on complete
+                      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                      const downloadURL =
+                        await uploadTask.snapshot.ref.getDownloadURL();
+                      setExerciseVideo(downloadURL);
+                    }
+                  );
+                  await uploadTask;
+
                   const exerciseData = {
                     id: exerciseRef.id,
                     name: exerciseName,
@@ -365,94 +428,33 @@ export default function RecordExercise({ navigation, route }) {
                     deleted: false,
                   };
                   exerciseRef.set(exerciseData, { merge: true });
-                  navigation.goBack();
-                  return;
-                }
 
-                // update storage
-                const response = await fetch(exerciseVideo);
-                const blob = await response.blob();
+                  const workoutRef = firebase
+                    .firestore()
+                    .collection("workouts")
+                    .doc(workoutID);
 
-                const uploadTask = firebase
-                  .storage()
-                  .ref()
-                  .child("exerciseVideos")
-                  .child(exerciseRef.id + ".mp4")
-                  .put(blob);
-
-                // Register three observers:
-                // 1. 'state_changed' observer, called any time the state changes
-                // 2. Error observer, called on failure
-                // 3. Completion observer, called on successful completion
-                uploadTask.on(
-                  "state_changed",
-                  (snapshot) => {
-                    // Observe state change events such as progress, pause, and resume
-                    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                    var progress =
-                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log("Upload is " + progress + "% done");
-                    switch (snapshot.state) {
-                      case firebase.storage.TaskState.PAUSED: // or 'paused'
-                        console.log("Upload is paused");
-                        break;
-                      case firebase.storage.TaskState.RUNNING: // or 'running'
-                        console.log("Upload is running");
-                        break;
-                    }
-                  },
-                  (error) => {
-                    // Handle unsuccessful uploads
-                  },
-                  async () => {
-                    // Handle successful uploads on complete
-                    // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-                    const downloadURL =
-                      await uploadTask.snapshot.ref.getDownloadURL();
-                    setExerciseVideo(downloadURL);
+                  const workoutDoc = await workoutRef.get();
+                  const workout = workoutDoc.data();
+                  if (workout) {
+                    let time = workout.time;
+                    time += exerciseVideoDuration;
+                    workoutRef.set(
+                      {
+                        time: time,
+                      },
+                      { merge: true }
+                    );
                   }
-                );
-                await uploadTask;
-
-                const exerciseData = {
-                  id: exerciseRef.id,
-                  name: exerciseName,
-                  video: exerciseVideo,
-                  duration: exerciseVideoDuration,
-                  reps: trackReps,
-                  weight: trackWeight,
-                  time: trackTime,
-                  order: order,
-                  workoutID: workoutID,
-                  deleted: false,
-                };
-                exerciseRef.set(exerciseData, { merge: true });
-
-                const workoutRef = firebase
-                  .firestore()
-                  .collection("workouts")
-                  .doc(workoutID);
-
-                const workoutDoc = await workoutRef.get();
-                const workout = workoutDoc.data();
-                if (workout) {
-                  let time = workout.time;
-                  time += exerciseVideoDuration;
-                  workoutRef.set(
-                    {
-                      time: time,
-                    },
-                    { merge: true }
-                  );
+                  navigation.goBack();
+                } catch (error) {
+                  alert(error.message);
                 }
-                navigation.goBack();
-              } catch (error) {
-                alert(error.message);
-              }
-            }}
-          />
-        </View>
-      </KeyboardAvoidingView>
+              }}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      ) : null}
     </View>
   );
 }

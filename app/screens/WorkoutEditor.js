@@ -298,7 +298,7 @@ export default function WorkoutEditor({ navigation, route }) {
       {orderedExercises.length ? (
         <View style={{ alignItems: "center" }}>
           <SecondaryButton
-            title="Save"
+            title="Done"
             onPress={() => {
               navigation.navigate("My Workouts");
             }}
