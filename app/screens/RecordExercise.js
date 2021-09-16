@@ -8,6 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { Switch } from "react-native-gesture-handler";
 import * as ImagePicker from "expo-image-picker";
@@ -58,7 +59,7 @@ export default function RecordExercise({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Header title="Add Exercise" />
+      <Header title="Add Exercise" navigation={navigation} />
       <ScrollView>
         <View style={{ height: 70, flexDirection: "row" }}>
           <View style={{ flex: 1 }}></View>
@@ -243,25 +244,31 @@ export default function RecordExercise({ navigation, route }) {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
             }}
           >
             <View style={{ flex: 1 }}></View>
-            <View style={{ flex: 1.5 }}>
-              <BouncyCheckbox
-                isChecked={trackReps}
-                size={25}
-                fillColor="blue"
-                unfillColor="#FFFFFF"
-                iconStyle={{ borderColor: "blue" }}
-                textStyle={{}}
+            <View style={{ flex: 11.5 }}>
+              <Pressable
+                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                 onPress={() => {
                   setTrackReps(!trackReps);
                 }}
-              />
-            </View>
-            <View style={{ flex: 10 }}>
-              <Text>Number of Reps</Text>
+              >
+                <View style={{ flex: 1.5 }}>
+                  <BouncyCheckbox
+                    isChecked={trackReps}
+                    size={25}
+                    fillColor="blue"
+                    unfillColor="#FFFFFF"
+                    iconStyle={{ borderColor: "blue" }}
+                    textStyle={{}}
+                    disableBuiltInState
+                  />
+                </View>
+                <View style={{ flex: 10 }}>
+                  <Text>Number of Reps</Text>
+                </View>
+              </Pressable>
             </View>
             <View style={{ flex: 1 }}></View>
           </View>
@@ -269,25 +276,31 @@ export default function RecordExercise({ navigation, route }) {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
             }}
           >
             <View style={{ flex: 1 }}></View>
-            <View style={{ flex: 1.5 }}>
-              <BouncyCheckbox
-                isChecked={trackWeight}
-                size={25}
-                fillColor="blue"
-                unfillColor="#FFFFFF"
-                iconStyle={{ borderColor: "blue" }}
-                textStyle={{}}
+            <View style={{ flex: 11.5 }}>
+              <Pressable
+                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                 onPress={() => {
                   setTrackWeight(!trackWeight);
                 }}
-              />
-            </View>
-            <View style={{ flex: 10 }}>
-              <Text>Weight of dumbbells or bands used</Text>
+              >
+                <View style={{ flex: 1.5 }}>
+                  <BouncyCheckbox
+                    isChecked={trackWeight}
+                    size={25}
+                    fillColor="blue"
+                    unfillColor="#FFFFFF"
+                    iconStyle={{ borderColor: "blue" }}
+                    textStyle={{}}
+                    disableBuiltInState
+                  />
+                </View>
+                <View style={{ flex: 10 }}>
+                  <Text>Weight or bands used</Text>
+                </View>
+              </Pressable>
             </View>
             <View style={{ flex: 1 }}></View>
           </View>
@@ -295,25 +308,31 @@ export default function RecordExercise({ navigation, route }) {
             style={{
               flex: 1,
               flexDirection: "row",
-              alignItems: "center",
             }}
           >
             <View style={{ flex: 1 }}></View>
-            <View style={{ flex: 1.5 }}>
-              <BouncyCheckbox
-                isChecked={trackTime}
-                size={25}
-                fillColor="blue"
-                unfillColor="#FFFFFF"
-                iconStyle={{ borderColor: "blue" }}
-                textStyle={{}}
+            <View style={{ flex: 11.5 }}>
+              <Pressable
+                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                 onPress={() => {
                   setTrackTime(!trackTime);
                 }}
-              />
-            </View>
-            <View style={{ flex: 10 }}>
-              <Text>Length of Time</Text>
+              >
+                <View style={{ flex: 1.5 }}>
+                  <BouncyCheckbox
+                    isChecked={trackTime}
+                    size={25}
+                    fillColor="blue"
+                    unfillColor="#FFFFFF"
+                    iconStyle={{ borderColor: "blue" }}
+                    textStyle={{}}
+                    disableBuiltInState
+                  />
+                </View>
+                <View style={{ flex: 10 }}>
+                  <Text>Time to complete</Text>
+                </View>
+              </Pressable>
             </View>
             <View style={{ flex: 1 }}></View>
           </View>
