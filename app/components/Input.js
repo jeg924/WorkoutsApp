@@ -1,7 +1,14 @@
 import React from "react";
 import { View, TextInput, Text } from "react-native";
 
-export default function Input({ description, defaultValue, onChangeText }) {
+export default function Input({
+  description,
+  defaultValue,
+  onChangeText,
+  maxLength,
+  keyboardType,
+  enablesReturnKeyAutomatically,
+}) {
   return (
     <View style={{ flex: 1 }}>
       <Text style={{ fontWeight: "bold" }}>{description}</Text>
@@ -14,6 +21,9 @@ export default function Input({ description, defaultValue, onChangeText }) {
         }}
         onChangeText={onChangeText}
         defaultValue={defaultValue}
+        maxLength={maxLength}
+        keyboardType={keyboardType}
+        enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
       ></TextInput>
     </View>
   );
