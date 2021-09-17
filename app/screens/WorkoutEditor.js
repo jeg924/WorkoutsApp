@@ -20,57 +20,6 @@ import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
 import Svg, { Circle, Line } from "react-native-svg";
 
-{
-  /* <View style={{ flex: 0.4 }}>
-{orderedExercises.map((exercise) => {
-  return (
-    <View>
-      <Svg height={79} width={50}>
-        <Line
-          x1="15"
-          y1="0"
-          x2="15"
-          y2="66"
-          stroke="black"
-          strokeWidth="1"
-        />
-        <Circle
-          cx="15"
-          cy="70"
-          r="8"
-          stroke="blue"
-          strokeWidth="2"
-          fill="blue"
-        />
-      </Svg>
-    </View>
-  );
-})}
-{orderedExercises.length ? (
-  <View>
-    <Svg height={79} width={50}>
-      <Line
-        x1="15"
-        y1="0"
-        x2="15"
-        y2="66"
-        stroke="black"
-        strokeWidth="1"
-      />
-      <Circle
-        cx="15"
-        cy="70"
-        r="8"
-        stroke="blue"
-        strokeWidth="2"
-        fill="indigo"
-      />
-    </Svg>
-  </View>
-) : null}
-</View> */
-}
-
 export default function WorkoutEditor({ navigation, route }) {
   const { workoutID } = route.params;
   const [loading, setLoading] = React.useState(true);
@@ -99,7 +48,7 @@ export default function WorkoutEditor({ navigation, route }) {
     if (flatListRef.current) {
       console.log("EXERCISES", orderedExercises.length);
       flatListRef.current.getScrollResponder().scrollResponderScrollToEnd({
-        animated: false,
+        animated: true,
       });
     }
   }, [loading, eloading, navigation, orderedExercises.length]);
@@ -257,43 +206,40 @@ export default function WorkoutEditor({ navigation, route }) {
               </View>
             </View>
           ) : (
-            <View style={{ flex: 1, flexDirection: "row" }}>
+            <View
+              style={{
+                flex: 1,
+                height: 200,
+                justifyContent: "center",
+              }}
+            >
               <View
                 style={{
-                  flex: 10,
-                  justifyContent: "center",
+                  flex: 1,
+                  flexDirection: "row",
                   alignItems: "center",
                 }}
               >
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                  }}
-                >
-                  <View style={{ flex: 1 }}></View>
-                  <View style={{ flex: 2, alignItems: "center" }}>
-                    <Text style={{ fontWeight: "500", textAlign: "center" }}>
-                      To get started, add your first exercise video.
-                    </Text>
-                    <Text></Text>
-                  </View>
-                  <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 1 }}></View>
+                <View style={{ flex: 2, alignItems: "center" }}>
+                  <Text style={{ fontWeight: "500", textAlign: "center" }}>
+                    To get started, add your first exercise video.
+                  </Text>
                 </View>
-                <View style={{ width: "80%", alignItems: "center" }}>
-                  <SolidButton
-                    title="Add an Exercise"
-                    onPress={() => {
-                      navigation.navigate("Record Exercise", {
-                        order: exercises.length,
-                        exerciseObj: null,
-                        workoutID: workoutID,
-                      });
-                    }}
-                  />
-                </View>
+                <View style={{ flex: 1 }}></View>
               </View>
-              <View style={{ flex: 1 }}></View>
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <SolidButton
+                  title="Add an Exercise"
+                  onPress={() => {
+                    navigation.navigate("Record Exercise", {
+                      order: exercises.length,
+                      exerciseObj: null,
+                      workoutID: workoutID,
+                    });
+                  }}
+                />
+              </View>
             </View>
           )
         }

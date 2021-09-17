@@ -11,7 +11,6 @@ import {
   SafeAreaView,
   ActionSheetIOS,
 } from "react-native";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import SolidButton from "../components/SolidButton";
 import Header from "../components/Header";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
@@ -19,10 +18,6 @@ import SegmentedControl from "@react-native-segmented-control/segmented-control"
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
   const [deletingUpload, setDeletingUpload] = React.useState(false);
-
-  const [myHistoryCategory, setMyHistoryCategory] = React.useState(false);
-  const [myLibraryCategory, setMyLibraryCategory] = React.useState(false);
-  const [myUploadsCategory, setMyUploadsCategory] = React.useState(true);
 
   const [tabIndex, setTabIndex] = React.useState(2);
 
@@ -163,7 +158,7 @@ export default function MyWorkouts({ navigation, route }) {
               flexDirection: "column",
             }}
             data={tabIndex === 2 ? uploads : tabIndex === 1 ? library : history}
-            keyExtractor={(index) => index}
+            keyExtractor={(x) => x.workoutID}
             renderItem={({ item }) => {
               return (
                 <TouchableHighlight
