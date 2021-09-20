@@ -17,6 +17,9 @@ import SegmentedControl from "@react-native-segmented-control/segmented-control"
 
 export default function MyWorkouts({ navigation, route }) {
   const [loading, setLoading] = React.useState(false);
+
+  const [removingFromHistory, setRemovingFromHistory] = React.useState(false);
+  const [removingFromLibrary, setRemovingFromLibrary] = React.useState(false);
   const [deletingUpload, setDeletingUpload] = React.useState(false);
 
   const [tabIndex, setTabIndex] = React.useState(2);
@@ -163,10 +166,7 @@ export default function MyWorkouts({ navigation, route }) {
               return (
                 <TouchableHighlight
                   style={{
-                    marginTop: 20,
-                    marginBottom: 20,
-                    marginLeft: "11.3%",
-                    marginRight: "11.3%",
+                    padding: 20,
                   }}
                   onPress={() => {
                     navigation.navigate("Start Workout", {
@@ -175,72 +175,166 @@ export default function MyWorkouts({ navigation, route }) {
                     });
                   }}
                   onLongPress={() => {
-                    const options = [
-                      "Start Workout",
-                      "Edit Details",
-                      "Edit Exercises",
-                      "Delete",
-                      "Cancel",
-                    ];
-                    const destructiveButtonIndex = 3;
-                    const cancelButtonIndex = 4;
-
-                    ActionSheetIOS.showActionSheetWithOptions(
-                      {
-                        options,
-                        cancelButtonIndex,
-                        destructiveButtonIndex,
-                      },
-                      async (buttenIndex) => {
-                        if (buttenIndex == 0) {
-                          navigation.navigate("Start Workout", {
-                            workoutID: item.workoutID,
-                            current: 0,
-                          });
-                        } else if (buttenIndex == 1) {
-                          navigation.navigate("Workout Info Form", {
-                            workoutID: item.workoutID,
-                          });
-                        } else if (buttenIndex == 2) {
-                          navigation.navigate("Workout Editor", {
-                            workoutID: item.workoutID,
-                          });
-                        } else if (buttenIndex == 3) {
-                          try {
-                            setDeletingUpload(true);
-                            const batch = firebase.firestore().batch();
-                            const workoutRef = firebase
-                              .firestore()
-                              .collection("workouts")
-                              .doc(item.workoutID);
-                            await workoutRef.update({
-                              deleted: true,
+                    if (tabIndex === 0) {
+                      const options = [
+                        "Start Workout",
+                        "Remove from History",
+                        "Cancel",
+                      ];
+                      const destructiveButtonIndex = 1;
+                      const cancelButtonIndex = 2;
+                      ActionSheetIOS.showActionSheetWithOptions(
+                        {
+                          options,
+                          cancelButtonIndex,
+                          destructiveButtonIndex,
+                        },
+                        async (buttenIndex) => {
+                          if (buttenIndex === 0) {
+                            navigation.navigate("Start Workout", {
+                              workoutID: item.workoutID,
+                              current: 0,
                             });
-                            const workoutExercisesRef = firebase
-                              .firestore()
-                              .collection("exercises")
-                              .where("workoutID", "==", item.workoutID);
-                            const workoutExercises =
-                              await workoutExercisesRef.get();
-                            workoutExercises.forEach((doc) => {
-                              batch.update(doc.ref, { deleted: true });
-                            });
-                            await batch.commit();
+                          } else if (buttenIndex === 1) {
+                            try {
+                              setRemovingFromHistory(true);
+                              const myRef = firebase
+                                .firestore()
+                                .collection("users")
+                                .doc(firebase.auth().currentUser.uid);
+                              const myDoc = await myRef.get();
+                              const my = myDoc.data();
+                              let history = [...my.history];
+                              console.log("before");
+                              console.log(history);
+                              console.log(history[0].workoutID);
+                              console.log(item.workoutID);
+                              history = history.filter(
+                                (x) => x.workoutID !== item.workoutID
+                              );
+                              console.log("after");
+                              console.log(history);
+                              myRef.set({ history: history }, { merge: true });
 
-                            loadData();
-                          } catch (error) {
-                            console.log("error is " + error);
-                          } finally {
-                            setDeletingUpload(false);
+                              loadData();
+                            } catch (error) {
+                              console.log(error);
+                            } finally {
+                              setRemovingFromHistory(false);
+                            }
                           }
                         }
-                      }
-                    );
+                      );
+                    } else if (tabIndex == 1) {
+                      const options = [
+                        "Start Workout",
+                        "Remove from Library",
+                        "Cancel",
+                      ];
+                      const destructiveButtonIndex = 1;
+                      const cancelButtonIndex = 2;
+                      ActionSheetIOS.showActionSheetWithOptions(
+                        {
+                          options,
+                          cancelButtonIndex,
+                          destructiveButtonIndex,
+                        },
+                        async (buttenIndex) => {
+                          if (buttenIndex === 0) {
+                            navigation.navigate("Start Workout", {
+                              workoutID: item.workoutID,
+                              current: 0,
+                            });
+                          } else if (buttenIndex === 1) {
+                            try {
+                              setRemovingFromLibrary(true);
+                              const myRef = firebase
+                                .firestore()
+                                .collection("users")
+                                .doc(firebase.auth().currentUser.uid);
+                              const myDoc = await myRef.get();
+                              const my = myDoc.data();
+                              let library = [...my.library];
+                              library = library.filter(
+                                (x) => x.workoutID !== item.workoutID
+                              );
+                              myRef.set({ library: library }, { merge: true });
+                              loadData();
+                            } catch (error) {
+                              console.log(error);
+                            } finally {
+                              setRemovingFromLibrary(false);
+                            }
+                          }
+                        }
+                      );
+                    } else {
+                      const options = [
+                        "Start Workout",
+                        "Edit Details",
+                        "Edit Exercises",
+                        "Delete",
+                        "Cancel",
+                      ];
+                      const destructiveButtonIndex = 3;
+                      const cancelButtonIndex = 4;
+                      ActionSheetIOS.showActionSheetWithOptions(
+                        {
+                          options,
+                          cancelButtonIndex,
+                          destructiveButtonIndex,
+                        },
+                        async (buttenIndex) => {
+                          if (buttenIndex == 0) {
+                            navigation.navigate("Start Workout", {
+                              workoutID: item.workoutID,
+                              current: 0,
+                            });
+                          } else if (buttenIndex == 1) {
+                            navigation.navigate("Workout Info Form", {
+                              workoutID: item.workoutID,
+                            });
+                          } else if (buttenIndex == 2) {
+                            navigation.navigate("Workout Editor", {
+                              workoutID: item.workoutID,
+                            });
+                          } else if (buttenIndex == 3) {
+                            try {
+                              setDeletingUpload(true);
+                              const batch = firebase.firestore().batch();
+                              const workoutRef = firebase
+                                .firestore()
+                                .collection("workouts")
+                                .doc(item.workoutID);
+                              await workoutRef.update({
+                                deleted: true,
+                              });
+                              const workoutExercisesRef = firebase
+                                .firestore()
+                                .collection("exercises")
+                                .where("workoutID", "==", item.workoutID);
+                              const workoutExercises =
+                                await workoutExercisesRef.get();
+                              workoutExercises.forEach((doc) => {
+                                batch.update(doc.ref, { deleted: true });
+                              });
+                              await batch.commit();
+
+                              loadData();
+                            } catch (error) {
+                              console.log("error is " + error);
+                            } finally {
+                              setDeletingUpload(false);
+                            }
+                          }
+                        }
+                      );
+                    }
                   }}
                 >
                   <View>
                     <Image
-                      style={{ width: 100, height: 100 }}
+                      style={{ width: 140, height: 140 }}
                       source={{ uri: item.workoutImage, cache: "force-cache" }}
                     />
                     <Text>{item.workoutName}</Text>
@@ -248,17 +342,15 @@ export default function MyWorkouts({ navigation, route }) {
                 </TouchableHighlight>
               );
             }}
-            numColumns={3}
+            numColumns={2}
           />
         )}
       </SafeAreaView>
       {tabIndex === 2 && !uploads.length ? null : (
         <View
           style={{
-            width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            marginBottom: "5%",
           }}
         >
           <SolidButton
