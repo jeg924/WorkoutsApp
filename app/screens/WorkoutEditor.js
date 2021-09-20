@@ -57,7 +57,7 @@ export default function WorkoutEditor({ navigation, route }) {
     const unsubscribe = navigation.addListener("focus", () => {
       if (flatListRef.current) {
         flatListRef.current.getScrollResponder().scrollResponderScrollToEnd({
-          animated: false,
+          animated: true,
         });
       }
     });
