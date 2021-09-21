@@ -4,7 +4,13 @@ import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 
-export default function Header({ title, navigation, route, tabScreen }) {
+export default function Header({
+  title,
+  navigation,
+  route,
+  tabScreen,
+  headerButton,
+}) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
   return (
@@ -12,7 +18,7 @@ export default function Header({ title, navigation, route, tabScreen }) {
       style={{
         paddingTop: insets.top,
         flexDirection: "row",
-        backgroundColor: colors.primary,
+        backgroundColor: colors.card,
         height: 70,
         borderBottomWidth: 1,
         borderBottomColor: colors.border,
@@ -37,7 +43,9 @@ export default function Header({ title, navigation, route, tabScreen }) {
           {title}
         </Text>
       </View>
-      <View style={{ flex: 1 }}></View>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        {tabScreen ? headerButton : null}
+      </View>
     </View>
   );
 }

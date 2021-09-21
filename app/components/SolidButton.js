@@ -7,7 +7,7 @@ export default function SolidButton({ title, onPress, ...rest }) {
   return (
     <TouchableHighlight
       style={{
-        backgroundColor: colors.primary,
+        backgroundColor: colors.notification,
         borderRadius: 20,
         width: "90%",
         justifyContent: "center",
@@ -17,7 +17,7 @@ export default function SolidButton({ title, onPress, ...rest }) {
       onPress={onPress}
       rest
     >
-      <Text style={{ color: colors.background }}>{title}</Text>
+      <Text style={{ color: "white" }}>{title}</Text>
     </TouchableHighlight>
   );
 }

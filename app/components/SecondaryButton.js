@@ -19,7 +19,7 @@ export default function SecondaryButton({ title, onPress, ...rest }) {
       onPress={onPress}
       rest
     >
-      <Text style={{ color: colors.text }}>{title}</Text>
+      <Text style={{ color: colors.border }}>{title}</Text>
     </TouchableHighlight>
   );
 }

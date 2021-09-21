@@ -32,9 +32,9 @@ import { colors } from "react-native-elements";
 const MyTheme = {
   dark: false,
   colors: {
-    primary: "#6200EE",
+    primary: "#3700B3",
     background: "white",
-    card: "#3700B3",
+    card: "#6200EE",
     text: "black",
     border: "#3700B3",
     notification: "#BB86FC",
@@ -198,9 +198,9 @@ function App() {
               })}
               tabBarOptions={{
                 activeTintColor: MyTheme.colors.background,
-                inactiveTintColor: MyTheme.colors.notification,
+                inactiveTintColor: MyTheme.colors.text,
               }}
-              tabBarStyle={{ backgroundColor: MyTheme.colors.primary }}
+              tabBarStyle={{ backgroundColor: MyTheme.colors.notification }}
             >
               <Tab.Screen name="Home" component={HomeStackScreen} />
               <Tab.Screen

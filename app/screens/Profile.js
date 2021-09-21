@@ -172,19 +172,27 @@ export default function Profile({ navigation, route }) {
         <View
           style={{
             flex: 1,
-            alignItems: "center",
-            flexDirection: "row",
           }}
         >
-          <View style={{ flex: 2 }}></View>
-          <View style={{ flex: 10 }}>
+          <View style={{ flex: 1 }}>
             {userID === firebase.auth().currentUser.uid ? ( // is this my own profile?
-              <View style={{}}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <SolidButton
                   onPress={() => {
                     navigation.navigate("Edit Profile");
                   }}
                   title="Edit Profile"
+                />
+                <View style={{ height: 10 }}></View>
+                <SecondaryButton
+                  title="Sign out"
+                  onPress={() => firebase.auth().signOut()}
                 />
               </View>
             ) : !isFriend ? ( // is this my Friend?
@@ -204,7 +212,6 @@ export default function Profile({ navigation, route }) {
               </View>
             )}
           </View>
-          <View style={{ flex: 1 }}></View>
         </View>
       </View>
     </View>

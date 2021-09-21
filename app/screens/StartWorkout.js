@@ -147,16 +147,16 @@ export default function StartWorkout({ navigation, route }) {
     try {
       setStarting(true);
 
-      // add to history
-      const myRef = firebase
-        .firestore()
-        .collection("users")
-        .doc(firebase.auth().currentUser.uid);
-      const myDoc = await myRef.get();
-      const my = myDoc.data();
-      if (my) {
-        if (my.history) {
-          let history = [...my.history];
+      if (currentExercise === 0) {
+        // add to history
+        const myRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(firebase.auth().currentUser.uid);
+        const myDoc = await myRef.get();
+        const my = myDoc.data();
+        if (my) {
+          let history = my.history ? [...my.history] : [];
           history.concat({
             workoutID: workoutID,
             workoutName: workout.workoutName,
@@ -166,20 +166,6 @@ export default function StartWorkout({ navigation, route }) {
           myRef.set(
             {
               history: history,
-            },
-            { merge: true }
-          );
-        } else {
-          myRef.set(
-            {
-              history: [
-                {
-                  workoutID: workoutID,
-                  workoutName: workout.workoutName,
-                  workoutImage: workout.workoutImage,
-                  timeStamp: Date.now(),
-                },
-              ],
             },
             { merge: true }
           );
