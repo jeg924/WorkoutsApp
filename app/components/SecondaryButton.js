@@ -1,13 +1,15 @@
 import React from "react";
 import { TouchableHighlight, Text } from "react-native";
+import { useTheme } from "@react-navigation/native";
 
 export default function SecondaryButton({ title, onPress, ...rest }) {
+  const { colors } = useTheme();
   return (
     <TouchableHighlight
       style={{
-        backgroundColor: "white",
+        backgroundColor: colors.background,
         borderWidth: 1,
-        borderColor: "blue",
+        borderColor: colors.border,
         borderRadius: 20,
         width: "90%",
         justifyContent: "center",
@@ -17,7 +19,7 @@ export default function SecondaryButton({ title, onPress, ...rest }) {
       onPress={onPress}
       rest
     >
-      <Text style={{ color: "blue" }}>{title}</Text>
+      <Text style={{ color: colors.text }}>{title}</Text>
     </TouchableHighlight>
   );
 }

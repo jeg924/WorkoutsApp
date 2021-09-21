@@ -1,5 +1,6 @@
 import React from "react";
 import { View, TextInput, Text } from "react-native";
+import { useTheme } from "@react-navigation/native";
 
 export default function Input({
   description,
@@ -14,9 +15,12 @@ export default function Input({
   textContentType,
   autoCompleteType,
 }) {
+  const { colors } = useTheme();
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontWeight: "bold" }}>{description}</Text>
+      <Text style={{ fontWeight: "bold", color: colors.text }}>
+        {description}
+      </Text>
       <TextInput
         style={{
           borderRadius: 10,

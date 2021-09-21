@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator, HeaderTitle } from "@react-navigation/stack";
 import { Feather } from "@expo/vector-icons";
@@ -27,6 +27,18 @@ import StartWorkout from "./screens/StartWorkout";
 import WorkoutVideoScreen from "./screens/WorkoutVideoScreen";
 import WorkoutReview from "./screens/WorkoutReview";
 import ModalFriendPicker from "./screens/ModalFriendPicker";
+
+const MyTheme = {
+  dark: false,
+  colors: {
+    primary: "#6200EE",
+    background: "white",
+    card: "#3700B3",
+    text: "black",
+    border: "#3700B3",
+    notification: "#BB86FC",
+  },
+};
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5Y7PIj8JGZqlqM2T4Itf27ZZHDMA3NhA",
@@ -117,7 +129,6 @@ const Tab = createBottomTabNavigator();
 
 export const GlobalContext = React.createContext({
   myUserId: null,
-  myFriends: [],
 });
 
 function App() {
@@ -167,16 +178,9 @@ function App() {
         <GlobalContext.Provider
           value={{
             myUserId: firebase.auth().currentUser.uid,
-            myFriends: [
-              {
-                id: 123,
-                displayName: "Robert G",
-                profilePicture: "https://google.com",
-              },
-            ],
           }}
         >
-          <NavigationContainer>
+          <NavigationContainer theme={MyTheme}>
             <Tab.Navigator
               screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
