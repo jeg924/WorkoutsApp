@@ -15,21 +15,24 @@ export default function Home({ navigation }) {
     <View
       style={{
         flex: 1,
-        alignItems: "center",
         backgroundColor: colors.background,
       }}
     >
       <Header tabScreen={"true"} title="Home" />
-
-      <Button onPress={() => firebase.auth().signOut()} title="Sign Out" />
-      <Button
-        onPress={() =>
-          navigation.navigate("Profile", {
-            userID: firebase.auth().currentUser.uid,
-          })
-        }
-        title="My profile"
-      ></Button>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <SolidButton
+          onPress={() => firebase.auth().signOut()}
+          title="Sign Out"
+        />
+        <SecondaryButton
+          onPress={() =>
+            navigation.navigate("Profile", {
+              userID: firebase.auth().currentUser.uid,
+            })
+          }
+          title="My profile"
+        />
+      </View>
     </View>
   );
 }

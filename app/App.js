@@ -27,6 +27,7 @@ import StartWorkout from "./screens/StartWorkout";
 import WorkoutVideoScreen from "./screens/WorkoutVideoScreen";
 import WorkoutReview from "./screens/WorkoutReview";
 import ModalFriendPicker from "./screens/ModalFriendPicker";
+import { colors } from "react-native-elements";
 
 const MyTheme = {
   dark: false,
@@ -196,9 +197,10 @@ function App() {
                 },
               })}
               tabBarOptions={{
-                activeTintColor: "blue",
-                inactiveTintColor: "#708090",
+                activeTintColor: MyTheme.colors.background,
+                inactiveTintColor: MyTheme.colors.notification,
               }}
+              tabBarStyle={{ backgroundColor: MyTheme.colors.primary }}
             >
               <Tab.Screen name="Home" component={HomeStackScreen} />
               <Tab.Screen
