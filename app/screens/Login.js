@@ -33,9 +33,9 @@ export default function Login() {
           displayName: name,
           deleted: false,
         });
+        console.log("testing");
       })
       .catch((error) => setError(error.message));
-    console.log("testing");
   }
 
   function signin() {
@@ -66,6 +66,7 @@ export default function Login() {
             selectedIndex={tabIndex}
             onChange={(event) => {
               setTabIndex(event.nativeEvent.selectedSegmentIndex);
+              setError("");
             }}
             tintColor="blue"
             fontStyle={{ color: "black" }}
@@ -79,8 +80,23 @@ export default function Login() {
               }}
             >
               <View style={{ flex: 0.5 }}></View>
-              <Input description="Email" />
-              <Input description="Password" />
+              <Input
+                description="Email"
+                placeholder="Email Address"
+                textContentType="emailAddress"
+                keyboardType="email-address"
+                autoCompleteType="email"
+                onChangeText={(email) => setEmail(email)}
+              />
+              <Input
+                description="Password"
+                autoFocus={false}
+                secureTextEntry={true}
+                placeholder="Password"
+                textContentType="password"
+                autoCompleteType="password"
+                onChangeText={(password) => setPassword(password)}
+              />
 
               <View style={{ flex: 1 }}></View>
             </View>
@@ -91,9 +107,31 @@ export default function Login() {
               }}
             >
               <View style={{ flex: 0.5 }}></View>
-              <Input description="Email" />
-              <Input description="Display Name" />
-              <Input description="Password" />
+              <Input
+                description="Email"
+                autoFocus={false}
+                placeholder="Email Address"
+                textContentType="emailAddress"
+                keyboardType="email-address"
+                autoCompleteType="email"
+                onChangeText={(email) => setEmail(email)}
+              />
+              <Input
+                description="Display Name"
+                autoFocus={false}
+                placeholder="Display Name"
+                textContentType="name"
+                onChangeText={(name) => setName(name)}
+              />
+              <Input
+                description="Password"
+                autoFocus={false}
+                secureTextEntry={true}
+                placeholder="Password"
+                textContentType="password"
+                autoCompleteType="password"
+                onChangeText={(password) => setPassword(password)}
+              />
               <View style={{ flex: 0.5 }}></View>
             </View>
           )}
@@ -105,6 +143,15 @@ export default function Login() {
           title={tabIndex === 0 ? "Login" : "Register"}
           onPress={tabIndex === 0 ? signin : signup}
         />
+        <View
+          style={{
+            width: "90%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "red" }}>{error}</Text>
+        </View>
       </View>
     </View>
   );
