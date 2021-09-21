@@ -8,6 +8,11 @@ export default function Input({
   maxLength,
   keyboardType,
   enablesReturnKeyAutomatically,
+  autoFocus,
+  secureTextEntry,
+  placeholder,
+  textContentType,
+  autoCompleteType,
 }) {
   return (
     <View style={{ flex: 1 }}>
@@ -24,6 +29,11 @@ export default function Input({
         maxLength={maxLength}
         keyboardType={keyboardType}
         enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
+        autoFocus={autoFocus}
+        secureTextEntry={secureTextEntry}
+        placeholder={placeholder}
+        textContentType={textContentType}
+        autoCompleteType={autoCompleteType}
       ></TextInput>
     </View>
   );

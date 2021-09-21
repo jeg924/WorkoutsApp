@@ -96,6 +96,22 @@ export default function MyWorkouts({ navigation, route }) {
     );
   }
 
+  if (removingFromLibrary) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Removing from library</Text>
+      </View>
+    );
+  }
+
+  if (removingFromHistory) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Removing from history</Text>
+      </View>
+    );
+  }
+
   return (
     <View
       style={{
