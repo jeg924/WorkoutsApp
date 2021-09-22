@@ -1068,43 +1068,46 @@ export default function WorkoutReview({ navigation, route }) {
           ) : null}
         </View>
       </ScrollView>
-      <View
-        style={{
-          flex: 0.2,
-          width: "100%",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <SolidButton
-          title="Compare with a Friend"
-          onPress={() => {
-            navigation.navigate("Modal Friend Picker", {
-              friends: friends,
-              friendsAverageStats: friendsAverageStats,
-              friendsBestStats: friendsBestStats,
-              friendsLatestStats: friendsLatestStats,
-              updateFriend: updateFriend,
-            });
-          }}
-        />
-      </View>
-      {friend ? (
-        <View
-          style={{
-            flex: 0.2,
-            width: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <SecondaryButton
-            title="Stop Comparing"
-            onPress={() => {
-              setFriend(null);
+      {friends ? (
+        !friend ? (
+          <View
+            style={{
+              flex: 0.2,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-          />
-        </View>
+          >
+            <SolidButton
+              title="Compare with a Friend"
+              onPress={() => {
+                navigation.navigate("Modal Friend Picker", {
+                  friends: friends,
+                  friendsAverageStats: friendsAverageStats,
+                  friendsBestStats: friendsBestStats,
+                  friendsLatestStats: friendsLatestStats,
+                  updateFriend: updateFriend,
+                });
+              }}
+            />
+          </View>
+        ) : (
+          <View
+            style={{
+              flex: 0.2,
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SecondaryButton
+              title="Stop Comparing"
+              onPress={() => {
+                setFriend(null);
+              }}
+            />
+          </View>
+        )
       ) : null}
     </View>
   );
