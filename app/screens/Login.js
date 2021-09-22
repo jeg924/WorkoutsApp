@@ -33,7 +33,6 @@ export default function Login() {
           displayName: name,
           deleted: false,
         });
-        console.log("testing");
       })
       .catch((error) => setError(error.message));
   }
@@ -68,7 +67,7 @@ export default function Login() {
               setTabIndex(event.nativeEvent.selectedSegmentIndex);
               setError("");
             }}
-            tintColor="blue"
+            tintColor={colors.notification}
             fontStyle={{ color: "black" }}
             activeFontStyle={{ color: "white" }}
             style={{ height: 50 }}
@@ -142,6 +141,7 @@ export default function Login() {
         <SolidButton
           title={tabIndex === 0 ? "Login" : "Register"}
           onPress={tabIndex === 0 ? signin : signup}
+          style={{ backgroundColor: "#BB86FC" }}
         />
         <View
           style={{

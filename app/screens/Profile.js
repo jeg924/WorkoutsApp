@@ -1,12 +1,6 @@
 import React from "react";
 import firebase from "firebase";
 import { View, Text, Image, TouchableHighlight } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import * as ImagePicker from "expo-image-picker";
-import Constants from "expo-constants";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { set } from "react-native-reanimated";
-import { GlobalContext } from "../App";
 import Header from "../components/Header";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";

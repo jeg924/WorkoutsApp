@@ -9,9 +9,12 @@ import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
 import Svg, { Circle, Line } from "react-native-svg";
 import { DisplayTime } from "../UtilityFunctions";
+import { useTheme } from "@react-navigation/native";
 
 export default function StartWorkout({ navigation, route }) {
-  const { workoutID, current } = route.params;
+  const { workoutID, current, routeRecordID } = route.params;
+
+  const { colors } = useTheme();
   const [loading, setLoading] = React.useState(true);
   const [addingToLibrary, setAddingToLibary] = React.useState(false);
   const [starting, setStarting] = React.useState(false);
@@ -21,7 +24,7 @@ export default function StartWorkout({ navigation, route }) {
   const [exercises, setExercises] = React.useState(null);
   const [currentExercise, setCurrentExercise] = React.useState(null);
   const [stats, setStats] = React.useState(null);
-  const [recordID, setRecordID] = React.useState(null);
+  const [recordID, setRecordID] = React.useState(routeRecordID);
 
   React.useEffect(() => {
     loadData();
@@ -40,6 +43,8 @@ export default function StartWorkout({ navigation, route }) {
     try {
       setLoading(true);
       // load workout data
+      console.log("got here");
+      console.log(workoutID);
       const workoutRef = firebase
         .firestore()
         .collection("workouts")
@@ -90,12 +95,15 @@ export default function StartWorkout({ navigation, route }) {
   }
 
   async function loadStatData() {
+    console.log("I just need a girl ");
+    console.log(recordID);
     const statsRef = firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("recorded workouts")
       .doc(recordID);
+    console.log("who gon really understand");
     const statsDoc = await statsRef.get();
     const stats = statsDoc.data();
     setStats(stats);
@@ -148,11 +156,12 @@ export default function StartWorkout({ navigation, route }) {
       setStarting(true);
 
       if (currentExercise === 0) {
-        // add to history
         const myRef = firebase
           .firestore()
           .collection("users")
           .doc(firebase.auth().currentUser.uid);
+
+        // add to history
         const myDoc = await myRef.get();
         const my = myDoc.data();
         if (my) {
@@ -170,9 +179,7 @@ export default function StartWorkout({ navigation, route }) {
             { merge: true }
           );
         }
-      }
 
-      if (recordID == null) {
         // create a document to collect stats
         const recordRef = myRef.collection("recorded workouts").doc();
         setRecordID(recordRef.id);
@@ -181,6 +188,7 @@ export default function StartWorkout({ navigation, route }) {
           recordID: recordRef.id,
           workoutID: workout.workoutID,
           timeStarted: Date.now(),
+          timeCompleted: null,
         });
 
         navigation.navigate("Workout Video Screen", {
@@ -198,7 +206,7 @@ export default function StartWorkout({ navigation, route }) {
         });
       }
     } catch (error) {
-      console.log("error is", error);
+      console.log(error);
     } finally {
       setStarting(false);
     }
@@ -229,7 +237,7 @@ export default function StartWorkout({ navigation, route }) {
         },
       });
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -297,7 +305,7 @@ export default function StartWorkout({ navigation, route }) {
                 justifyContent: "center",
               }}
             >
-              <Feather name="plus-circle" color="blue" size={25} />
+              <Feather name="plus-circle" color={colors.card} size={25} />
               <Text style={{ paddingLeft: 10 }}>Add to Library</Text>
             </View>
           </TouchableHighlight>
@@ -310,7 +318,7 @@ export default function StartWorkout({ navigation, route }) {
             justifyContent: "center",
           }}
         >
-          <Feather name="clock" color="blue" size={25} />
+          <Feather name="clock" color={colors.card} size={25} />
           <Text style={{ paddingLeft: 10 }}>
             {workout ? DisplayTime(workout.time) : ""}
           </Text>
@@ -337,9 +345,13 @@ export default function StartWorkout({ navigation, route }) {
                 cx="15"
                 cy="50"
                 r="8"
-                stroke="blue"
+                stroke={colors.primary}
                 strokeWidth="2"
-                fill={currentExercise === exercises?.length ? "indigo" : "blue"}
+                fill={
+                  currentExercise === exercises?.length
+                    ? colors.notification
+                    : colors.primary
+                }
               />
               <Line
                 x1="15"
@@ -360,20 +372,22 @@ export default function StartWorkout({ navigation, route }) {
           >
             {currentExercise == exercises?.length ? (
               <SolidButton title="Review Workout" onPress={ReviewWorkout} />
-            ) : (
+            ) : exercises ? (
               <SolidButton
                 title={
                   currentExercise !== 0 ? "Next Exercise" : "Start Workout"
                 }
                 onPress={startExercise}
               />
-            )}
+            ) : null}
           </View>
         </View>
         <View style={{ flex: 3 }}>
           <FlatList
             style={{}}
-            initialScrollIndex={currentExercise}
+            initialScrollIndex={
+              currentExercise == exercises?.length ? 0 : currentExercise
+            }
             ref={flatListRef}
             keyExtractor={(x) => x.id}
             getItemLayout={(item, index) => {
@@ -400,11 +414,15 @@ export default function StartWorkout({ navigation, route }) {
                       cx="15"
                       cy="50"
                       r="8"
-                      stroke="blue"
+                      stroke={colors.primary}
                       strokeWidth="2"
-                      fill={index === currentExercise ? "indigo" : "blue"}
+                      fill={
+                        currentExercise === index
+                          ? colors.notification
+                          : colors.primary
+                      }
                     />
-                    {index !== exercises.length - 1 ? (
+                    {index !== exercises?.length - 1 ? (
                       <Line
                         x1="15"
                         y1="60"

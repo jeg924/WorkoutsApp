@@ -14,8 +14,10 @@ import {
 import SolidButton from "../components/SolidButton";
 import Header from "../components/Header";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
+import { useTheme } from "@react-navigation/native";
 
 export default function MyWorkouts({ navigation, route }) {
+  const { colors } = useTheme();
   const [loading, setLoading] = React.useState(false);
 
   const [removingFromHistory, setRemovingFromHistory] = React.useState(false);
@@ -126,7 +128,7 @@ export default function MyWorkouts({ navigation, route }) {
         onChange={(event) => {
           setTabIndex(event.nativeEvent.selectedSegmentIndex);
         }}
-        tintColor="blue"
+        tintColor={colors.card}
         fontStyle={{ color: "black" }}
         activeFontStyle={{ color: "white" }}
         style={{ height: 50 }}
@@ -188,6 +190,7 @@ export default function MyWorkouts({ navigation, route }) {
                     navigation.navigate("Start Workout", {
                       workoutID: item.workoutID,
                       current: 0,
+                      routeRecordID: null,
                     });
                   }}
                   onLongPress={() => {
@@ -362,7 +365,7 @@ export default function MyWorkouts({ navigation, route }) {
           />
         )}
       </SafeAreaView>
-      {tabIndex === 2 && !uploads.length ? null : (
+      {tabIndex === 2 || !uploads.length ? null : (
         <View
           style={{
             justifyContent: "center",

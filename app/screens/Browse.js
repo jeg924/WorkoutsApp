@@ -15,12 +15,14 @@ import {
   TextInput,
   TouchableHighlight,
   Image,
+  Pressable,
 } from "react-native";
 import { SearchBar } from "react-native-elements";
 import { Feather } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import { FlatList } from "react-native-gesture-handler";
 import { useDocumentDataOnce } from "react-firebase-hooks/firestore";
+import Header from "../components/Header";
 
 // Search all workouts
 // Search all users
@@ -123,6 +125,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                 navigation.navigate("Start Workout", {
                   workoutID: item.workoutID,
                   current: 0,
+                  routeRecordID: null,
                 })
               }
             >
@@ -209,40 +212,19 @@ export default function Browse({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          marginTop: 20,
-        }}
-      >
-        <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 6, justifyContent: "center" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 30,
-            }}
-          >
-            Browse
-          </Text>
-        </View>
-        <View style={{ flex: 2 }}>
-          <TouchableHighlight
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+      <Header
+        title="Browse"
+        tabScreen
+        headerButton={
+          <Pressable
             onPress={() => {
               navigation.navigate("Filter Form");
             }}
           >
-            <Feather name="filter" color="black" size={30} />
-          </TouchableHighlight>
-        </View>
-        <View style={{ flex: 1 }}></View>
-      </View>
+            <Feather name="filter" size={30} color="white" />
+          </Pressable>
+        }
+      />
       <View style={{ flex: 8 }}>
         <InstantSearch
           searchClient={algoliasearch(

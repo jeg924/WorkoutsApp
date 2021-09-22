@@ -9,6 +9,9 @@ import {
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import { Picker } from "@react-native-picker/picker";
+import { useTheme } from "@react-navigation/native";
+import SegmentedControl from "@react-native-segmented-control/segmented-control";
+import Header from "../components/Header";
 
 // function calculateWinningStatsForThisWorkout() {
 //   let averageWinnerObject = {};
@@ -413,11 +416,15 @@ import { Picker } from "@react-native-picker/picker";
 
 export default function WorkoutReview({ navigation, route }) {
   const { workout, exercises } = route.params;
-
+  const { colors } = useTheme();
   const [timesCompleted, setTimesCompleted] = React.useState(null);
+
   const [averageCategory, setAverageCategory] = React.useState(false);
   const [bestCategory, setBestCategory] = React.useState(true);
   const [latestCategory, setLatestCategory] = React.useState(false);
+
+  const [tabIndex, setTabIndex] = React.useState(2);
+
   const [myProfilePicture, setMyProfilePicture] = React.useState(null);
   const [myDisplayName, setMyDisplayName] = React.useState(null);
   const [latestStats, setLatestStats] = React.useState(null);
@@ -746,87 +753,18 @@ export default function WorkoutReview({ navigation, route }) {
   }
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={{
-          justifyContent: "center",
-          marginTop: "6%",
-          position: "fixed",
-          height: "auto",
-          padding: 10,
-          borderBottomColor: "black",
-          borderBottomWidth: 1,
-          width: "100%",
+      <Header title="Review Workout" navigation={navigation} />
+      <SegmentedControl
+        values={["Latest", "Average", "Best"]}
+        selectedIndex={tabIndex}
+        onChange={(event) => {
+          setTabIndex(event.nativeEvent.selectedSegmentIndex);
         }}
-      >
-        <Text style={{ fontSize: 25, fontWeight: "bold", marginLeft: "4.8%" }}>
-          Review {workout.workoutName}
-        </Text>
-        <Text style={{ marginLeft: "4.8%" }}>
-          You have completed this workout {timesCompleted} times
-        </Text>
-      </View>
-
-      <View
-        style={{
-          width: "100%",
-          height: "10%",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          alignItems: "center",
-        }}
-      >
-        <TouchableHighlight
-          onPress={() => {
-            setAverageCategory(true);
-            setBestCategory(false);
-            setLatestCategory(false);
-          }}
-        >
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 20,
-              color: averageCategory ? "blue" : "black",
-            }}
-          >
-            Average
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() => {
-            setBestCategory(true);
-            setAverageCategory(false);
-            setLatestCategory(false);
-          }}
-        >
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 20,
-              color: bestCategory ? "blue" : "black",
-            }}
-          >
-            Best
-          </Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() => {
-            setLatestCategory(true);
-            setAverageCategory(false);
-            setBestCategory(false);
-          }}
-        >
-          <Text
-            style={{
-              fontWeight: "bold",
-              color: latestCategory ? "blue" : "black",
-              fontSize: 20,
-            }}
-          >
-            Latest
-          </Text>
-        </TouchableHighlight>
-      </View>
+        tintColor={colors.card}
+        fontStyle={{ color: "black" }}
+        activeFontStyle={{ color: "white" }}
+        style={{ height: 50 }}
+      />
       <ScrollView style={{ flex: 1 }}>
         {friend ? (
           <View
@@ -898,11 +836,11 @@ export default function WorkoutReview({ navigation, route }) {
             <FlatList
               style={{}}
               data={
-                averageCategory
+                tabIndex === 0
+                  ? latestStats
+                  : tabIndex === 1
                   ? averageStats
-                  : bestCategory
-                  ? bestStats
-                  : latestStats
+                  : bestStats
               }
               renderItem={({ item, index }) => (
                 <View
@@ -1029,11 +967,11 @@ export default function WorkoutReview({ navigation, route }) {
               <FlatList
                 style={{}}
                 data={
-                  averageCategory
-                    ? friend.averageStats
-                    : bestCategory
-                    ? friend.bestStats
-                    : friend.latestStats
+                  tabIndex === 0
+                    ? latestStats
+                    : tabIndex === 1
+                    ? averageStats
+                    : bestStats
                 }
                 renderItem={({ item }) => (
                   <View
@@ -1136,7 +1074,6 @@ export default function WorkoutReview({ navigation, route }) {
           width: "100%",
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: "5%",
         }}
       >
         <SolidButton
@@ -1159,7 +1096,6 @@ export default function WorkoutReview({ navigation, route }) {
             width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            marginBottom: "5%",
           }}
         >
           <SecondaryButton

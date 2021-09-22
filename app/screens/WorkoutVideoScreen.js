@@ -29,6 +29,10 @@ export default function WorkoutVideoScreen({ navigation, route }) {
   async function continueWorkout() {
     try {
       setResuming(true);
+      console.log("IM GOOD IM GOOD IM GREAT");
+      console.log("record ID");
+      console.log(recordID);
+
       const recordedWorkoutRef = firebase
         .firestore()
         .collection("users")
@@ -84,9 +88,6 @@ export default function WorkoutVideoScreen({ navigation, route }) {
       setResuming(false);
     }
   }
-
-  console.log("minutes: " + minutes);
-  console.log("seconds: " + seconds);
 
   if (exercises.length == 0) {
     return (

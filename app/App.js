@@ -64,6 +64,12 @@ function HomeStackScreen() {
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="Edit Profile" component={EditProfile} />
       <HomeStack.Screen name="Profile" component={Profile} />
+      <HomeStack.Screen name="Start Workout" component={StartWorkout} />
+      <HomeStack.Screen
+        name="Workout Video Screen"
+        component={WorkoutVideoScreen}
+      />
+      <HomeStack.Screen name="Review" component={ReviewStackScreen} />
     </HomeStack.Navigator>
   );
 }
