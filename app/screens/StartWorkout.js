@@ -1,9 +1,9 @@
 import React from "react";
 import firebase from "firebase";
-import { View, Text, Image, ScrollView } from "react-native";
+import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
-import { FlatList, TouchableHighlight } from "react-native-gesture-handler";
-import { Feather } from "@expo/vector-icons";
+import { FlatList } from "react-native-gesture-handler";
+import { Feather, AntDesign } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
@@ -16,8 +16,13 @@ export default function StartWorkout({ navigation, route }) {
 
   const { colors } = useTheme();
   const [loading, setLoading] = React.useState(true);
-  const [addingToLibrary, setAddingToLibary] = React.useState(false);
   const [starting, setStarting] = React.useState(false);
+
+  const [addingToLibrary, setAddingToLibary] = React.useState(false);
+  const [removingFromLibrary, setRemovingFromLibrary] = React.useState(false);
+  const [addedToLibrary, setAddedToLibrary] = React.useState(false);
+  const [favorites, setFavorites] = React.useState(0);
+
   const [workout, setWorkout] = React.useState(null);
   const [author, setAuthor] = React.useState(null);
   const flatListRef = React.useRef();
@@ -70,6 +75,17 @@ export default function StartWorkout({ navigation, route }) {
         });
       });
 
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+      if (my?.library?.some((item) => item.workoutID === workout.workoutID)) {
+        setAddedToLibrary(true);
+      }
+
+      setFavorites(workout.favorites);
       // load author data
       const authorRef = firebase
         .firestore()
@@ -93,15 +109,12 @@ export default function StartWorkout({ navigation, route }) {
   }
 
   async function loadStatData() {
-    console.log("I just need a girl ");
-    console.log(recordID);
     const statsRef = firebase
       .firestore()
       .collection("users")
       .doc(firebase.auth().currentUser.uid)
       .collection("recorded workouts")
       .doc(recordID);
-    console.log("who gon really understand");
     const statsDoc = await statsRef.get();
     const stats = statsDoc.data();
     setStats(stats);
@@ -140,11 +153,44 @@ export default function StartWorkout({ navigation, route }) {
       let favorites = workout.favorites;
 
       favorites += 1;
+      setFavorites(favorites);
       workoutRef.set({ favorites: favorites }, { merge: true });
     } catch (error) {
       console.log(error);
     } finally {
+      setAddedToLibrary(true);
       setAddingToLibary(false);
+    }
+  }
+
+  async function removeFromLibrary() {
+    try {
+      setRemovingFromLibrary(true);
+      const workoutRef = firebase
+        .firestore()
+        .collection("workouts")
+        .doc(workoutID);
+      const workoutDoc = await workoutRef.get();
+      const workout = workoutDoc.data();
+      let favorites = workout.favorites;
+      favorites -= 1;
+      setFavorites(favorites);
+      workoutRef.set({ favorites: favorites }, { merge: true });
+
+      const myRef = firebase
+        .firestore()
+        .collection("users")
+        .doc(firebase.auth().currentUser.uid);
+      const myDoc = await myRef.get();
+      const my = myDoc.data();
+      let library = [...my.library];
+      library = library.filter((x) => x.workoutID !== workoutID);
+      myRef.set({ library: library }, { merge: true });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setAddedToLibrary(false);
+      setRemovingFromLibrary(false);
     }
   }
 
@@ -273,7 +319,13 @@ export default function StartWorkout({ navigation, route }) {
   if (addingToLibrary)
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>adding To Library</Text>
+        <Text>Adding to Library</Text>
+      </View>
+    );
+  if (removingFromLibrary)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Removing from Library</Text>
       </View>
     );
 
@@ -299,19 +351,39 @@ export default function StartWorkout({ navigation, route }) {
           }}
         >
           <View style={{ flex: 1 }}>
-            <TouchableHighlight onPress={addToLibrary}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Feather name="plus-circle" color={colors.card} size={25} />
-                <Text style={{ paddingLeft: 10 }}>Add to Library</Text>
-              </View>
-            </TouchableHighlight>
+            {addedToLibrary ? (
+              <Pressable onPress={removeFromLibrary}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AntDesign
+                    name="heart"
+                    size={25}
+                    color={colors.notification}
+                  />
+                  <Text style={{ paddingLeft: 10 }}>{favorites + " favs"}</Text>
+                </View>
+              </Pressable>
+            ) : (
+              <Pressable onPress={addToLibrary}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Feather name="heart" color={colors.notification} size={25} />
+                  <Text style={{ paddingLeft: 10 }}>{favorites + " favs"}</Text>
+                </View>
+              </Pressable>
+            )}
           </View>
+
           <View
             style={{
               flex: 1,
