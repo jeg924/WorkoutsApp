@@ -61,6 +61,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
       <FlatList
         style={{ flex: 1 }}
         data={hits}
+        keyExtractor={(x) => x.objectID}
         renderItem={({ item }) => {
           return item.type === "user" ? (
             <TouchableHighlight

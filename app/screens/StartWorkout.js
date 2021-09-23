@@ -43,8 +43,6 @@ export default function StartWorkout({ navigation, route }) {
     try {
       setLoading(true);
       // load workout data
-      console.log("got here");
-      console.log(workoutID);
       const workoutRef = firebase
         .firestore()
         .collection("workouts")
@@ -88,7 +86,7 @@ export default function StartWorkout({ navigation, route }) {
         setAuthor(author);
       });
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -119,33 +117,32 @@ export default function StartWorkout({ navigation, route }) {
       const myDoc = await myRef.get();
       const my = myDoc.data();
       if (my) {
+        let library = [];
         if (my.library) {
-          let library = [...my.library];
-          if (!library.includes(workout.workoutID)) {
-            library = library.concat({
-              workoutID: workout.workoutID,
-              workoutName: workout.workoutName,
-              workoutImage: workout.workoutImage,
-            });
-            myRef.set({ library: library }, { merge: true });
-          }
+          library = [...my.library];
+        }
+        if (!library.some((x) => x.workoutID === workout.workoutID)) {
+          library.push({
+            workoutID: workout.workoutID,
+            workoutName: workout.workoutName,
+            workoutImage: workout.workoutImage,
+          });
+          myRef.set({ library: library }, { merge: true });
         } else {
-          myRef.set(
-            {
-              library: [
-                {
-                  workoutID: workout.workoutID,
-                  workoutName: workout.workoutName,
-                  workoutImage: workout.workoutImage,
-                },
-              ],
-            },
-            { merge: true }
-          );
+          alert("This workout has already been added to your library.");
         }
       }
+      const workoutRef = firebase
+        .firestore()
+        .collection("workouts")
+        .doc(workoutID);
+
+      let favorites = workout.favorites;
+
+      favorites += 1;
+      workoutRef.set({ favorites: favorites }, { merge: true });
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setAddingToLibary(false);
     }
@@ -165,20 +162,23 @@ export default function StartWorkout({ navigation, route }) {
         const myDoc = await myRef.get();
         const my = myDoc.data();
         if (my) {
-          console.log("adding to history");
           let history = my.history ? [...my.history] : [];
-          history.push({
-            workoutID: workoutID,
-            workoutName: workout.workoutName,
-            workoutImage: workout.workoutImage,
-            timeStamp: Date.now(),
-          });
-          myRef.set(
-            {
-              history: history,
-            },
-            { merge: true }
-          );
+
+          if (!history.some((item) => item.workoutID === workoutID)) {
+            history.push({
+              workoutID: workoutID,
+              workoutName: workout.workoutName,
+              workoutImage: workout.workoutImage,
+              timeStamp: Date.now(),
+              deleted: false,
+            });
+            myRef.set(
+              {
+                history: history,
+              },
+              { merge: true }
+            );
+          }
         }
 
         // create a document to collect stats
@@ -288,43 +288,45 @@ export default function StartWorkout({ navigation, route }) {
             : null
         }
       />
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          height: 50,
-          borderBottomColor: "black",
-          borderBottomWidth: 1,
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <TouchableHighlight onPress={addToLibrary}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Feather name="plus-circle" color={colors.card} size={25} />
-              <Text style={{ paddingLeft: 10 }}>Add to Library</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
+      {workout ? (
         <View
           style={{
-            flex: 1,
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center",
+            height: 50,
+            borderBottomColor: "black",
+            borderBottomWidth: 1,
           }}
         >
-          <Feather name="clock" color={colors.card} size={25} />
-          <Text style={{ paddingLeft: 10 }}>
-            {workout ? DisplayTime(workout.time) : ""}
-          </Text>
+          <View style={{ flex: 1 }}>
+            <TouchableHighlight onPress={addToLibrary}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Feather name="plus-circle" color={colors.card} size={25} />
+                <Text style={{ paddingLeft: 10 }}>Add to Library</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Feather name="clock" color={colors.card} size={25} />
+            <Text style={{ paddingLeft: 10 }}>
+              {workout ? DisplayTime(workout.time) : ""}
+            </Text>
+          </View>
         </View>
-      </View>
+      ) : null}
       <View style={{ flex: 1 }}>
         <View
           style={{

@@ -71,7 +71,9 @@ export default function MyWorkouts({ navigation, route }) {
       }
       // set history
       if (my.history) {
-        setHistory(my.history);
+        let history = [...my.history];
+        history = history.filter((item) => item.deleted === true);
+        setHistory(history);
       } else {
         setHistory(null);
       }
@@ -224,17 +226,15 @@ export default function MyWorkouts({ navigation, route }) {
                               const myDoc = await myRef.get();
                               const my = myDoc.data();
                               let history = [...my.history];
-                              console.log("before");
-                              console.log(history);
-                              console.log(history[0].workoutID);
-                              console.log(item.workoutID);
-                              history = history.filter(
-                                (x) => x.workoutID !== item.workoutID
-                              );
-                              console.log("after");
-                              console.log(history);
-                              myRef.set({ history: history }, { merge: true });
 
+                              for (let i = 0; i < history.length; ++i) {
+                                if (history[i].workoutID === item.workoutID) {
+                                  history[i].deleted = true;
+                                  break;
+                                }
+                              }
+
+                              myRef.set({ history: history }, { merge: true });
                               loadData();
                             } catch (error) {
                               console.log(error);
@@ -267,6 +267,19 @@ export default function MyWorkouts({ navigation, route }) {
                           } else if (buttenIndex === 1) {
                             try {
                               setRemovingFromLibrary(true);
+                              const workoutRef = firebase
+                                .firestore()
+                                .collection("workouts")
+                                .doc(item.workoutID);
+                              const workoutDoc = await workoutRef.get();
+                              const workout = workoutDoc.data();
+                              let favorites = workout.favorites;
+                              favorites -= 1;
+                              workoutRef.set(
+                                { favorites: favorites },
+                                { merge: true }
+                              );
+
                               const myRef = firebase
                                 .firestore()
                                 .collection("users")

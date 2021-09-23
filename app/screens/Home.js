@@ -145,6 +145,8 @@ export default function Home({ navigation }) {
           recentHistory.push(myHistory[i].workoutID);
         }
 
+        //TODO::: figure out. Basics first. I know that library must be changed. When I add to a library, that workout must have a field that incremenets. When I remove from a library I also decrement the field on that workout.
+
         let lessRecentWorkouts = [];
         const workoutsRef = firebase
           .firestore()
@@ -198,10 +200,22 @@ export default function Home({ navigation }) {
         recommended = recommended.sort((a, b) => {
           return a.score > b.score ? 1 : -1;
         });
-        console.log("recommended");
-        console.log(recommended);
+        setRecommended(recommended);
       }
       // set featured
+
+      // todo: build featured list based off of top 5 most favorited workouts.
+      let featured = [];
+      const workoutsRef = firebase
+        .firestore()
+        .collection("workouts")
+        .orderBy("favorites")
+        .limit(5);
+      const workoutsDocs = await workoutsRef.get();
+      workoutsDocs.forEach((doc) => {
+        featured.push(doc.data());
+      });
+      setFeatured(featured);
     } catch (error) {
       console.log("error is " + error);
     } finally {
@@ -322,7 +336,7 @@ export default function Home({ navigation }) {
                 </Svg>
               </View>
               <ScrollView horizontal>
-                {workoutsToBeContinued?.map((item) => {
+                {recommended?.map((item) => {
                   return (
                     <TouchableHighlight
                       key={item.workoutID}
@@ -333,8 +347,6 @@ export default function Home({ navigation }) {
                         console.log(item.workoutID);
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
-                          current: item.currentExercise,
-                          routeRecordID: item.recordID,
                         });
                       }}
                     >
@@ -377,7 +389,7 @@ export default function Home({ navigation }) {
                 </Svg>
               </View>
               <ScrollView horizontal>
-                {workoutsToBeContinued?.map((item) => {
+                {featured?.map((item) => {
                   return (
                     <TouchableHighlight
                       key={item.workoutID}
@@ -388,8 +400,6 @@ export default function Home({ navigation }) {
                         console.log(item.workoutID);
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
-                          current: item.currentExercise,
-                          routeRecordID: item.recordID,
                         });
                       }}
                     >
@@ -397,12 +407,12 @@ export default function Home({ navigation }) {
                         <Image
                           style={{ width: 100, height: 100 }}
                           source={
-                            item.image
-                              ? { uri: item.image, cache: "force-cache" }
+                            item.workoutImage
+                              ? { uri: item.workoutImage, cache: "force-cache" }
                               : require("../assets/placeholder-image.png")
                           }
                         />
-                        <Text>{item.name}</Text>
+                        <Text>{item.workoutName}</Text>
                       </View>
                     </TouchableHighlight>
                   );

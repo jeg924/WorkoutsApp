@@ -592,6 +592,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
                   isYoga: yoga,
                   isSpeed: speed,
                   time: 0,
+                  favorites: 0,
                   deleted: false,
                 };
                 console.log(workoutData);
