@@ -145,14 +145,17 @@ export default function StartWorkout({ navigation, route }) {
           alert("This workout has already been added to your library.");
         }
       }
+      console.log(workoutID);
       const workoutRef = firebase
         .firestore()
         .collection("workouts")
         .doc(workoutID);
 
-      let favorites = workout.favorites;
+      const workoutDoc = await workoutRef.get();
+      const workoutData = workoutDoc.data();
+      let favorites = workoutData.favorites;
 
-      favorites += 1;
+      favorites = favorites + 1;
       setFavorites(favorites);
       workoutRef.set({ favorites: favorites }, { merge: true });
     } catch (error) {
@@ -290,17 +293,17 @@ export default function StartWorkout({ navigation, route }) {
     }
   }
 
-  // React.useEffect(() => {
-  //   const unsubscribe = navigation.addListener("focus", () => {
-  //     if (flatListRef.current) {
-  //       flatListRef.current.scrollToOffset({
-  //         animated: true,
-  //         offset: currentExercise * 100,
-  //       });
-  //     }
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
+  React.useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToOffset({
+        animated: true,
+        offset:
+          currentExercise === exercises?.length
+            ? currentExercise
+            : currentExercise * 100 + 100,
+      });
+    }
+  }, [current]);
 
   if (loading)
     return (
