@@ -217,7 +217,7 @@ export default function Home({ navigation }) {
       });
       setFeatured(featured);
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -287,8 +287,6 @@ export default function Home({ navigation }) {
                       key={item.workoutID}
                       style={{ paddingRight: 10 }}
                       onPress={() => {
-                        console.log("in here");
-                        console.log("item.workoutID");
                         console.log(item.workoutID);
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
@@ -342,11 +340,9 @@ export default function Home({ navigation }) {
                       key={item.workoutID}
                       style={{ paddingRight: 10 }}
                       onPress={() => {
-                        console.log("in here");
-                        console.log("item.workoutID");
-                        console.log(item.workoutID);
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
+                          current: 0,
                         });
                       }}
                     >
@@ -395,11 +391,9 @@ export default function Home({ navigation }) {
                       key={item.workoutID}
                       style={{ paddingRight: 10 }}
                       onPress={() => {
-                        console.log("in here");
-                        console.log("item.workoutID");
-                        console.log(item.workoutID);
                         navigation.navigate("Start Workout", {
                           workoutID: item.workoutID,
+                          current: 0,
                         });
                       }}
                     >
