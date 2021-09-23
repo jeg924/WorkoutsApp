@@ -165,8 +165,9 @@ export default function StartWorkout({ navigation, route }) {
         const myDoc = await myRef.get();
         const my = myDoc.data();
         if (my) {
+          console.log("adding to history");
           let history = my.history ? [...my.history] : [];
-          history.concat({
+          history.push({
             workoutID: workoutID,
             workoutName: workout.workoutName,
             workoutImage: workout.workoutImage,
