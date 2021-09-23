@@ -2,13 +2,10 @@
 
 import React from "react";
 import { Text, View } from "react-native";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator, HeaderTitle } from "@react-navigation/stack";
-import { Feather } from "@expo/vector-icons";
-import { Asset } from "expo-asset";
-import { AppLoading } from "expo";
-import { set } from "react-native-reanimated";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import * as firebase from "firebase";
@@ -27,7 +24,6 @@ import StartWorkout from "./screens/StartWorkout";
 import WorkoutVideoScreen from "./screens/WorkoutVideoScreen";
 import WorkoutReview from "./screens/WorkoutReview";
 import ModalFriendPicker from "./screens/ModalFriendPicker";
-import { colors } from "react-native-elements";
 
 const MyTheme = {
   dark: false,
@@ -176,7 +172,9 @@ function App() {
   } else if (user === null) {
     return (
       <SafeAreaProvider>
-        <Login />
+        <NavigationContainer theme={MyTheme}>
+          <Login />
+        </NavigationContainer>
       </SafeAreaProvider>
     );
   } else {
@@ -191,15 +189,19 @@ function App() {
             <Tab.Navigator
               screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
-                  let iconName;
                   if (route.name === "Home") {
-                    iconName = "home";
+                    return <Feather name="home" color={color} size={size} />;
                   } else if (route.name === "My Workouts") {
-                    iconName = "activity";
+                    return (
+                      <FontAwesome5
+                        name="grin-beam-sweat"
+                        color={color}
+                        size={size}
+                      />
+                    );
                   } else if (route.name === "Browse") {
-                    iconName = "search";
+                    return <Feather name="search" color={color} size={size} />;
                   }
-                  return <Feather name={iconName} color={color} size={size} />;
                 },
               })}
               tabBarOptions={{

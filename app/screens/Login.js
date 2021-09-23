@@ -11,12 +11,14 @@ import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Input from "../components/Input";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
+import { useTheme } from "@react-navigation/native";
 
 // Login should handle firestore data.
 // if signing up, it adds a user doc to the the collection
 // if signing in, the data should already be there.
 //
 export default function Login() {
+  const { colors } = useTheme();
   const [returningUser, setReturningUser] = React.useState(true);
   const [tabIndex, setTabIndex] = React.useState(0);
   var [name, setName] = React.useState("");
@@ -67,7 +69,7 @@ export default function Login() {
               setTabIndex(event.nativeEvent.selectedSegmentIndex);
               setError("");
             }}
-            tintColor={colors.notification}
+            tintColor={colors.card}
             fontStyle={{ color: "black" }}
             activeFontStyle={{ color: "white" }}
             style={{ height: 50 }}
@@ -81,7 +83,6 @@ export default function Login() {
               <View style={{ flex: 0.5 }}></View>
               <Input
                 description="Email"
-                placeholder="Email Address"
                 textContentType="emailAddress"
                 keyboardType="email-address"
                 autoCompleteType="email"
@@ -91,7 +92,6 @@ export default function Login() {
                 description="Password"
                 autoFocus={false}
                 secureTextEntry={true}
-                placeholder="Password"
                 textContentType="password"
                 autoCompleteType="password"
                 onChangeText={(password) => setPassword(password)}
@@ -109,7 +109,6 @@ export default function Login() {
               <Input
                 description="Email"
                 autoFocus={false}
-                placeholder="Email Address"
                 textContentType="emailAddress"
                 keyboardType="email-address"
                 autoCompleteType="email"
@@ -118,7 +117,6 @@ export default function Login() {
               <Input
                 description="Display Name"
                 autoFocus={false}
-                placeholder="Display Name"
                 textContentType="name"
                 onChangeText={(name) => setName(name)}
               />
@@ -126,7 +124,6 @@ export default function Login() {
                 description="Password"
                 autoFocus={false}
                 secureTextEntry={true}
-                placeholder="Password"
                 textContentType="password"
                 autoCompleteType="password"
                 onChangeText={(password) => setPassword(password)}
