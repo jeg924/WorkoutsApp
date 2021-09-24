@@ -61,7 +61,7 @@ export default function RecordExercise({ navigation, route }) {
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <Header title="Add Exercise" navigation={navigation} />
       <ScrollView>
-        <View style={{ height: 70, flexDirection: "row" }}>
+        <View style={{ height: 90, flexDirection: "row", paddingTop: 20 }}>
           <View style={{ flex: 1 }}></View>
           <View style={{ flex: 13 }}>
             <Text style={{ fontWeight: "bold" }}>Exercise Name</Text>
