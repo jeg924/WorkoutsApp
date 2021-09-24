@@ -402,177 +402,185 @@ export default function StartWorkout({ navigation, route }) {
           </View>
         </View>
       ) : null}
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Svg height={100} width={50}>
-              <Line
-                x1="15"
-                y1="0"
-                x2="15"
-                y2="40"
-                stroke="black"
-                strokeWidth="1"
-              />
-              <Circle
-                cx="15"
-                cy="50"
-                r="8"
-                stroke={colors.primary}
-                strokeWidth="2"
-                fill={
-                  currentExercise === exercises?.length
-                    ? colors.notification
-                    : colors.primary
-                }
-              />
-              <Line
-                x1="15"
-                y1="60"
-                x2="15"
-                y2="100"
-                stroke="black"
-                strokeWidth="1"
-              />
-            </Svg>
-          </View>
+      {exercises?.length ? (
+        <View style={{ flex: 1 }}>
           <View
             style={{
-              flex: 10,
-              justifyContent: "center",
-              height: 100,
+              flex: 1,
+              flexDirection: "row",
             }}
           >
-            {currentExercise == exercises?.length ? (
-              <SolidButton title="Review Workout" onPress={ReviewWorkout} />
-            ) : exercises ? (
-              <SolidButton
-                title={
-                  currentExercise !== 0 ? "Next Exercise" : "Start Workout"
-                }
-                onPress={startExercise}
-              />
-            ) : null}
+            <View style={{ flex: 1 }}>
+              <Svg height={100} width={50}>
+                <Line
+                  x1="15"
+                  y1="0"
+                  x2="15"
+                  y2="40"
+                  stroke="black"
+                  strokeWidth="1"
+                />
+                <Circle
+                  cx="15"
+                  cy="50"
+                  r="8"
+                  stroke={colors.primary}
+                  strokeWidth="2"
+                  fill={
+                    currentExercise === exercises?.length
+                      ? colors.notification
+                      : colors.primary
+                  }
+                />
+                <Line
+                  x1="15"
+                  y1="60"
+                  x2="15"
+                  y2="100"
+                  stroke="black"
+                  strokeWidth="1"
+                />
+              </Svg>
+            </View>
+            <View
+              style={{
+                flex: 10,
+                justifyContent: "center",
+                height: 100,
+              }}
+            >
+              {currentExercise == exercises?.length ? (
+                <SolidButton title="Review Workout" onPress={ReviewWorkout} />
+              ) : exercises ? (
+                <SolidButton
+                  title={
+                    currentExercise !== 0 ? "Next Exercise" : "Start Workout"
+                  }
+                  onPress={startExercise}
+                />
+              ) : null}
+            </View>
           </View>
-        </View>
-        <View style={{ flex: 3 }}>
-          <FlatList
-            style={{}}
-            initialScrollIndex={
-              currentExercise == exercises?.length ? 0 : currentExercise
-            }
-            ref={flatListRef}
-            keyExtractor={(x) => x.id}
-            getItemLayout={(item, index) => {
-              return {
-                length: 100,
-                offset: 100 * index,
-                index,
-              };
-            }}
-            data={exercises}
-            renderItem={({ item, index }) => (
-              <View style={{ flexDirection: "row", height: 100 }}>
-                <View style={{ flex: 1 }}>
-                  <Svg height={100} width={50}>
-                    <Line
-                      x1="15"
-                      y1="0"
-                      x2="15"
-                      y2="40"
-                      stroke="black"
-                      strokeWidth="1"
-                    />
-                    <Circle
-                      cx="15"
-                      cy="50"
-                      r="8"
-                      stroke={colors.primary}
-                      strokeWidth="2"
-                      fill={
-                        currentExercise === index
-                          ? colors.notification
-                          : colors.primary
-                      }
-                    />
-                    {index !== exercises?.length - 1 ? (
+          <View style={{ flex: 3 }}>
+            <FlatList
+              style={{}}
+              initialScrollIndex={
+                currentExercise == exercises?.length ? 0 : currentExercise
+              }
+              ref={flatListRef}
+              keyExtractor={(x) => x.id}
+              getItemLayout={(item, index) => {
+                return {
+                  length: 100,
+                  offset: 100 * index,
+                  index,
+                };
+              }}
+              data={exercises}
+              renderItem={({ item, index }) => (
+                <View style={{ flexDirection: "row", height: 100 }}>
+                  <View style={{ flex: 1 }}>
+                    <Svg height={100} width={50}>
                       <Line
                         x1="15"
-                        y1="60"
+                        y1="0"
                         x2="15"
-                        y2="100"
+                        y2="40"
                         stroke="black"
                         strokeWidth="1"
                       />
-                    ) : null}
-                  </Svg>
-                </View>
-                <View style={{ flex: 10, justifyContent: "center" }}>
-                  <Text>
-                    {DisplayTimeSegment(exercises, item.order, item.duration)}
-                  </Text>
-                  <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
-                  {stats?.exerciseInputData && currentExercise ? (
-                    item.reps && item.weight && item.time ? (
-                      <Text>
-                        Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
-                        {stats.exerciseInputData[index]?.weight} & Time{" "}
-                        {stats.exerciseInputData[index]?.time}
-                      </Text>
+                      <Circle
+                        cx="15"
+                        cy="50"
+                        r="8"
+                        stroke={colors.primary}
+                        strokeWidth="2"
+                        fill={
+                          currentExercise === index
+                            ? colors.notification
+                            : colors.primary
+                        }
+                      />
+                      {index !== exercises?.length - 1 ? (
+                        <Line
+                          x1="15"
+                          y1="60"
+                          x2="15"
+                          y2="100"
+                          stroke="black"
+                          strokeWidth="1"
+                        />
+                      ) : null}
+                    </Svg>
+                  </View>
+                  <View style={{ flex: 10, justifyContent: "center" }}>
+                    <Text>
+                      {DisplayTimeSegment(exercises, item.order, item.duration)}
+                    </Text>
+                    <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+                    {stats?.exerciseInputData && currentExercise ? (
+                      item.reps && item.weight && item.time ? (
+                        <Text>
+                          Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
+                          {stats.exerciseInputData[index]?.weight} & Time{" "}
+                          {stats.exerciseInputData[index]?.time}
+                        </Text>
+                      ) : item.reps && item.weight && !item.time ? (
+                        <Text>
+                          Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
+                          {stats.exerciseInputData[index]?.weight}
+                        </Text>
+                      ) : item.reps && item.time && !item.weight ? (
+                        <Text>
+                          Reps {stats.exerciseInputData[index]?.reps} & Time
+                          {stats.exerciseInputData[index]?.time}
+                        </Text>
+                      ) : item.weight && item.time && !item.reps ? (
+                        <Text>
+                          Weight {stats.exerciseInputData[index]?.weight} & Time{" "}
+                          {stats.exerciseInputData[index]?.time}
+                        </Text>
+                      ) : item.reps && !item.weight && !item.time ? (
+                        <Text>Reps {stats.exerciseInputData[index]?.reps}</Text>
+                      ) : item.weight && !item.reps && !item.time ? (
+                        <Text>
+                          Weight {stats.exerciseInputData[index]?.weight}
+                        </Text>
+                      ) : item.time && !item.weight && !item.reps ? (
+                        <Text>Time {stats.exerciseInputData[index]?.time}</Text>
+                      ) : (
+                        <Text></Text>
+                      )
+                    ) : item.reps && item.weight && item.time ? (
+                      <Text>Reps & Weight & Time</Text>
                     ) : item.reps && item.weight && !item.time ? (
-                      <Text>
-                        Reps {stats.exerciseInputData[index]?.reps} & Weight{" "}
-                        {stats.exerciseInputData[index]?.weight}
-                      </Text>
+                      <Text>Reps & Weight</Text>
                     ) : item.reps && item.time && !item.weight ? (
-                      <Text>
-                        Reps {stats.exerciseInputData[index]?.reps} & Time
-                        {stats.exerciseInputData[index]?.time}
-                      </Text>
+                      <Text>Reps & Time</Text>
                     ) : item.weight && item.time && !item.reps ? (
-                      <Text>
-                        Weight {stats.exerciseInputData[index]?.weight} & Time{" "}
-                        {stats.exerciseInputData[index]?.time}
-                      </Text>
+                      <Text>Weight & Time</Text>
                     ) : item.reps && !item.weight && !item.time ? (
-                      <Text>Reps {stats.exerciseInputData[index]?.reps}</Text>
+                      <Text>Reps</Text>
                     ) : item.weight && !item.reps && !item.time ? (
-                      <Text>
-                        Weight {stats.exerciseInputData[index]?.weight}
-                      </Text>
+                      <Text>Weight</Text>
                     ) : item.time && !item.weight && !item.reps ? (
-                      <Text>Time {stats.exerciseInputData[index]?.time}</Text>
+                      <Text>Time</Text>
                     ) : (
                       <Text></Text>
-                    )
-                  ) : item.reps && item.weight && item.time ? (
-                    <Text>Reps & Weight & Time</Text>
-                  ) : item.reps && item.weight && !item.time ? (
-                    <Text>Reps & Weight</Text>
-                  ) : item.reps && item.time && !item.weight ? (
-                    <Text>Reps & Time</Text>
-                  ) : item.weight && item.time && !item.reps ? (
-                    <Text>Weight & Time</Text>
-                  ) : item.reps && !item.weight && !item.time ? (
-                    <Text>Reps</Text>
-                  ) : item.weight && !item.reps && !item.time ? (
-                    <Text>Weight</Text>
-                  ) : item.time && !item.weight && !item.reps ? (
-                    <Text>Time</Text>
-                  ) : (
-                    <Text></Text>
-                  )}
+                    )}
+                  </View>
                 </View>
-              </View>
-            )}
-          />
+              )}
+            />
+          </View>
         </View>
-      </View>
+      ) : (
+        <View style={{ flex: 1, alignItems: "center", paddingTop: 20 }}>
+          <Text style={{ fontWeight: "bold" }}>
+            This workout has no exercises
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
