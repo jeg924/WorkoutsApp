@@ -1,27 +1,19 @@
-import React, { useMemo } from "react";
+import React from "react";
 import firebase from "firebase";
 import "firebase/firestore";
 import "firebase/auth";
-import {
-  View,
-  Text,
-  Button,
-  ImageBackground,
-  Image,
-  FlatList,
-  SafeAreaView,
-  ScrollView,
-} from "react-native";
+import { View, Text, Image, FlatList } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { Feather } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
 import Svg, { Circle, Line } from "react-native-svg";
+import { useTheme } from "@react-navigation/native";
 
 export default function WorkoutEditor({ navigation, route }) {
   const { workoutID } = route.params;
+  const { colors } = useTheme();
   const [loading, setLoading] = React.useState(true);
   const [workout, setWorkout] = React.useState(null);
   const [authorName, setAuthorName] = React.useState(null);
@@ -186,9 +178,9 @@ export default function WorkoutEditor({ navigation, route }) {
                     cx="15"
                     cy="50"
                     r="8"
-                    stroke="blue"
+                    stroke={colors.primary}
                     strokeWidth="2"
-                    fill="indigo"
+                    fill={colors.notification}
                   />
                 </Svg>
               </View>
@@ -259,9 +251,9 @@ export default function WorkoutEditor({ navigation, route }) {
                   cx="15"
                   cy="50"
                   r="8"
-                  stroke="blue"
+                  stroke={colors.primary}
                   strokeWidth="2"
-                  fill="blue"
+                  fill={colors.primary}
                 />
                 <Line
                   x1="15"
