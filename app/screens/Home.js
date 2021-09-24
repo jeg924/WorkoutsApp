@@ -204,12 +204,11 @@ export default function Home({ navigation }) {
         setRecommended(recommended);
       }
       // set featured
-
-      // todo: build featured list based off of top 5 most favorited workouts.
       let featured = [];
       const workoutsRef = firebase
         .firestore()
         .collection("workouts")
+        .where("public", "==", true)
         .orderBy("favorites")
         .limit(5);
       const workoutsDocs = await workoutsRef.get();
