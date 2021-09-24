@@ -355,7 +355,7 @@ export default function StartWorkout({ navigation, route }) {
         >
           <View style={{ flex: 1 }}>
             {addedToLibrary ? (
-              <Pressable onPress={removeFromLibrary}>
+              <Pressable onPress={removeFromLibrary} hitSlop>
                 <View
                   style={{
                     flexDirection: "row",
@@ -372,7 +372,7 @@ export default function StartWorkout({ navigation, route }) {
                 </View>
               </Pressable>
             ) : (
-              <Pressable onPress={addToLibrary}>
+              <Pressable onPress={addToLibrary} hitSlop>
                 <View
                   style={{
                     flexDirection: "row",

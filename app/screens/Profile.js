@@ -205,7 +205,7 @@ export default function Profile({ navigation, route }) {
                     alignItems: "center",
                   }}
                 >
-                  <Pressable onPress={addFriend}>
+                  <Pressable onPress={addFriend} hitSlop>
                     <View
                       style={{
                         flexDirection: "row",
@@ -241,7 +241,7 @@ export default function Profile({ navigation, route }) {
                   alignItems: "center",
                 }}
               >
-                <Pressable onPress={removeFriend}>
+                <Pressable onPress={removeFriend} hitSlop>
                   <View
                     style={{
                       flexDirection: "row",
