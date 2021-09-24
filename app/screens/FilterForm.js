@@ -1,13 +1,15 @@
 import React from "react";
-import { View, Text, Switch } from "react-native";
-import { CheckBox } from "native-base";
+import { View, Text, Switch, ScrollView, Pressable } from "react-native";
 import Slider from "react-native-slider";
 import SolidButton from "../components/SolidButton";
+import Header from "../components/Header";
 import { DisplayMaxTime } from "../UtilityFunctions";
-import { TouchableHighlight } from "react-native-gesture-handler";
-import { set } from "react-native-reanimated";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { useTheme } from "@react-navigation/native";
 
 export default function FilterForm({ navigation, route }) {
+  const { colors } = useTheme();
+
   const [workoutFilter, setWorkoutFilter] = React.useState(false);
   const [userFilter, setUserFilter] = React.useState(false);
   const [strengthFilter, setStrengthFilter] = React.useState(false);
@@ -21,198 +23,263 @@ export default function FilterForm({ navigation, route }) {
   var [maxTime, setMaxTime] = React.useState(1);
 
   return (
-    <View>
-      <Text style={{ margin: 10, fontSize: 30, fontWeight: "bold" }}>
-        Filter
-      </Text>
-      <View style={{ margin: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Filter by Type</Text>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={workoutFilter ? true : false}
-            onPress={() => {
-              if (workoutFilter) {
-                setUserFilter(false);
-                setWorkoutFilter(false);
-              } else {
-                setUserFilter(false);
-                setWorkoutFilter(true);
-              }
-            }}
-          />
-          <Text style={{ marginLeft: 20 }}>Workouts only</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={userFilter ? true : false}
-            onPress={() => {
-              if (userFilter) {
-                setUserFilter(false);
-                setWorkoutFilter(false);
-              } else {
-                setUserFilter(true);
-                setWorkoutFilter(false);
-              }
-            }}
-          />
-          <Text style={{ marginLeft: 20 }}>Users only</Text>
-        </View>
-      </View>
-      <View style={{ margin: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Filter by Category</Text>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={strengthFilter ? true : false}
-            onPress={() =>
-              strengthFilter
-                ? setStrengthFilter(false)
-                : setStrengthFilter(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>Strength</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={cardioFilter ? true : false}
-            onPress={() =>
-              cardioFilter ? setCardioFilter(false) : setCardioFilter(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>Cardio</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={yogaFilter ? true : false}
-            onPress={() =>
-              yogaFilter ? setYogaFilter(false) : setYogaFilter(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>Yoga</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={balanceFilter ? true : false}
-            onPress={() =>
-              balanceFilter ? setBalanceFilter(false) : setBalanceFilter(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>Balance</Text>
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={speedFilter ? true : false}
-            onPress={() =>
-              speedFilter ? setSpeedFilter(false) : setSpeedFilter(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>Speed</Text>
-        </View>
-      </View>
-      <View style={{ margin: 10 }}>
-        <Text style={{ fontWeight: "bold" }}>Filter by equipment</Text>
-        <View style={{ flexDirection: "row", marginTop: 10 }}>
-          <CheckBox
-            color="blue"
-            checked={equipmentless ? true : false}
-            onPress={() =>
-              equipmentless ? setEquipmentless(false) : setEquipmentless(true)
-            }
-          />
-          <Text style={{ marginLeft: 20 }}>No equipment needed</Text>
-        </View>
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontWeight: "bold" }}>Time to Complete</Text>
-          <View style={{ marginTop: 10, flexDirection: "row" }}>
-            <CheckBox
-              color="blue"
-              checked={timeLimit ? true : false}
-              onPress={() =>
-                timeLimit ? setTimeLimit(false) : setTimeLimit(true)
-              }
-            />
-            <Text style={{ marginLeft: 20 }}>Set a time limit</Text>
-          </View>
-          {timeLimit ? (
-            <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontWeight: "bold", margin: 10 }}>
-                {DisplayMaxTime(maxTime)}
-              </Text>
-              <Slider
-                value={maxTime}
-                step={0.01}
-                thumbTintColor="blue"
-                onValueChange={(value) => {
-                  setMaxTime(value);
-                }}
-                style={{ width: 200, height: 40 }}
-              />
+    <View style={{ flex: 1 }}>
+      <Header title="Add Filters" navigation={navigation} />
+      <ScrollView>
+        <View style={{ flexDirection: "row", flex: 1 }}>
+          <View style={{ flex: 1 }}></View>
+          <View style={{ flex: 18 }}>
+            <View style={{}}>
+              <View style={{ height: 50, justifyContent: "center" }}>
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Filter by Workout length in time
+                </Text>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Text style={{ fontWeight: "bold", paddingRight: 20 }}>
+                  {"Time: " + DisplayMaxTime(maxTime)}
+                </Text>
+                <Slider
+                  value={maxTime}
+                  step={0.01}
+                  thumbTintColor={colors.notification}
+                  onValueChange={(value) => {
+                    setMaxTime(value);
+                  }}
+                  style={{ width: 220, height: 20 }}
+                />
+              </View>
             </View>
-          ) : null}
+            <View style={{ height: 50, justifyContent: "center" }}>
+              <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                Filter by Type
+              </Text>
+            </View>
+            <View style={{ height: 35 }}>
+              <Pressable
+                onPress={() => {
+                  if (workoutFilter) {
+                    setUserFilter(false);
+                    setWorkoutFilter(false);
+                  } else {
+                    setUserFilter(false);
+                    setWorkoutFilter(true);
+                  }
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <BouncyCheckbox
+                    isChecked={workoutFilter}
+                    size={25}
+                    fillColor={colors.notification}
+                    unfillColor="#FFFFFF"
+                    iconStyle={{ borderColor: colors.notification }}
+                    textStyle={{}}
+                    disableBuiltInState
+                  />
+                  <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                    Workouts only
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+            <View style={{ height: 35 }}>
+              <Pressable
+                onPress={() => {
+                  if (userFilter) {
+                    setUserFilter(false);
+                    setWorkoutFilter(false);
+                  } else {
+                    setUserFilter(true);
+                    setWorkoutFilter(false);
+                  }
+                }}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <BouncyCheckbox
+                    isChecked={userFilter}
+                    size={25}
+                    fillColor={colors.notification}
+                    unfillColor="#FFFFFF"
+                    iconStyle={{ borderColor: colors.notification }}
+                    textStyle={{}}
+                    disableBuiltInState
+                  />
+                  <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                    Users only
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+            <View style={{}}>
+              <View style={{ height: 50, justifyContent: "center" }}>
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Filter by Category
+                </Text>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setStrengthFilter(!strengthFilter)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={strengthFilter}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                      Strength
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setCardioFilter(!cardioFilter)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={cardioFilter}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                      Cardio
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setYogaFilter(!yogaFilter)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={yogaFilter}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>Yoga</Text>
+                  </View>
+                </Pressable>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setBalanceFilter(!balanceFilter)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={balanceFilter}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                      Balance
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setSpeedFilter(!speedFilter)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={speedFilter}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>Speed</Text>
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+            <View style={{}}>
+              <View style={{ height: 50, justifyContent: "center" }}>
+                <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                  Filter by equipment
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: "row", height: 35 }}>
+                <Pressable onPress={() => setEquipmentless(!equipmentless)}>
+                  <View style={{ flexDirection: "row" }}>
+                    <BouncyCheckbox
+                      isChecked={equipmentless}
+                      size={25}
+                      fillColor={colors.notification}
+                      unfillColor="#FFFFFF"
+                      iconStyle={{ borderColor: colors.notification }}
+                      textStyle={{}}
+                      disableBuiltInState
+                    />
+                    <Text style={{ paddingLeft: 15, fontSize: 16 }}>
+                      No equipment needed
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+          <View style={{ flex: 1 }}></View>
         </View>
+      </ScrollView>
+      <View style={{ alignItems: "center" }}>
+        <SolidButton
+          onPress={() => {
+            let facetFilters = [];
+            let numericFilters = [];
+            workoutFilter
+              ? (facetFilters = facetFilters.concat("type:workout"))
+              : null;
+            userFilter
+              ? (facetFilters = facetFilters.concat("type:user"))
+              : null;
+            strengthFilter
+              ? (facetFilters = facetFilters.concat("isStrength:true"))
+              : null;
+            cardioFilter
+              ? (facetFilters = facetFilters.concat("isCardio:true"))
+              : null;
+            yogaFilter
+              ? (facetFilters = facetFilters.concat("isYoga:true"))
+              : null;
+            balanceFilter
+              ? (facetFilters = facetFilters.concat("isBalance:true"))
+              : null;
+            speedFilter
+              ? (facetFilters = facetFilters.concat("isSpeed:true"))
+              : null;
+            if (equipmentless) {
+              facetFilters = facetFilters.concat("isWeightNeeded:false");
+              facetFilters = facetFilters.concat("isBarNeeded:false");
+              facetFilters = facetFilters.concat("isChairNeeded:false");
+              facetFilters = facetFilters.concat("isTowelNeeded:false");
+              facetFilters = facetFilters.concat("isMatNeeded:false");
+            }
 
-        <View style={{ margin: 10, marginTop: 40 }}>
-          <TouchableHighlight
-            style={{
-              backgroundColor: "blue",
-              borderRadius: "100%",
-              width: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 15,
-            }}
-            onPress={() => {
-              let facetFilters = [];
-              let numericFilters = [];
-              workoutFilter
-                ? (facetFilters = facetFilters.concat("type:workout"))
-                : null;
-              userFilter
-                ? (facetFilters = facetFilters.concat("type:user"))
-                : null;
-              strengthFilter
-                ? (facetFilters = facetFilters.concat("isStrength:true"))
-                : null;
-              cardioFilter
-                ? (facetFilters = facetFilters.concat("isCardio:true"))
-                : null;
-              yogaFilter
-                ? (facetFilters = facetFilters.concat("isYoga:true"))
-                : null;
-              balanceFilter
-                ? (facetFilters = facetFilters.concat("isBalance:true"))
-                : null;
-              speedFilter
-                ? (facetFilters = facetFilters.concat("isSpeed:true"))
-                : null;
-              if (equipmentless) {
-                facetFilters = facetFilters.concat("isWeightNeeded:false");
-                facetFilters = facetFilters.concat("isBarNeeded:false");
-                facetFilters = facetFilters.concat("isChairNeeded:false");
-                facetFilters = facetFilters.concat("isTowelNeeded:false");
-                facetFilters = facetFilters.concat("isMatNeeded:false");
-              }
+            if (timeLimit) {
+              let timeFilter = "lengthInMinutes" + Math.floor(maxTime * 90);
+              numericFilters = numericFilters.concat(timeFilter);
+            }
 
-              if (timeLimit) {
-                let timeFilter = "lengthInMinutes" + Math.floor(maxTime * 90);
-                numericFilters = numericFilters.concat(timeFilter);
-              }
-
-              navigation.navigate("Browse", {
-                facetFilters: facetFilters,
-                numericFilters: numericFilters,
-              });
-            }}
-          >
-            <Text style={{ color: "white" }}>Done</Text>
-          </TouchableHighlight>
-        </View>
+            navigation.navigate("Browse", {
+              facetFilters: facetFilters,
+              numericFilters: numericFilters,
+            });
+          }}
+          title="Done"
+        />
       </View>
     </View>
   );

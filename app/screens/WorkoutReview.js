@@ -765,7 +765,7 @@ export default function WorkoutReview({ navigation, route }) {
         activeFontStyle={{ color: "white" }}
         style={{ height: 50 }}
       />
-      <ScrollView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         {friend ? (
           <View style={{ flex: 1, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
@@ -964,6 +964,7 @@ export default function WorkoutReview({ navigation, route }) {
             >
               <FlatList
                 style={{}}
+                keyExtractor={(item) => indexOf(item)}
                 data={
                   tabIndex === 0
                     ? latestStats
@@ -1065,7 +1066,7 @@ export default function WorkoutReview({ navigation, route }) {
             </View>
           ) : null}
         </View>
-      </ScrollView>
+      </View>
       {friends ? (
         !friend ? (
           <View
