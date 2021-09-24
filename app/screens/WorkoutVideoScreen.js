@@ -143,7 +143,6 @@ export default function WorkoutVideoScreen({ navigation, route }) {
             </View>
             <View
               style={{
-                flex: 1,
                 flexDirection: "row",
                 alignItems: "center",
               }}
@@ -159,7 +158,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
                   />
                 </View>
               ) : null}
-              <View style={{ flex: 0.5 }}></View>
+              <View style={{ flex: 0.1 }}></View>
               {exercises[currentExercise].time ? (
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontWeight: "bold" }}>Time</Text>
@@ -291,7 +290,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
                   </Modal>
                 </View>
               ) : null}
-              <View style={{ flex: 0.5 }}></View>
+              <View style={{ flex: 0.1 }}></View>
               {exercises[currentExercise].weight ? (
                 <View style={{ flex: 1 }}>
                   <Input
