@@ -382,7 +382,7 @@ export default function MyWorkouts({ navigation, route }) {
           />
         )}
       </SafeAreaView>
-      {tabIndex === 2 || !uploads.length ? null : (
+      {tabIndex !== 2 || !uploads.length ? null : (
         <View
           style={{
             justifyContent: "center",
