@@ -54,7 +54,7 @@ export default function StartWorkout({ navigation, route }) {
         .doc(workoutID);
       const workoutDoc = await workoutRef.get();
       const workout = workoutDoc.data();
-      if (workout) {
+      if (workout?.workoutImage) {
         Image.prefetch(workout.workoutImage);
       }
       setWorkout(workout);
@@ -340,7 +340,7 @@ export default function StartWorkout({ navigation, route }) {
         source={
           workout?.workoutImage
             ? { uri: workout.workoutImage, cache: "force-cache" }
-            : null
+            : require("../assets/placeholder-image.png")
         }
       />
       {workout ? (

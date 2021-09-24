@@ -72,8 +72,6 @@ export default function WorkoutEditor({ navigation, route }) {
       const workoutDoc = await workoutRef.get();
       const workout = workoutDoc.data();
       if (workout?.workoutImage) {
-        console.log("got here");
-        console.log(workout.workoutImage);
         await Image.prefetch(workout.workoutImage);
       }
 

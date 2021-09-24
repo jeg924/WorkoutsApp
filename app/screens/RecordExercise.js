@@ -21,9 +21,11 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import SolidButton from "../components/SolidButton";
 import Header from "../components/Header";
 import { DisplayTime } from "../UtilityFunctions";
+import { useTheme } from "@react-navigation/native";
 
 export default function RecordExercise({ navigation, route }) {
   const { order, exerciseObj, workoutID } = route.params;
+  const { colors } = useTheme();
 
   const [saving, setSaving] = React.useState(false);
 
@@ -46,8 +48,6 @@ export default function RecordExercise({ navigation, route }) {
   const [trackTime, setTrackTime] = React.useState(
     exerciseObj ? exerciseObj.time : false
   );
-
-  console.log(exerciseVideo);
 
   if (saving) {
     return (
@@ -258,9 +258,9 @@ export default function RecordExercise({ navigation, route }) {
                   <BouncyCheckbox
                     isChecked={trackReps}
                     size={25}
-                    fillColor="blue"
+                    fillColor={colors.notification}
                     unfillColor="#FFFFFF"
-                    iconStyle={{ borderColor: "blue" }}
+                    iconStyle={{ borderColor: colors.notification }}
                     textStyle={{}}
                     disableBuiltInState
                   />
@@ -290,9 +290,9 @@ export default function RecordExercise({ navigation, route }) {
                   <BouncyCheckbox
                     isChecked={trackWeight}
                     size={25}
-                    fillColor="blue"
+                    fillColor={colors.notification}
                     unfillColor="#FFFFFF"
-                    iconStyle={{ borderColor: "blue" }}
+                    iconStyle={{ borderColor: colors.notification }}
                     textStyle={{}}
                     disableBuiltInState
                   />
@@ -322,9 +322,9 @@ export default function RecordExercise({ navigation, route }) {
                   <BouncyCheckbox
                     isChecked={trackTime}
                     size={25}
-                    fillColor="blue"
+                    fillColor={colors.notification}
                     unfillColor="#FFFFFF"
-                    iconStyle={{ borderColor: "blue" }}
+                    iconStyle={{ borderColor: colors.notification }}
                     textStyle={{}}
                     disableBuiltInState
                   />
