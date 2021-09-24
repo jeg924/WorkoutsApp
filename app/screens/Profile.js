@@ -1,13 +1,15 @@
 import React from "react";
 import firebase from "firebase";
-import { View, Text, Image, TouchableHighlight } from "react-native";
+import { View, Text, Image, TouchableHighlight, Pressable } from "react-native";
 import Header from "../components/Header";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
+import { Feather, AntDesign } from "@expo/vector-icons";
+import { useTheme } from "@react-navigation/native";
 
 export default function Profile({ navigation, route }) {
   // const { myUserId, myFriends } = React.useContext(GlobalContext);
-
+  const { colors } = useTheme();
   const { userID } = route.params;
   const [loading, setLoading] = React.useState(true);
   const [displayName, setDisplayName] = React.useState("");
@@ -31,7 +33,6 @@ export default function Profile({ navigation, route }) {
     const userDoc = await userRef.get();
     const user = userDoc.data();
     if (user) {
-      console.log(user);
       setDisplayName(user.displayName);
       if (user.photoURL) {
         await Image.prefetch(user.photoURL);
@@ -46,8 +47,6 @@ export default function Profile({ navigation, route }) {
         .doc(firebase.auth().currentUser.uid);
       const myDoc = await myRef.get();
       const my = myDoc.data();
-      console.log(userID);
-      console.log(my.friends);
       if (my?.friends?.some((friend) => friend.userID === userID)) {
         setIsFriend(true);
       }
@@ -75,13 +74,11 @@ export default function Profile({ navigation, route }) {
         displayName: displayName,
         profilePicture: profilePicture,
       });
-      console.log("FRIENDS ++++++++");
-      console.log(friends);
       await myRef.set({ friends: friends }, { merge: true });
 
       setIsFriend(true);
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setAddingFriend(false);
     }
@@ -102,7 +99,7 @@ export default function Profile({ navigation, route }) {
       myRef.set({ friends: friends }, { merge: true });
       setIsFriend(false);
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setRemovingFriend(false);
     }
@@ -189,20 +186,77 @@ export default function Profile({ navigation, route }) {
                   onPress={() => firebase.auth().signOut()}
                 />
               </View>
-            ) : !isFriend ? ( // is this my Friend?
-              addingFriend ? ( // am I currently adding this person to my friends list?
-                <Text>Adding Friend...</Text>
+            ) : !isFriend ? (
+              addingFriend ? (
+                <View
+                  style={{
+                    height: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>Adding friend...</Text>
+                </View>
               ) : (
-                <View style={{}}>
-                  <SolidButton onPress={addFriend} title="Add Friend" />
+                <View
+                  style={{
+                    height: 50,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Pressable onPress={addFriend}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Feather
+                        name="heart"
+                        color={colors.notification}
+                        size={25}
+                      />
+                      <Text style={{ paddingLeft: 10 }}>Add Friend</Text>
+                    </View>
+                  </Pressable>
                 </View>
               )
             ) : removingFriend ? (
-              <Text>Removing friend...</Text>
+              <View
+                style={{
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>Removing Friend...</Text>
+              </View>
             ) : (
-              // already my friend
-              <View style={{}}>
-                <SecondaryButton onPress={removeFriend} title="Remove Friend" />
+              <View
+                style={{
+                  height: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Pressable onPress={removeFriend}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AntDesign
+                      name="heart"
+                      size={25}
+                      color={colors.notification}
+                    />
+                    <Text style={{ paddingLeft: 10 }}>Remove Friend</Text>
+                  </View>
+                </Pressable>
               </View>
             )}
           </View>
