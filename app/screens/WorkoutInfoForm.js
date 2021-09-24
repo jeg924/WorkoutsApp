@@ -20,9 +20,11 @@ import { Feather } from "@expo/vector-icons";
 import Header from "../components/Header";
 import Input from "../components/Input";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
+import { useTheme } from "@react-navigation/native";
 
 export default function WorkoutInfoForm({ navigation, route }) {
   const { workoutID } = route.params;
+  const { colors } = useTheme();
 
   const [loading, setLoading] = React.useState(true);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -220,7 +222,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 20,
-                    color: !publicWorkout ? "blue" : "black",
+                    color: !publicWorkout ? colors.primary : "black",
                     textDecorationLine: !publicWorkout ? "underline" : "none",
                   }}
                 >
@@ -253,7 +255,7 @@ export default function WorkoutInfoForm({ navigation, route }) {
                   style={{
                     fontWeight: "bold",
                     fontSize: 20,
-                    color: publicWorkout ? "blue" : "black",
+                    color: publicWorkout ? colors.primary : "black",
                     textDecorationLine: publicWorkout ? "underline" : "none",
                   }}
                 >
@@ -297,9 +299,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={weightNeeded}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -321,9 +323,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={barNeeded}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -345,9 +347,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={chairNeeded}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -369,9 +371,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={matNeeded}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -393,9 +395,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={towelNeeded}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -429,9 +431,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={strength}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -453,9 +455,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={cardio}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -477,9 +479,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={yoga}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -501,9 +503,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={balance}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -525,9 +527,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={speed}
                       size={25}
-                      fillColor="blue"
+                      fillColor={colors.notification}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: "blue" }}
+                      iconStyle={{ borderColor: colors.notification }}
                       textStyle={{}}
                       disableBuiltInState
                     />
