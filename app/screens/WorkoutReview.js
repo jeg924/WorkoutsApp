@@ -767,9 +767,7 @@ export default function WorkoutReview({ navigation, route }) {
       />
       <ScrollView style={{ flex: 1 }}>
         {friend ? (
-          <View
-            style={{ flex: 1, flexDirection: "row", backgroundColor: "red" }}
-          >
+          <View style={{ flex: 1, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
             <View
               style={{
@@ -780,7 +778,7 @@ export default function WorkoutReview({ navigation, route }) {
               }}
             >
               <View>
-                <Text>{"Winner"}</Text>
+                <Text></Text>
                 <Image
                   source={{
                     uri: myProfilePicture,
@@ -1072,7 +1070,6 @@ export default function WorkoutReview({ navigation, route }) {
         !friend ? (
           <View
             style={{
-              flex: 0.2,
               width: "100%",
               justifyContent: "center",
               alignItems: "center",
@@ -1094,13 +1091,12 @@ export default function WorkoutReview({ navigation, route }) {
         ) : (
           <View
             style={{
-              flex: 0.2,
               width: "100%",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <SecondaryButton
+            <SolidButton
               title="Stop Comparing"
               onPress={() => {
                 setFriend(null);
