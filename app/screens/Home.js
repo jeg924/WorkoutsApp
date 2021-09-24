@@ -69,8 +69,10 @@ export default function Home({ navigation }) {
           workoutToBeContinuedObject.name = workout.workoutName;
           workoutToBeContinuedObject.workoutID = workout.workoutID;
           workoutToBeContinuedObject.recordID = unfinishedRecords[i].recordID;
-          workoutToBeContinuedObject.currentExercise =
-            unfinishedRecords[i].exerciseInputData.length;
+          workoutToBeContinuedObject.currentExercise = unfinishedRecords[i]
+            .exerciseInputData
+            ? unfinishedRecords[i].exerciseInputData.length
+            : 0;
           workoutsToBeContinued.push(workoutToBeContinuedObject);
         });
         workoutPromises.push(workoutPromise);

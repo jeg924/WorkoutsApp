@@ -3,9 +3,7 @@ import {
   ScrollView,
   View,
   Text,
-  TextInput,
   TouchableHighlight,
-  Dimensions,
   Modal,
 } from "react-native";
 import firebase from "firebase";
