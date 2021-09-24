@@ -207,6 +207,7 @@ function App() {
               tabBarOptions={{
                 activeTintColor: MyTheme.colors.background,
                 inactiveTintColor: MyTheme.colors.text,
+                style: { height: 50 },
               }}
               tabBarStyle={{ backgroundColor: MyTheme.colors.notification }}
             >
