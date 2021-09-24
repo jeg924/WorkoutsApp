@@ -152,6 +152,7 @@ export default function Home({ navigation }) {
           .firestore()
           .collection("workouts")
           .where("workoutID", "not-in", recentHistory)
+          .where("public", "==", true)
           .limit(20);
         const workoutsDocs = await workoutsRef.get();
         workoutsDocs.forEach((doc) => {

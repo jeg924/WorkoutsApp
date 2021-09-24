@@ -82,7 +82,9 @@ export default function WorkoutInfoForm({ navigation, route }) {
           setSpeed(workout.isSpeed);
           setBalance(workout.isBalance);
 
-          Image.prefetch(workoutImage);
+          if (workoutImage) {
+            Image.prefetch(workoutImage);
+          }
         }
       }
     } catch (error) {
