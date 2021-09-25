@@ -95,7 +95,11 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                     }}
                   >
                     <Image
-                      source={{ uri: item.photoURL, cache: "force-cache" }}
+                      source={
+                        item.photoURL
+                          ? { uri: item.photoURL, cache: "force-cache" }
+                          : require("../assets/placeholder-image.png")
+                      }
                       style={{ width: 60, height: 60, borderRadius: 100 }}
                     />
                   </View>
@@ -154,7 +158,11 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                     }}
                   >
                     <Image
-                      source={{ uri: item.workoutImage, cache: "force-cache" }}
+                      source={
+                        item.workoutImage
+                          ? { uri: item.workoutImage, cache: "force-cache" }
+                          : require("../assets/placeholder-image.png")
+                      }
                       style={{ width: 60, height: 60 }}
                     />
                   </View>
