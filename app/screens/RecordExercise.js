@@ -458,6 +458,9 @@ export default function RecordExercise({ navigation, route }) {
                   if (workout) {
                     console.log("time");
                     let time = workout.time;
+                    if (exerciseObj) {
+                      time -= exerciseObj.duration;
+                    }
                     time += exerciseVideoDuration;
                     console.log(time);
                     workoutRef.set(

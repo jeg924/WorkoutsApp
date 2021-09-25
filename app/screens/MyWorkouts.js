@@ -371,7 +371,11 @@ export default function MyWorkouts({ navigation, route }) {
                   <View>
                     <Image
                       style={{ width: 140, height: 140 }}
-                      source={{ uri: item.workoutImage, cache: "force-cache" }}
+                      source={
+                        item.workoutImage
+                          ? { uri: item.workoutImage, cache: "force-cache" }
+                          : require("../assets/placeholder-image.png")
+                      }
                     />
                     <Text>{item.workoutName}</Text>
                   </View>
