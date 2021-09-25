@@ -71,18 +71,14 @@ export default function MyWorkouts({ navigation, route }) {
       }
       // set history
       if (my.history) {
-        console.log("history");
-        console.log(my.history);
         let history = [...my.history];
         history = history.filter((item) => item.deleted === false);
-        console.log("history");
-        console.log(history);
         setHistory(history);
       } else {
         setHistory(null);
       }
     } catch (error) {
-      console.log("error is " + error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -358,7 +354,7 @@ export default function MyWorkouts({ navigation, route }) {
 
                               loadData();
                             } catch (error) {
-                              console.log("error is " + error);
+                              console.log(error);
                             } finally {
                               setDeletingUpload(false);
                             }
