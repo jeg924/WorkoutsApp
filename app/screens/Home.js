@@ -147,8 +147,6 @@ export default function Home({ navigation }) {
           recentHistory.push(myHistory[i].workoutID);
         }
 
-        //TODO::: figure out. Basics first. I know that library must be changed. When I add to a library, that workout must have a field that incremenets. When I remove from a library I also decrement the field on that workout.
-
         let lessRecentWorkouts = [];
         const workoutsRef = firebase
           .firestore()
@@ -160,8 +158,7 @@ export default function Home({ navigation }) {
         workoutsDocs.forEach((doc) => {
           lessRecentWorkouts.push(doc.data());
         });
-        // todo ok. I have my less recent workouts. now I wanna check them against the standard
-        // todo and pick the best 5
+
         let recommended = [];
         for (let i = 0; i < lessRecentWorkouts.length; ++i) {
           let recommendedObject = {};
