@@ -193,11 +193,7 @@ function App() {
                     return <Feather name="home" color={color} size={size} />;
                   } else if (route.name === "My Workouts") {
                     return (
-                      <FontAwesome5
-                        name="grin-beam-sweat"
-                        color={color}
-                        size={size}
-                      />
+                      <Feather name="activity" color={color} size={size} />
                     );
                   } else if (route.name === "Browse") {
                     return <Feather name="search" color={color} size={size} />;

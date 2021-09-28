@@ -13,7 +13,7 @@ import { useTheme } from "@react-navigation/native";
 import Header from "../components/Header";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
-import { Feather } from "@expo/vector-icons";
+import { Feather, EvilIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Svg, { Circle, Line } from "react-native-svg";
 import { FlatList } from "react-native-gesture-handler";
 import { abs } from "react-native-reanimated";
@@ -225,7 +225,7 @@ export default function Home({ navigation }) {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Loading...</Text>
+        <EvilIcons name="spinner" size={50} color={colors.card} />
       </View>
     );
   }

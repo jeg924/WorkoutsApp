@@ -5,6 +5,8 @@ import {
   Text,
   TouchableHighlight,
   Dimensions,
+  KeyboardAvoidingView,
+  ScrollView,
 } from "react-native";
 import firebase from "firebase";
 import SolidButton from "../components/SolidButton";
@@ -47,19 +49,28 @@ export default function Login() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ flex: 0.8 }}></View>
-      <View style={{ flex: 2, flexDirection: "row" }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: "white" }}
+      contentContainerStyle={{ flex: 1 }}
+    >
+      <View style={{ flex: 7.2, flexDirection: "row" }}>
         <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 8 }}>
-          <View style={{ flex: 0.3, alignItems: "center" }}>
+        <View style={{ flex: 18 }}>
+          <View style={{ flex: 0.2 }}></View>
+          <View
+            style={{
+              flex: 0.3,
+              alignItems: "center",
+            }}
+          >
             <Text
               style={{
                 fontWeight: "bold",
-                fontSize: 30,
+                fontSize: 50,
+                color: colors.notification,
               }}
             >
-              Workouts App
+              Outwork
             </Text>
           </View>
           <SegmentedControl
@@ -105,7 +116,7 @@ export default function Login() {
                 flex: 1,
               }}
             >
-              <View style={{ flex: 0.5 }}></View>
+              <View style={{ flex: 0.3 }}></View>
               <Input
                 description="Email"
                 autoFocus={false}
@@ -134,11 +145,14 @@ export default function Login() {
         </View>
         <View style={{ flex: 1 }}></View>
       </View>
-      <View style={{ flex: 1, alignItems: "center" }}>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={{ flex: 1, alignItems: "center" }}
+      >
         <SolidButton
           title={tabIndex === 0 ? "Login" : "Register"}
           onPress={tabIndex === 0 ? signin : signup}
-          style={{ backgroundColor: "#BB86FC" }}
+          style={{ backgroundColor: colors.notification }}
         />
         <View
           style={{
@@ -149,7 +163,8 @@ export default function Login() {
         >
           <Text style={{ color: "red" }}>{error}</Text>
         </View>
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+      <View style={{ flex: 1 }}></View>
+    </ScrollView>
   );
 }
