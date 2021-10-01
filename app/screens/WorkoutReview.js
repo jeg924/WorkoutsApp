@@ -840,6 +840,19 @@ export default function WorkoutReview({ navigation, route }) {
                   ? averageStats
                   : bestStats
               }
+              ListHeaderComponent={() => {
+                return (
+                  <View style={{ height: 50, flexDirection: "row" }}>
+                    <View style={{ flex: 1 }}></View>
+                    <View style={{ flex: 18 }}>
+                      <Text style={{ fontWeight: "bold", fontSize: 30 }}>
+                        {workout.workoutName}
+                      </Text>
+                    </View>
+                    <View style={{ flex: 1 }}></View>
+                  </View>
+                );
+              }}
               renderItem={({ item, index }) => (
                 <View
                   style={{
@@ -964,7 +977,19 @@ export default function WorkoutReview({ navigation, route }) {
             >
               <FlatList
                 style={{}}
-                keyExtractor={(item) => indexOf(item)}
+                ListHeaderComponent={() => {
+                  return (
+                    <View style={{ height: 50, flexDirection: "row" }}>
+                      <View style={{ flex: 1 }}></View>
+                      <View style={{ flex: 18 }}>
+                        <Text style={{ fontWeight: "bold", fontSize: 30 }}>
+                          {workout.workoutName}
+                        </Text>
+                      </View>
+                      <View style={{ flex: 1 }}></View>
+                    </View>
+                  );
+                }}
                 data={
                   tabIndex === 0
                     ? latestStats

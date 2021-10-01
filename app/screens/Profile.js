@@ -254,7 +254,7 @@ export default function Profile({ navigation, route }) {
                       size={25}
                       color={colors.notification}
                     />
-                    <Text style={{ paddingLeft: 10 }}>Remove Friend</Text>
+                    <Text style={{ paddingLeft: 10 }}>Friend</Text>
                   </View>
                 </Pressable>
               </View>

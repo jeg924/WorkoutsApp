@@ -143,6 +143,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
               style={{
                 flexDirection: "row",
                 alignItems: "center",
+                height: 50,
               }}
             >
               {exercises[currentExercise].reps ? (
@@ -307,7 +308,7 @@ export default function WorkoutVideoScreen({ navigation, route }) {
       </ScrollView>
       <KeyboardAvoidingView behavior="padding">
         <View style={{ justifyContent: "center", alignItems: "center" }}>
-          <SolidButton onPress={continueWorkout} title="Resume" />
+          <SolidButton onPress={continueWorkout} title="Continue" />
         </View>
       </KeyboardAvoidingView>
     </View>

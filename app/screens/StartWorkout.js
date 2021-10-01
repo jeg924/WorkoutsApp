@@ -587,9 +587,7 @@ export default function StartWorkout({ navigation, route }) {
         </View>
       ) : (
         <View style={{ flex: 1, alignItems: "center", paddingTop: 20 }}>
-          <Text style={{ fontWeight: "bold" }}>
-            This workout has no exercises
-          </Text>
+          <Text style={{ fontWeight: "bold" }}>No exercises loaded yet.</Text>
         </View>
       )}
     </View>

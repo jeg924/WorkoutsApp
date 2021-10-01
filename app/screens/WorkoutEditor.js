@@ -284,8 +284,10 @@ export default function WorkoutEditor({ navigation, route }) {
                 <Text>Reps</Text>
               ) : item.weight && !item.reps && !item.time ? (
                 <Text>Weight</Text>
-              ) : (
+              ) : !item.weight && !item.reps && item.time ? (
                 <Text>Time</Text>
+              ) : (
+                <Text></Text>
               )}
             </View>
             <View style={{ flex: 5, justifyContent: "center" }}>
