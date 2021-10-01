@@ -13,6 +13,7 @@ import { TextInput } from "react-native-gesture-handler";
 import { Feather } from "@expo/vector-icons";
 import { SearchBar } from "react-native-elements";
 import SolidButton from "../components/SolidButton";
+import Header from "../components/Header";
 
 export default function ModalFriendPicker({ navigation, route }) {
   const {
@@ -39,26 +40,7 @@ export default function ModalFriendPicker({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          marginTop: 20,
-        }}
-      >
-        <View style={{ flex: 1 }}></View>
-        <View style={{ flex: 8, justifyContent: "center" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 30,
-            }}
-          >
-            Search Friends
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}></View>
-      </View>
+      <Header navigation={navigation} title="Search Friends" />
       <View style={{ flex: 1, flexDirection: "row" }}>
         <View style={{ flex: 1 }}></View>
         <View style={{ flex: 11 }}>
