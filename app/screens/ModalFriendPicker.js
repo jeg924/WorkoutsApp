@@ -185,9 +185,8 @@ export default function ModalFriendPicker({ navigation, route }) {
         style={{
           flex: 1,
           width: "100%",
-          justifyContent: "center",
+          justifyContent: "flex-end",
           alignItems: "center",
-          marginBottom: "5%",
         }}
       >
         <SolidButton
