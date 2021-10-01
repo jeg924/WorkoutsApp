@@ -436,6 +436,10 @@ export default function WorkoutReview({ navigation, route }) {
   const [friendsBestStats, setFriendsBestStats] = React.useState(null);
   const [friendsAverageStats, setFriendsAverageStats] = React.useState(null);
   const [friend, setFriend] = React.useState(null);
+
+  const [myData, setMyData] = React.useState(null);
+  const [friendsData, setFriendsData] = React.useState(null);
+
   const [averageWinner, setAverageWinner] = React.useState(null);
   const [bestWinner, setBestWinner] = React.useState(null);
   const [latestWinner, setLatestWinner] = React.useState(null);
@@ -741,8 +745,8 @@ export default function WorkoutReview({ navigation, route }) {
   // console.log("friend best stats");
   // console.log(friendsBestStats);
 
-  // console.log("friend");
-  // console.log(friend);
+  console.log("friend");
+  console.log(friend);
 
   if (loading) {
     return (
@@ -766,19 +770,28 @@ export default function WorkoutReview({ navigation, route }) {
         style={{ height: 50 }}
       />
       <View style={{ flex: 1 }}>
+        <View style={{ height: 50, flexDirection: "row" }}>
+          <View style={{ flex: 1 }}></View>
+          <View style={{ flex: 18 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 30 }}>
+              {workout.workoutName}
+            </Text>
+            <Text>You've completed this workout {timesCompleted} times.</Text>
+          </View>
+          <View style={{ flex: 1 }}></View>
+        </View>
         {friend ? (
-          <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 0.25, flexDirection: "row" }}>
             <View style={{ flex: 1 }}></View>
             <View
               style={{
                 flexDirection: "row",
                 flex: 2,
                 justifyContent: "space-around",
-                alignItems: "center",
+                padding: 10,
               }}
             >
               <View>
-                <Text></Text>
                 <Image
                   source={{
                     uri: myProfilePicture,
@@ -800,7 +813,6 @@ export default function WorkoutReview({ navigation, route }) {
                 </Text>
               </View>
               <View>
-                <Text> </Text>
                 <Image
                   source={{
                     uri: friend.profilePicture,
@@ -828,168 +840,713 @@ export default function WorkoutReview({ navigation, route }) {
           style={{
             flex: 1,
             flexDirection: "row",
+            borderTopWidth: 1,
           }}
         >
-          <View style={{ flex: 2 }}>
-            <FlatList
-              style={{}}
-              data={
-                tabIndex === 0
-                  ? latestStats
-                  : tabIndex === 1
-                  ? averageStats
-                  : bestStats
-              }
-              ListHeaderComponent={() => {
-                return (
-                  <View style={{ height: 50, flexDirection: "row" }}>
-                    <View style={{ flex: 1 }}></View>
-                    <View style={{ flex: 18 }}>
-                      <Text style={{ fontWeight: "bold", fontSize: 30 }}>
-                        {workout.workoutName}
-                      </Text>
-                    </View>
-                    <View style={{ flex: 1 }}></View>
+          {friend ? (
+            <ScrollView style={{}} contentContainerStyle={{}}>
+              {tabIndex === 0 ? (
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <View style={{ flex: 2 }}>
+                    {latestStats.map((item, index) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1.5,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {index + 1}. {item.name}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
                   </View>
-                );
-              }}
-              renderItem={({ item, index }) => (
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    alignContent: "center",
-                  }}
-                >
-                  <View
-                    style={{
-                      flex: 1,
-                      paddingTop: 10,
-                      paddingBottom: 10,
-                      paddingLeft: 20,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {index + 1}. {item.name}
-                    </Text>
+                  <View style={{ flex: 1 }}>
+                    {friend.latestStats.map((item) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 25,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
                   </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      paddingBottom: 10,
-                      paddingTop: 10,
-                      paddingLeft: 20,
-                    }}
-                  >
-                    <Text style={{}}>
-                      {item.reps && !item.weight && !item.time
-                        ? "Reps: " + item.reps
-                        : null}
-                      {item.weight && !item.weight && !item.time
-                        ? "Weight: " + item.weight
-                        : null}
-                      {item.time && !item.reps && !item.weight
-                        ? item.time % 60 >= 10
-                          ? "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.reps && item.weight && !item.time
-                        ? "Reps: " + item.reps + "\n" + "Weight: " + item.weight
-                        : null}
-                      {item.reps && item.time && !item.weight
-                        ? item.time % 60 >= 10
-                          ? "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.weight && item.time && !item.reps
-                        ? item.time % 60 >= 10
-                          ? "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.weight && item.time && item.reps
-                        ? item.time % 60 >= 10
-                          ? "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                    </Text>
+                </View>
+              ) : tabIndex === 1 ? (
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <View style={{ flex: 2 }}>
+                    {averageStats.map((item, index) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1.5,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {index + 1}. {item.name}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    {friend.averageStats.map((item) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 25,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                </View>
+              ) : (
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <View style={{ flex: 2 }}>
+                    {bestStats.map((item, index) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: "row",
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1.5,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                fontWeight: "bold",
+                              }}
+                            >
+                              {index + 1}. {item.name}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 10,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    {friend.bestStats.map((item) => {
+                      return (
+                        <View
+                          style={{
+                            flex: 1,
+                            alignContent: "center",
+                            height: 60,
+                            borderBottomWidth: 1,
+                          }}
+                        >
+                          <View
+                            style={{
+                              flex: 1,
+                              justifyContent: "center",
+                              paddingLeft: 25,
+                            }}
+                          >
+                            <Text style={{}}>
+                              {item.reps && !item.weight && !item.time
+                                ? "Reps: " + item.reps
+                                : null}
+                              {item.weight && !item.weight && !item.time
+                                ? "Weight: " + item.weight
+                                : null}
+                              {item.time && !item.reps && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.reps && item.weight && !item.time
+                                ? "Reps: " +
+                                  item.reps +
+                                  "\n" +
+                                  "Weight: " +
+                                  item.weight
+                                : null}
+                              {item.reps && item.time && !item.weight
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && !item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                              {item.weight && item.time && item.reps
+                                ? item.time % 60 >= 10
+                                  ? "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":" +
+                                    (item.time % 60)
+                                  : "Reps: " +
+                                    item.reps +
+                                    "\n" +
+                                    "Weight: " +
+                                    item.weight +
+                                    "\n" +
+                                    "Time: " +
+                                    Math.floor(item.time / 60) +
+                                    ":0" +
+                                    (item.time % 60)
+                                : null}
+                            </Text>
+                          </View>
+                        </View>
+                      );
+                    })}
                   </View>
                 </View>
               )}
-            />
-          </View>
-          {friend ? (
-            <View
-              style={{
-                flex: 1,
-              }}
-            >
+            </ScrollView>
+          ) : (
+            <View style={{ flex: 1 }}>
               <FlatList
                 style={{}}
-                ListHeaderComponent={() => {
-                  return (
-                    <View style={{ height: 50, flexDirection: "row" }}>
-                      <View style={{ flex: 1 }}></View>
-                      <View style={{ flex: 18 }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 30 }}>
-                          {workout.workoutName}
-                        </Text>
-                      </View>
-                      <View style={{ flex: 1 }}></View>
-                    </View>
-                  );
-                }}
                 data={
                   tabIndex === 0
                     ? latestStats
@@ -997,99 +1554,159 @@ export default function WorkoutReview({ navigation, route }) {
                     ? averageStats
                     : bestStats
                 }
-                renderItem={({ item }) => (
+                renderItem={({ item, index }) => (
+                  // <View
+                  //         style={{
+                  //           flex: 1,
+                  //           flexDirection: "row",
+                  //           alignContent: "center",
+                  //           height: 60,
+                  //           borderBottomWidth: 1,
+                  //         }}
+                  //       >
+                  //         <View
+                  //           style={{
+                  //             flex: 1.5,
+                  //             justifyContent: "center",
+                  //             paddingLeft: 10,
+                  //           }}
+                  //         >
+                  //           <Text
+                  //             style={{
+                  //               fontSize: 16,
+                  //               fontWeight: "bold",
+                  //             }}
+                  //           >
+                  //             {index + 1}. {item.name}
+                  //           </Text>
+                  //         </View>
+                  //         <View
+                  //           style={{
+                  //             flex: 1,
+                  //             justifyContent: "center",
+                  //             paddingLeft: 10,
+                  //           }}
+                  //         >
                   <View
                     style={{
                       flex: 1,
-                      paddingBottom: 10,
-                      paddingTop: 10,
-                      paddingLeft: 20,
+                      flexDirection: "row",
+                      alignContent: "center",
+                      height: 60,
+                      borderBottomWidth: 1,
                     }}
                   >
-                    <Text style={{ textAlign: "left" }}>
-                      {item.reps && !item.weight && !item.time
-                        ? "Reps: " + item.reps
-                        : null}
-                      {item.weight && !item.weight && !item.time
-                        ? "Weight: " + item.weight
-                        : null}
-                      {item.time && !item.reps && !item.weight
-                        ? item.time % 60 >= 10
-                          ? "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.reps && item.weight && !item.time
-                        ? "Reps: " + item.reps + "\n" + "Weight: " + item.weight
-                        : null}
-                      {item.reps && item.time && !item.weight
-                        ? item.time % 60 >= 10
-                          ? "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.weight && item.time && !item.reps
-                        ? item.time % 60 >= 10
-                          ? "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                      {item.weight && item.time && item.reps
-                        ? item.time % 60 >= 10
+                    <View
+                      style={{
+                        flex: 1.5,
+                        justifyContent: "center",
+                        paddingLeft: 18,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {index + 1}. {item.name}
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Text style={{}}>
+                        {item.reps && !item.weight && !item.time
+                          ? "Reps: " + item.reps
+                          : null}
+                        {item.weight && !item.weight && !item.time
+                          ? "Weight: " + item.weight
+                          : null}
+                        {item.time && !item.reps && !item.weight
+                          ? item.time % 60 >= 10
+                            ? "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":" +
+                              (item.time % 60)
+                            : "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":0" +
+                              (item.time % 60)
+                          : null}
+                        {item.reps && item.weight && !item.time
                           ? "Reps: " +
                             item.reps +
                             "\n" +
                             "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":" +
-                            (item.time % 60)
-                          : "Reps: " +
-                            item.reps +
-                            "\n" +
-                            "Weight: " +
-                            item.weight +
-                            "\n" +
-                            "Time: " +
-                            Math.floor(item.time / 60) +
-                            ":0" +
-                            (item.time % 60)
-                        : null}
-                    </Text>
+                            item.weight
+                          : null}
+                        {item.reps && item.time && !item.weight
+                          ? item.time % 60 >= 10
+                            ? "Reps: " +
+                              item.reps +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":" +
+                              (item.time % 60)
+                            : "Reps: " +
+                              item.reps +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":0" +
+                              (item.time % 60)
+                          : null}
+                        {item.weight && item.time && !item.reps
+                          ? item.time % 60 >= 10
+                            ? "Weight: " +
+                              item.weight +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":" +
+                              (item.time % 60)
+                            : "Weight: " +
+                              item.weight +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":0" +
+                              (item.time % 60)
+                          : null}
+                        {item.weight && item.time && item.reps
+                          ? item.time % 60 >= 10
+                            ? "Reps: " +
+                              item.reps +
+                              "\n" +
+                              "Weight: " +
+                              item.weight +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":" +
+                              (item.time % 60)
+                            : "Reps: " +
+                              item.reps +
+                              "\n" +
+                              "Weight: " +
+                              item.weight +
+                              "\n" +
+                              "Time: " +
+                              Math.floor(item.time / 60) +
+                              ":0" +
+                              (item.time % 60)
+                          : null}
+                      </Text>
+                    </View>
                   </View>
                 )}
               />
             </View>
-          ) : null}
+          )}
         </View>
       </View>
       {friends ? (
