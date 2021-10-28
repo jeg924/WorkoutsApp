@@ -17,7 +17,7 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import { SearchBar } from "react-native-elements";
+import { colors, SearchBar } from "react-native-elements";
 import { Feather } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import { FlatList } from "react-native-gesture-handler";
@@ -76,6 +76,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                   flex: 1,
                   flexDirection: "row",
                   borderBottomWidth: 1,
+                  borderBottomColor: "gainsboro",
                 }}
               >
                 <View style={{ flex: 1 }}></View>
@@ -139,6 +140,7 @@ const InfiniteHits = connectInfiniteHits(({ hits, navigation }) => {
                   flex: 1,
                   flexDirection: "row",
                   borderBottomWidth: 1,
+                  borderBottomColor: "gainsboro",
                 }}
               >
                 <View style={{ flex: 1 }}></View>
@@ -230,7 +232,7 @@ export default function Browse({ navigation, route }) {
               navigation.navigate("Filter Form");
             }}
           >
-            <Feather name="filter" size={30} color="white" />
+            <Feather name="filter" size={20} color={colors.text} />
           </Pressable>
         }
       />

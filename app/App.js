@@ -28,12 +28,12 @@ import ModalFriendPicker from "./screens/ModalFriendPicker";
 const MyTheme = {
   dark: false,
   colors: {
-    primary: "#3700B3",
+    primary: "#FFA000",
     background: "white",
-    card: "#6200EE",
+    card: "gray",
     text: "black",
-    border: "#3700B3",
-    notification: "#BB86FC",
+    border: "gray",
+    notification: "#FFA000",
   },
 };
 
@@ -201,11 +201,13 @@ function App() {
                 },
               })}
               tabBarOptions={{
-                activeTintColor: MyTheme.colors.background,
-                inactiveTintColor: MyTheme.colors.text,
-                style: { height: 50 },
+                activeTintColor: MyTheme.colors.text,
+                inactiveTintColor: MyTheme.colors.card,
+                style: {
+                  backgroundColor: "white",
+                },
               }}
-              tabBarStyle={{ backgroundColor: MyTheme.colors.notification }}
+              tabBarStyle={{ backgroundColor: "white" }}
             >
               <Tab.Screen name="Home" component={HomeStackScreen} />
               <Tab.Screen

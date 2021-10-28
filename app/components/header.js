@@ -3,6 +3,7 @@ import { Text, View, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 export default function Header({
   title,
@@ -18,8 +19,8 @@ export default function Header({
       style={{
         paddingTop: insets.top,
         flexDirection: "row",
-        backgroundColor: colors.card,
-        height: 70,
+        backgroundColor: colors.background,
+        height: 80,
         borderBottomWidth: 1,
         borderBottomColor: colors.border,
       }}
@@ -34,12 +35,12 @@ export default function Header({
               }
             }}
           >
-            <Feather name="chevron-left" size={30} color="white" />
+            <Feather name="chevron-left" size={20} color={colors.text} />
           </Pressable>
         )}
       </View>
       <View style={{ flex: 4, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ fontSize: 30, fontWeight: "bold", color: "white" }}>
+        <Text style={{ fontSize: 20, fontWeight: "bold", color: colors.text }}>
           {title}
         </Text>
       </View>

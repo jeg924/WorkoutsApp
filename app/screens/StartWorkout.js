@@ -319,19 +319,6 @@ export default function StartWorkout({ navigation, route }) {
       </View>
     );
 
-  if (addingToLibrary)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Adding to Library</Text>
-      </View>
-    );
-  if (removingFromLibrary)
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Removing from Library</Text>
-      </View>
-    );
-
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <Header title={workout?.workoutName} navigation={navigation} />
@@ -355,22 +342,42 @@ export default function StartWorkout({ navigation, route }) {
         >
           <View style={{ flex: 1 }}>
             {addedToLibrary ? (
-              <Pressable onPress={removeFromLibrary}>
+              removingFromLibrary ? (
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flex: 1,
                     justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <AntDesign
-                    name="heart"
-                    size={25}
-                    color={colors.notification}
-                  />
-                  <Text style={{ paddingLeft: 10 }}>{favorites + " favs"}</Text>
+                  <Text>Removing from Library</Text>
                 </View>
-              </Pressable>
+              ) : (
+                <Pressable onPress={removeFromLibrary}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AntDesign name="heart" size={25} color={colors.primary} />
+                    <Text style={{ paddingLeft: 10 }}>
+                      {favorites + " favs"}
+                    </Text>
+                  </View>
+                </Pressable>
+              )
+            ) : addingToLibrary ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text>Adding to Library</Text>
+              </View>
             ) : (
               <Pressable onPress={addToLibrary}>
                 <View
@@ -380,7 +387,7 @@ export default function StartWorkout({ navigation, route }) {
                     justifyContent: "center",
                   }}
                 >
-                  <Feather name="heart" color={colors.notification} size={25} />
+                  <Feather name="heart" color={colors.primary} size={25} />
                   <Text style={{ paddingLeft: 10 }}>{favorites + " favs"}</Text>
                 </View>
               </Pressable>
@@ -411,7 +418,7 @@ export default function StartWorkout({ navigation, route }) {
             }}
           >
             <View style={{ flex: 1 }}>
-              <Svg height={100} width={50}>
+              <Svg height={200} width={50}>
                 <Line
                   x1="15"
                   y1="0"
@@ -424,19 +431,19 @@ export default function StartWorkout({ navigation, route }) {
                   cx="15"
                   cy="50"
                   r="8"
-                  stroke={colors.primary}
+                  stroke={colors.text}
                   strokeWidth="2"
                   fill={
                     currentExercise === exercises?.length
-                      ? colors.notification
-                      : colors.primary
+                      ? colors.text
+                      : colors.text
                   }
                 />
                 <Line
                   x1="15"
                   y1="60"
                   x2="15"
-                  y2="100"
+                  y2="200"
                   stroke="black"
                   strokeWidth="1"
                 />
@@ -493,12 +500,12 @@ export default function StartWorkout({ navigation, route }) {
                         cx="15"
                         cy="50"
                         r="8"
-                        stroke={colors.primary}
+                        stroke={colors.text}
                         strokeWidth="2"
                         fill={
                           currentExercise === index
-                            ? colors.notification
-                            : colors.primary
+                            ? colors.primary
+                            : colors.text
                         }
                       />
                       {index !== exercises?.length - 1 ? (

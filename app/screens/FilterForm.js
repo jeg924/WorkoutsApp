@@ -42,7 +42,7 @@ export default function FilterForm({ navigation, route }) {
                 <Slider
                   value={maxTime}
                   step={0.01}
-                  thumbTintColor={colors.notification}
+                  thumbTintColor={colors.primary}
                   onValueChange={(value) => {
                     setMaxTime(value);
                   }}
@@ -71,9 +71,9 @@ export default function FilterForm({ navigation, route }) {
                   <BouncyCheckbox
                     isChecked={workoutFilter}
                     size={25}
-                    fillColor={colors.notification}
+                    fillColor={colors.primary}
                     unfillColor="#FFFFFF"
-                    iconStyle={{ borderColor: colors.notification }}
+                    iconStyle={{ borderColor: colors.primary }}
                     textStyle={{}}
                     disableBuiltInState
                   />
@@ -99,9 +99,9 @@ export default function FilterForm({ navigation, route }) {
                   <BouncyCheckbox
                     isChecked={userFilter}
                     size={25}
-                    fillColor={colors.notification}
+                    fillColor={colors.primary}
                     unfillColor="#FFFFFF"
-                    iconStyle={{ borderColor: colors.notification }}
+                    iconStyle={{ borderColor: colors.primary }}
                     textStyle={{}}
                     disableBuiltInState
                   />
@@ -123,9 +123,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={strengthFilter}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -141,9 +141,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={cardioFilter}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -159,9 +159,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={yogaFilter}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -175,9 +175,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={balanceFilter}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -193,9 +193,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={speedFilter}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />
@@ -217,9 +217,9 @@ export default function FilterForm({ navigation, route }) {
                     <BouncyCheckbox
                       isChecked={equipmentless}
                       size={25}
-                      fillColor={colors.notification}
+                      fillColor={colors.primary}
                       unfillColor="#FFFFFF"
-                      iconStyle={{ borderColor: colors.notification }}
+                      iconStyle={{ borderColor: colors.primary }}
                       textStyle={{}}
                       disableBuiltInState
                     />

@@ -841,6 +841,7 @@ export default function WorkoutReview({ navigation, route }) {
             flex: 1,
             flexDirection: "row",
             borderTopWidth: 1,
+            borderTopColor: "gainsboro",
           }}
         >
           {friend ? (
@@ -857,6 +858,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -979,6 +981,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -1089,6 +1092,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -1211,6 +1215,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -1321,6 +1326,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -1443,6 +1449,7 @@ export default function WorkoutReview({ navigation, route }) {
                             alignContent: "center",
                             height: 60,
                             borderBottomWidth: 1,
+                            borderBottomColor: "gainsboro",
                           }}
                         >
                           <View
@@ -1594,6 +1601,7 @@ export default function WorkoutReview({ navigation, route }) {
                       alignContent: "center",
                       height: 60,
                       borderBottomWidth: 1,
+                      borderBottomColor: "gainsboro",
                     }}
                   >
                     <View

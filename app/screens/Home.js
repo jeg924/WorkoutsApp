@@ -247,7 +247,7 @@ export default function Home({ navigation }) {
               });
             }}
           >
-            <Feather name="user" size={30} color="white" />
+            <Feather name="user" size={20} color={colors.text} />
           </Pressable>
         }
       />

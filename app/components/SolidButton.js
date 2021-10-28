@@ -7,8 +7,8 @@ export default function SolidButton({ title, onPress, ...rest }) {
   return (
     <TouchableHighlight
       style={{
-        backgroundColor: colors.notification,
-        borderRadius: 20,
+        backgroundColor: colors.primary,
+        borderRadius: 10,
         width: "90%",
         justifyContent: "center",
         alignItems: "center",
