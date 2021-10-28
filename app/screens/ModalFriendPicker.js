@@ -114,6 +114,7 @@ export default function ModalFriendPicker({ navigation, route }) {
                     flex: 1,
                     flexDirection: "row",
                     borderBottomWidth: 1,
+                    borderBottomColor: "gainsboro",
                   }}
                 >
                   <View style={{ flex: 1 }}></View>
