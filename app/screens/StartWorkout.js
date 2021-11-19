@@ -3,7 +3,7 @@ import firebase from "firebase";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import { DisplayTimeSegment } from "../UtilityFunctions";
 import { FlatList } from "react-native-gesture-handler";
-import { Feather, AntDesign } from "@expo/vector-icons";
+import { Feather, AntDesign, Ionicons } from "@expo/vector-icons";
 import SolidButton from "../components/SolidButton";
 import SecondaryButton from "../components/SecondaryButton";
 import Header from "../components/Header";
@@ -262,7 +262,7 @@ export default function StartWorkout({ navigation, route }) {
     }
   }
 
-  async function ReviewWorkout() {
+  async function finishRecordingStats() {
     setLoading(true);
     try {
       const recordRef = firebase
@@ -278,19 +278,22 @@ export default function StartWorkout({ navigation, route }) {
         },
         { merge: true }
       );
-
-      navigation.navigate("Review", {
-        screen: "Workout Review",
-        params: {
-          workout: workout,
-          exercises: exercises,
-        },
-      });
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
+  }
+
+  function ReviewWorkout() {
+    
+    navigation.navigate("Review", {
+      screen: "Workout Review",
+      params: {
+        workout: workout,
+        exercises: exercises,
+      },
+    });
   }
 
   React.useEffect(() => {
@@ -353,20 +356,32 @@ export default function StartWorkout({ navigation, route }) {
                   <Text>Removing from Library</Text>
                 </View>
               ) : (
-                <Pressable onPress={removeFromLibrary}>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <AntDesign name="heart" size={25} color={colors.primary} />
-                    <Text style={{ paddingLeft: 10 }}>
-                      {favorites + " favs"}
-                    </Text>
-                  </View>
-                </Pressable>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Pressable onPress={removeFromLibrary}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <AntDesign
+                        name="heart"
+                        size={25}
+                        color={colors.primary}
+                      />
+                      <Text style={{ paddingLeft: 10 }}>
+                        {favorites + " favs"}
+                      </Text>
+                    </View>
+                  </Pressable>
+                </View>
               )
             ) : addingToLibrary ? (
               <View
@@ -379,18 +394,28 @@ export default function StartWorkout({ navigation, route }) {
                 <Text>Adding to Library</Text>
               </View>
             ) : (
-              <Pressable onPress={addToLibrary}>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Feather name="heart" color={colors.primary} size={25} />
-                  <Text style={{ paddingLeft: 10 }}>{favorites + " favs"}</Text>
-                </View>
-              </Pressable>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Pressable onPress={addToLibrary}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Feather name="heart" color={colors.primary} size={25} />
+                    <Text style={{ paddingLeft: 10 }}>
+                      {favorites + " favs"}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
             )}
           </View>
 
@@ -406,6 +431,26 @@ export default function StartWorkout({ navigation, route }) {
             <Text style={{ paddingLeft: 10 }}>
               {workout ? DisplayTime(workout.time) : ""}
             </Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Pressable onPress={ReviewWorkout}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Ionicons name="ios-stats" color={colors.text} size={25} />
+                <Text style={{ paddingLeft: 10 }}>Review Stats</Text>
+              </View>
+            </Pressable>
           </View>
         </View>
       ) : null}
@@ -457,7 +502,13 @@ export default function StartWorkout({ navigation, route }) {
               }}
             >
               {currentExercise == exercises?.length ? (
-                <SolidButton title="Review Workout" onPress={ReviewWorkout} />
+                <SolidButton
+                  title="Review Workout"
+                  onPress={() => {
+                    finishRecordingStats();
+                    ReviewWorkout();
+                  }}
+                />
               ) : exercises ? (
                 <SolidButton
                   title={

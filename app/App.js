@@ -32,7 +32,7 @@ const MyTheme = {
     background: "white",
     card: "gray",
     text: "black",
-    border: "gray",
+    border: "silver",
     notification: "#FFA000",
   },
 };

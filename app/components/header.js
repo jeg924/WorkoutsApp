@@ -20,7 +20,7 @@ export default function Header({
         paddingTop: insets.top,
         flexDirection: "row",
         backgroundColor: colors.background,
-        height: 80,
+        height: 90,
         borderBottomWidth: 1,
         borderBottomColor: colors.border,
       }}
@@ -35,7 +35,7 @@ export default function Header({
               }
             }}
           >
-            <Feather name="chevron-left" size={20} color={colors.text} />
+            <Feather name="chevron-left" size={30} color={colors.text} />
           </Pressable>
         )}
       </View>

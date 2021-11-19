@@ -429,24 +429,23 @@ export default function RecordExercise({ navigation, route }) {
                       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                       const downloadURL =
                         await uploadTask.snapshot.ref.getDownloadURL();
-                      setExerciseVideo(downloadURL);
+
+                      const exerciseData = {
+                        id: exerciseRef.id,
+                        name: exerciseName,
+                        video: downloadURL,
+                        duration: exerciseVideoDuration,
+                        reps: trackReps,
+                        weight: trackWeight,
+                        time: trackTime,
+                        order: order,
+                        workoutID: workoutID,
+                        deleted: false,
+                      };
+                      exerciseRef.set(exerciseData, { merge: true });
                     }
                   );
                   await uploadTask;
-
-                  const exerciseData = {
-                    id: exerciseRef.id,
-                    name: exerciseName,
-                    video: exerciseVideo,
-                    duration: exerciseVideoDuration,
-                    reps: trackReps,
-                    weight: trackWeight,
-                    time: trackTime,
-                    order: order,
-                    workoutID: workoutID,
-                    deleted: false,
-                  };
-                  exerciseRef.set(exerciseData, { merge: true });
 
                   const workoutRef = firebase
                     .firestore()

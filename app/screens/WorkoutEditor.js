@@ -61,7 +61,6 @@ export default function WorkoutEditor({ navigation, route }) {
   }, [workoutID]);
 
   async function loadWorkoutData() {
-    // todo: current problem. get author name.
     try {
       setLoading(true);
       const workoutRef = firebase
